@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">JoggingApplicationAndroid</string>
+    <string name="statistics">Statistics</string>
+    <string name="calendar">Calendar</string>
+</resources>

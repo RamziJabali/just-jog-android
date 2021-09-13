@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content">
+    <item
+        android:id="@+id/statistics_page"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_insert_chart_outlined"
+        android:title="@string/statistics"/>
+    <item
+        android:id="@+id/calendar_page"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_calendar_today"
+        android:title="@string/calendar" />
+</menu>
