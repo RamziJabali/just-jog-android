@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.eljabali.joggingapplicationandroid.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
@@ -24,24 +26,34 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupBottomNavigation()
+        setupStatisticsPage()
         setupCalendar()
+    }
+
+    private fun setupStatisticsPage() {
+
     }
 
     private fun setupBottomNavigation() {
         bottomNavigationBarView.setOnItemSelectedListener { item ->
             when (item.itemId) {
+
                 R.id.statistics_page -> {
-                    // Respond to navigation item 1 click
-                    Toast.makeText(this, "MusicPage selected", Toast.LENGTH_SHORT).show()
+//                    supportFragmentManager.beginTransaction()
+//                        .replace(R.id.frameLayout, JogStatisticsFragment.newInstance("",""))
+//                        .commit()
                     true
                 }
+
                 R.id.calendar_page -> {
-                    // Respond to navigation item 2 click
-                    Toast.makeText(this, "SettingPage selected", Toast.LENGTH_SHORT).show()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, caldroidFragment)
+                        .commit()
                     true
                 }
                 else -> false
@@ -51,10 +63,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationBarView.setOnItemReselectedListener { item ->
             when (item.itemId) {
                 R.id.statistics_page -> {
-                    Toast.makeText(this, "MusicPage reselected", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "StatsPage reselected", Toast.LENGTH_SHORT).show()
                 }
                 R.id.calendar_page -> {
-                    Toast.makeText(this, "SettingPage reselected", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "CalendarPage reselected", Toast.LENGTH_SHORT).show()
                     // Respond to navigation item 2 reselection
                 }
             }
@@ -64,11 +76,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCalendar() {
         caldroidFragment.caldroidListener = object : CaldroidListener() {
             override fun onSelectDate(date: Date, view: View?) {
-
             }
         }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.calendarView, caldroidFragment)
-            .commit()
     }
 }

@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 data class WorkoutDate(
     @PrimaryKey @ColumnInfo(name = "date") val date: Long,
     @ColumnInfo(name = "did_user_attend_date") val didUserAttend: Boolean,
-    @ColumnInfo(name = "latitude") val latitude: Long,
-    @ColumnInfo(name = "longitude") val longitude: Long
+    @ColumnInfo(name = "latitude") val latitude: Double,
+    @ColumnInfo(name = "longitude") val longitude: Double
 
 )
