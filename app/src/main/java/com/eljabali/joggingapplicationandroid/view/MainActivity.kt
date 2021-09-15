@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
 
+    private val statisticsFragment: JogStatisticsFragment by lazy {  JogStatisticsFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
         val calendar = Calendar.getInstance()
         CaldroidFragment().apply {
@@ -36,7 +37,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupStatisticsPage() {
-
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout,statisticsFragment)
+            .commit()
     }
 
     private fun setupBottomNavigation() {
@@ -44,15 +47,17 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
 
                 R.id.statistics_page -> {
-//                    supportFragmentManager.beginTransaction()
-//                        .replace(R.id.frameLayout, JogStatisticsFragment.newInstance("",""))
-//                        .commit()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, statisticsFragment)
+                        .addToBackStack("StatisticsFragment")
+                        .commit()
                     true
                 }
 
                 R.id.calendar_page -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, caldroidFragment)
+                        .replace(R.id.frameLayout, caldroidFragment,"CaldroidFragment")
+                        .addToBackStack("CaldroidFragment")
                         .commit()
                     true
                 }
