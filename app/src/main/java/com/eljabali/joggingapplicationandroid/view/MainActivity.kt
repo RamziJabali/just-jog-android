@@ -2,6 +2,7 @@ package com.eljabali.joggingapplicationandroid.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -10,6 +11,10 @@ import com.eljabali.joggingapplicationandroid.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
+import localtime.LocalTimeUtil
+import zoneddatetime.ZonedDateTimeUtil
+import zoneddatetime.ZonedDateTimes
+import java.time.LocalTime
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -34,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupStatisticsPage()
         setupCalendar()
+
+        val currentDateTime = ZonedDateTimes.now
+        Log.i("Date/Time","${currentDateTime.hour}:${currentDateTime.minute}/${currentDateTime.second}")
     }
 
     private fun setupStatisticsPage() {

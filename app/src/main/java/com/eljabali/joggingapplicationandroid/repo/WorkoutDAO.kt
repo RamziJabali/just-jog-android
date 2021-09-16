@@ -9,7 +9,7 @@ import io.reactivex.Single
 
 @Dao
 interface WorkoutDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addUpdateWorkout(workoutDate: WorkoutDate): Completable
 
     @Query("SELECT * FROM user_workout_schedule")
