@@ -2,26 +2,21 @@ package com.eljabali.joggingapplicationandroid.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.eljabali.joggingapplicationandroid.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.R
+import com.eljabali.joggingapplicationandroid.statisticsview.JogStatisticsFragment
+import com.eljabali.joggingapplicationandroid.viewmodel.ViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
-import localtime.LocalTimeUtil
-import zoneddatetime.ZonedDateTimeUtil
-import zoneddatetime.ZonedDateTimes
-import java.time.LocalTime
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
-
-    private val statisticsFragment: JogStatisticsFragment by lazy {  JogStatisticsFragment.newInstance() }
+    private val viewModel: ViewModel by lazy { ViewModel() }
+    private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
         val calendar = Calendar.getInstance()
         CaldroidFragment().apply {
@@ -39,32 +34,29 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupStatisticsPage()
         setupCalendar()
-
-        val currentDateTime = ZonedDateTimes.now
-        Log.i("Date/Time","${currentDateTime.hour}:${currentDateTime.minute}/${currentDateTime.second}")
     }
 
     private fun setupStatisticsPage() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout,statisticsFragment)
+            .replace(R.id.frameLayout, statisticsFragment)
+            .addToBackStack("Statistics Fragment")
             .commit()
     }
 
     private fun setupBottomNavigation() {
         bottomNavigationBarView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-
                 R.id.statistics_page -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.frameLayout, statisticsFragment)
-                        .addToBackStack("StatisticsFragment")
+                        .addToBackStack("Statistics Fragment")
                         .commit()
                     true
                 }
 
                 R.id.calendar_page -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, caldroidFragment,"CaldroidFragment")
+                        .replace(R.id.frameLayout, caldroidFragment, "CaldroidFragment")
                         .addToBackStack("CaldroidFragment")
                         .commit()
                     true
