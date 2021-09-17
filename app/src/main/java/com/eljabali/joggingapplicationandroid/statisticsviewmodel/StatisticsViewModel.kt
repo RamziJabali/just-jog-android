@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.eljabali.joggingapplicationandroid.statisticsview.StatisticsViewState
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.ZonedDateTimes
+import zoneddatetime.extensions.print
 
 class StatisticsViewModel : ViewModel() {
 
@@ -12,10 +13,10 @@ class StatisticsViewModel : ViewModel() {
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
 
     fun onFragmentLaunch() {
-        val zoneddatetime = ZonedDateTimes.now
+        val now = ZonedDateTimes.now
         statisticsViewState = statisticsViewState.copy(
-            time = "${zoneddatetime.hour}:${zoneddatetime.minute}:${zoneddatetime.second} ",
-            date = "${zoneddatetime.month}/${zoneddatetime.dayOfMonth}/${zoneddatetime.year}"
+            time = now.print("HH:mm"),
+            date = now.print("EEE, MMM d yyyy")
         )
         invalidateView()
     }

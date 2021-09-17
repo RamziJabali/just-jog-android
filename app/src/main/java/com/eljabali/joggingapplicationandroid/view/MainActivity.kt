@@ -10,19 +10,24 @@ import com.eljabali.joggingapplicationandroid.viewmodel.ViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
-import java.util.*
+import zoneddatetime.ZonedDateTimes
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
-    private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
+    companion object{
+        const val CAL_TAG = "CaldroidFragment"
+    }
+
     private val viewModel: ViewModel by lazy { ViewModel() }
+    private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
     private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
-        val calendar = Calendar.getInstance()
+        val today = ZonedDateTimes.today
         CaldroidFragment().apply {
             arguments = Bundle().apply {
-                putInt(CaldroidFragment.MONTH, calendar.get(Calendar.MONTH) + 1)
-                putInt(CaldroidFragment.YEAR, calendar.get(Calendar.YEAR))
+                putInt(CaldroidFragment.MONTH, today.monthValue)
+                putInt(CaldroidFragment.YEAR, today.year)
                 putBoolean(CaldroidFragment.ENABLE_CLICK_ON_DISABLED_DATES, false)
             }
         }
@@ -38,8 +43,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupStatisticsPage() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, statisticsFragment)
-            .addToBackStack("Statistics Fragment")
+            .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
+            .hide(caldroidFragment)
+            .commit()
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.frameLayout, statisticsFragment, JogStatisticsFragment.TAG)
             .commit()
     }
 
@@ -48,16 +57,15 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.statistics_page -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, statisticsFragment)
-                        .addToBackStack("Statistics Fragment")
+                        .hide(caldroidFragment)
+                        .show(statisticsFragment)
                         .commit()
                     true
                 }
-
                 R.id.calendar_page -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout, caldroidFragment, "CaldroidFragment")
-                        .addToBackStack("CaldroidFragment")
+                        .hide(statisticsFragment)
+                        .show(caldroidFragment)
                         .commit()
                     true
                 }
@@ -72,7 +80,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.calendar_page -> {
                     Toast.makeText(this, "CalendarPage reselected", Toast.LENGTH_SHORT).show()
-                    // Respond to navigation item 2 reselection
                 }
             }
         }
