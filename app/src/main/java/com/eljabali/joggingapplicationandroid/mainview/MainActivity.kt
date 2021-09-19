@@ -1,4 +1,4 @@
-package com.eljabali.joggingapplicationandroid.view
+package com.eljabali.joggingapplicationandroid.mainview
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

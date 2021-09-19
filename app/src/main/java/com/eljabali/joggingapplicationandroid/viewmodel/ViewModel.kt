@@ -1,8 +1,10 @@
 package com.eljabali.joggingapplicationandroid.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.eljabali.joggingapplicationandroid.usecase.UseCase
 
-class ViewModel(): ViewModel() {
+class ViewModel(application: Application, private val UseCase: UseCase): AndroidViewModel(application) {
 
     public fun onAppStart(){
 
