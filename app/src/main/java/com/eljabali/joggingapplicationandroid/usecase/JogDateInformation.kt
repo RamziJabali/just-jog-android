@@ -1,13 +1,13 @@
 package com.eljabali.joggingapplicationandroid.usecase
 
 import android.graphics.drawable.ColorDrawable
-import androidx.room.ColumnInfo
+import com.google.android.gms.maps.model.LatLng
+import java.util.*
 
-data class ColoredJogDate(
-    val date: Long,
+data class JogDateInformation(
+    val date: Date,
     val runNumber: Int,
     val backgroundColor: ColorDrawable,
     val time: Double,
-    val latitude: Double,
-    val longitude: Double
+    val latitudeLongitude: LatLng
 )
