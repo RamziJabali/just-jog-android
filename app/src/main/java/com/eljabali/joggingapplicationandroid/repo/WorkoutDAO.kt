@@ -16,7 +16,7 @@ interface WorkoutDAO {
     fun getAll(): Observable<List<WorkoutDate>>
 
     @Query("SELECT * FROM user_workout_schedule WHERE date IN (:dateInMillis)")
-    fun getByDate(dateInMillis: Long): Maybe<WorkoutDate>
+    fun getByDate(dateInMillis: Long): Maybe<List<WorkoutDate>>
 
     @Query("DELETE FROM user_workout_schedule")
     fun deleteAll(): Completable

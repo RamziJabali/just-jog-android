@@ -4,7 +4,7 @@ import android.graphics.drawable.ColorDrawable
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
-data class JogDateInformation(
+data class ModifiedJogDateInformation(
     val date: Date,
     val runNumber: Int,
     val backgroundColor: ColorDrawable,

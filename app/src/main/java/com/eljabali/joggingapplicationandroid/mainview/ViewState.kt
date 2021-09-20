@@ -1,4 +1,8 @@
 package com.eljabali.joggingapplicationandroid.mainview
 
-class ViewState {
-}
+import com.eljabali.joggingapplicationandroid.usecase.ModifiedJogDateInformation
+
+data class ViewState(
+    val listOfModifiedDates:List<ModifiedJogDateInformation>
+)
+
