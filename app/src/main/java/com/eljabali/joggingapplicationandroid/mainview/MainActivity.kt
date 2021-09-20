@@ -10,6 +10,7 @@ import com.eljabali.joggingapplicationandroid.viewmodel.ViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import zoneddatetime.ZonedDateTimes
 import java.util.Date
 
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         const val CAL_TAG = "CaldroidFragment"
     }
 
-    private val viewModel: ViewModel by lazy { ViewModel() }
+    private val viewModel: ViewModel by viewModel()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
     private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {

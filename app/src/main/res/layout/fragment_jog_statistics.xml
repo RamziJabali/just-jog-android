@@ -6,96 +6,109 @@
     android:layout_height="match_parent"
     android:background="@color/secondary_background_color"
     tools:context=".statisticsview.JogStatisticsFragment">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/current_date_time"
-        android:layout_width="400dp"
-        android:layout_height="200dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="8dp"
-        app:cardBackgroundColor="@color/primary_background_color"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.363"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <!-- TODO: Update blank fragment layout -->
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/current_date_time"
+            android:layout_width="400dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/primary_background_color"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/today"
-            android:textAlignment="center"
-            android:textColor="@color/caldroid_darker_gray" />
+            <Button
+                android:id="@+id/start_run"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="270dp"
+                android:layout_marginTop="60dp"
+                android:backgroundTint="@color/primary_button_color"
+                android:text="@string/start_run"
+                android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="60dp"
-            android:textColor="@color/primary_text_color"
-            android:textSize="18sp"
-            tools:text="07:30:21" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="270dp"
+                android:layout_marginTop="40dp"
+                android:text="@string/click_to_start_run" />
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="30dp"
-            android:textColor="@color/primary_text_color"
-            android:textSize="18sp"
-            tools:text="09/13/2021" />
-    </com.google.android.material.card.MaterialCardView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/today"
+                android:textAlignment="center"
+                android:textColor="@color/caldroid_darker_gray" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/average"
-        android:layout_width="194dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        app:cardBackgroundColor="@color/primary_background_color"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/daily_record"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_date_time">
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="60dp"
+                android:textColor="@color/primary_text_color"
+                android:textSize="18sp"
+                tools:text="07:30:21" />
 
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/primary_text_color"
+                android:textSize="18sp"
+                tools:text="09/13/2021" />
+        </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/average_miles_per_week"
-            android:textAlignment="center"
-            android:textColor="@color/caldroid_darker_gray" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/daily_record"
-        android:layout_width="194dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:cardBackgroundColor="@color/primary_background_color"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_date_time">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/average"
+            android:layout_width="194dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/primary_background_color"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/daily_record"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/current_date_time">
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="@string/daily_record"
-            android:textColor="@color/caldroid_darker_gray" />
-    </com.google.android.material.card.MaterialCardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/average_miles_per_week"
+                android:textAlignment="center"
+                android:textColor="@color/caldroid_darker_gray" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/daily_record"
+            android:layout_width="194dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            app:cardBackgroundColor="@color/primary_background_color"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/average"
+            app:layout_constraintTop_toBottomOf="@id/current_date_time">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/daily_record"
+                android:textAlignment="center"
+                android:textColor="@color/caldroid_darker_gray" />
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

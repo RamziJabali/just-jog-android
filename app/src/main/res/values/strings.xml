@@ -6,4 +6,6 @@
     <string name="today">Today</string>
     <string name="average_miles_per_week">Average Weekly</string>
     <string name="daily_record">Daily Record</string>
+    <string name="start_run">Start</string>
+    <string name="click_to_start_run">Click to Start Run</string>
 </resources>
