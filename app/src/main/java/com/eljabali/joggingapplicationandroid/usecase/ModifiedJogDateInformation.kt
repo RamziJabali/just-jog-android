@@ -1,13 +1,12 @@
 package com.eljabali.joggingapplicationandroid.usecase
 
-import android.graphics.drawable.ColorDrawable
 import com.google.android.gms.maps.model.LatLng
-import java.util.*
+import zoneddatetime.ZonedDateTimeUtil
+import zoneddatetime.ZonedDateTimes
+import java.time.ZonedDateTime
 
 data class ModifiedJogDateInformation(
-    val date: Date,
+    val dateTime: ZonedDateTime,
     val runNumber: Int,
-    val backgroundColor: ColorDrawable,
-    val time: Double,
     val latitudeLongitude: LatLng
 )

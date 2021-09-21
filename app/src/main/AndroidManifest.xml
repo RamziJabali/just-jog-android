@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.JoggingApplicationAndroid">
-        <activity android:name=".mainview.MainActivity">
+        <activity android:name="com.eljabali.joggingapplicationandroid.mainview.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

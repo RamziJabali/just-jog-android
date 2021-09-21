@@ -8,4 +8,6 @@
     <string name="daily_record">Daily Record</string>
     <string name="start_run">Start</string>
     <string name="click_to_start_run">Click to Start Run</string>
+    <string name="delete_all_entries">Delete All Entries</string>
+    <string name="delete">Delete</string>
 </resources>

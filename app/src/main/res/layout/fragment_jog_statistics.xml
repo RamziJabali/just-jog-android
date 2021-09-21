@@ -41,6 +41,23 @@
                 android:layout_marginTop="40dp"
                 android:text="@string/click_to_start_run" />
 
+            <Button
+                android:id="@+id/delete_all_runs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="270dp"
+                android:layout_marginTop="140dp"
+                android:backgroundTint="@color/primary_button_color"
+                android:text="@string/delete"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="270dp"
+                android:layout_marginTop="120dp"
+                android:text="@string/delete_all_entries" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,6 +126,15 @@
                 android:text="@string/daily_record"
                 android:textAlignment="center"
                 android:textColor="@color/caldroid_darker_gray" />
+
+            <TextView
+                android:id="@+id/jog_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/caldroid_white" />
         </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
