@@ -1,6 +1,5 @@
 package com.eljabali.joggingapplicationandroid.statisticsviewmodel
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -126,7 +125,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(1),
                 1,
                 latLng3
             )
@@ -134,7 +133,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(2),
                 1,
                 latLng4
             )
@@ -142,7 +141,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(3),
                 1,
                 latLng5
             )
@@ -150,7 +149,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(4),
                 1,
                 latLng6
             )
@@ -158,7 +157,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(7),
                 1,
                 latLng7
             )
@@ -166,7 +165,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().plusDays(20),
                 1,
                 latLng8
             )
