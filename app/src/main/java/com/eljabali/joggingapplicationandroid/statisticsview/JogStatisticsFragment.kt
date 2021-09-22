@@ -69,11 +69,9 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     private fun onLaunch() {
         monitorStatisticsViewState()
         statisticsViewModel.onFragmentLaunch()
-        statisticsViewModel.getAllJogs()
-        statisticsViewModel.getAverageMillagePerWeek()
 
         startRunButton.setOnClickListener {
-            statisticsViewModel.addJog()
+            statisticsViewModel.addFiveJogs()
         }
 
         deleteAllRunsButton.setOnClickListener {

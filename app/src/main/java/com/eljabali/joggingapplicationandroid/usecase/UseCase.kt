@@ -7,9 +7,11 @@ import android.util.Log
 import com.eljabali.joggingapplicationandroid.repo.WorkoutDate
 import com.eljabali.joggingapplicationandroid.repo.WorkoutRepository
 import com.google.android.gms.maps.model.LatLng
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import zoneddatetime.extensions.parseZonedDateTime
 import zoneddatetime.extensions.print
@@ -23,18 +25,9 @@ class UseCase(private val repository: WorkoutRepository) {
         const val UC_TAG = "USECASE"
     }
 
-    @SuppressLint("CheckResult")
-    fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
+    fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
         repository.addWorkoutDate(
-            convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
-        )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { Log.i(UC_TAG, "Success") },
-                { error -> Log.e(UC_TAG, error.localizedMessage, error) }
-            )
-    }
+            convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation))
 
     @SuppressLint("CheckResult")
     fun getAllJogs(): Observable<List<ModifiedJogDateInformation>> =

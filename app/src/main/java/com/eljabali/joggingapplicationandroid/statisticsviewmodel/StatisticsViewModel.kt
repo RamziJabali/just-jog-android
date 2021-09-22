@@ -39,6 +39,11 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     fun onFragmentLaunch() {
+        setUpClock()
+        getAllJogs()
+    }
+
+    private fun setUpClock() {
         compositeDisposable.add(Observable.interval(1, TimeUnit.SECONDS)
             .timeInterval()
             .observeOn(AndroidSchedulers.mainThread())
@@ -52,24 +57,25 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             })
     }
 
-    fun getAverageMillagePerWeek(){
-        var latLng6 = LatLng(33.37856700076846, -112.13381645952278) //start point
-        var latLng7 = LatLng(33.39223722036783, -112.13348390000411) //end point
-        statisticsViewState.distance = getDistanceBetweenTwoLatLngToMiles(latLng6,latLng7)
-        invalidateView()
-    }
-
-    @SuppressLint("CheckResult")
-    fun getAllJogs() {
-        useCase.getAllJogs()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { listOfModifiedJogDates ->
-                    statisticsViewState.listOfModifiedJogDateInformation = listOfModifiedJogDates
-                    invalidateView()
-                },
-                { error -> Log.e(SVM_TAG, error.localizedMessage, error) })
+    private fun getAllJogs() {
+        compositeDisposable.add(
+            useCase.getAllJogs()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { listOfModifiedJogDates ->
+                        statisticsViewState = statisticsViewState.copy(
+                            listOfModifiedJogDateInformation = listOfModifiedJogDates,
+                            distance = getTotalDistance(
+                                getListOfLatLangFromModifiedJogDates(
+                                    listOfModifiedJogDates
+                                )
+                            )
+                        )
+                        invalidateView()
+                    },
+                    { error -> Log.e(SVM_TAG, error.localizedMessage, error) })
+        )
     }
 
     fun deleteAll() {
@@ -77,52 +83,110 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         invalidateView()
     }
 
-    fun addJog() {
-        val latLng = LatLng(33.380914, -112.133667)
-        val latLng2 = LatLng(33.380999, -112.133662)
-        val latLng3 = LatLng(33.381283, -112.133662)
-        val latLng4 = LatLng(33.381656, -112.133665)
-        val latLng5 = LatLng(33.383449, -112.133673)
+    fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
+        compositeDisposable.add(
+            useCase.addJog(modifiedJogDateInformation)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        Log.i(UseCase.UC_TAG, "Success")
+                        invalidateView()
+                    },
+                    { error -> Log.e(UseCase.UC_TAG, error.localizedMessage, error) })
+        )
+    }
 
-        useCase.addJog(
+    fun addFiveJogs() {
+        val latLng = LatLng(33.378407552340995, -112.13377654418115)
+        val latLng2 = LatLng(33.38074586452286, -112.13377654416735)
+        val latLng3 = LatLng(33.38264513696114, -112.13367998464074)
+        val latLng4 = LatLng(33.38373809566478, -112.13371217114684)
+        val latLng5 = LatLng(33.38512686005226, -112.13364808651048)
+        val latLng6 = LatLng(33.38748122592157, -112.13368226534573)
+        val latLng7 = LatLng(33.389855392762904, -112.13359635767495)
+        val latLng8 = LatLng(33.39222026263584, -112.13362891719325)
+
+        addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 1,
                 latLng
             )
         )
-        Thread.sleep(1_000)
-        useCase.addJog(
+        Thread.sleep(1000)
+
+        addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 1,
                 latLng2
             )
         )
-        Thread.sleep(1_000)
-        useCase.addJog(
+        Thread.sleep(1000)
+        addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 1,
                 latLng3
             )
         )
-        Thread.sleep(1_000)
-        useCase.addJog(
+        Thread.sleep(1000)
+        addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 1,
                 latLng4
             )
         )
-        Thread.sleep(1_000)
-        useCase.addJog(
+        Thread.sleep(1000)
+        addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 1,
                 latLng5
             )
         )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now(),
+                1,
+                latLng6
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now(),
+                1,
+                latLng7
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now(),
+                1,
+                latLng8
+            )
+        )
+    }
+
+    private fun getTotalDistance(listOfPoints: List<LatLng>): Double {
+        var totalDistance = 0.0
+        if (listOfPoints.size >= 2) {
+            var index = 1
+            while (index < listOfPoints.size) {
+                totalDistance += getDistanceBetweenTwoLatLngToMiles(
+                    listOfPoints[index - 1],
+                    listOfPoints[index]
+                )
+                index++
+            }
+            return String.format("%.3f", totalDistance).toDouble()
+        }
+        return totalDistance
     }
 
     private fun getDistanceBetweenTwoLatLngToMiles(point1: LatLng, point2: LatLng): Double {
@@ -135,8 +199,16 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
                     sin(dLon / 2) * sin(dLon / 2)
         val c = 2 * kotlin.math.atan2(kotlin.math.sqrt(a), kotlin.math.sqrt(1 - a))
         val final = earthsRadius * c
-        val rounded = String.format("%.3f", final)
-        return rounded.toDouble()
+
+        return String.format("%.3f", final).toDouble()
+    }
+
+    private fun getListOfLatLangFromModifiedJogDates(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<LatLng> {
+        val listOfLatLng: MutableList<LatLng> = mutableListOf()
+        for (element in listOfModifiedJogDateInformation) {
+            listOfLatLng.add(element.latitudeLongitude)
+        }
+        return listOfLatLng
     }
 
     private fun degreesToRadian(degree: Double): Double {
