@@ -105,6 +105,15 @@
                 android:text="@string/average_miles_per_week"
                 android:textAlignment="center"
                 android:textColor="@color/caldroid_darker_gray" />
+
+            <TextView
+                android:id="@+id/average_weekly_milage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/caldroid_white" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView

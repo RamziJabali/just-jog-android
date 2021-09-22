@@ -14,8 +14,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import zoneddatetime.extensions.print
-import java.time.ZonedDateTime
 
 class JogStatisticsFragment : Fragment(), ViewListener {
 
@@ -29,6 +27,7 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     private val dateTextView: TextView by lazy { requireView().findViewById(R.id.date) }
     private val timeTextView: TextView by lazy { requireView().findViewById(R.id.time) }
     private val jogEntryTextView: TextView by lazy { requireView().findViewById(R.id.jog_entry) }
+    private val averageWeeklyMillageTextView: TextView by lazy { requireView().findViewById(R.id.average_weekly_milage) }
     private val startRunButton: Button by lazy { requireView().findViewById(R.id.start_run) }
     private val deleteAllRunsButton: Button by lazy { requireView().findViewById(R.id.delete_all_runs) }
 
@@ -60,12 +59,18 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     override fun setNewViewState(statisticsViewState: StatisticsViewState) {
         dateTextView.text = statisticsViewState.date
         timeTextView.text = statisticsViewState.time
+        if (statisticsViewState.listOfModifiedJogDateInformation.isNotEmpty()){
+            jogEntryTextView.text =
+                statisticsViewState.listOfModifiedJogDateInformation[0].dateTime.toString()
+        }
+        averageWeeklyMillageTextView.text = " ${statisticsViewState.distance} Miles"
     }
 
     private fun onLaunch() {
         monitorStatisticsViewState()
         statisticsViewModel.onFragmentLaunch()
-//        statisticsViewModel.getAllJogs()
+        statisticsViewModel.getAllJogs()
+        statisticsViewModel.getAverageMillagePerWeek()
 
         startRunButton.setOnClickListener {
             statisticsViewModel.addJog()
