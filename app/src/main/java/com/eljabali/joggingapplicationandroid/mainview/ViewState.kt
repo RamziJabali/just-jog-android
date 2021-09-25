@@ -7,7 +7,7 @@ import java.util.*
 
 data class ViewState(
     val listOfModifiedDates: List<ModifiedJogDateInformation> = emptyList(),
-    val listOfDates: List<ColoredDates> = emptyList(),
+    val listOfColoredDates: List<ColoredDates> = emptyList(),
 )
 
 data class ColoredDates(

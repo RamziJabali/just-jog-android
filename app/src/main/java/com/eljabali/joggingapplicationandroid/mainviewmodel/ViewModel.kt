@@ -9,11 +9,11 @@ import com.eljabali.joggingapplicationandroid.mainview.ColoredDates
 import com.eljabali.joggingapplicationandroid.mainview.ViewState
 import com.eljabali.joggingapplicationandroid.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.usecase.UseCase
-import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import java.time.ZonedDateTime
 import java.util.*
 
 class ViewModel(application: Application, private val useCase: UseCase) :
@@ -45,7 +45,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                         viewState =
                             viewState.copy(
                                 listOfModifiedDates = listOfModifiedJogInformation,
-                                listOfDates = getDatesFromModifiedJogInformation(
+                                listOfColoredDates = getDatesFromModifiedJogInformation(
                                     listOfModifiedJogInformation
                                 )
                             )
@@ -58,21 +58,49 @@ class ViewModel(application: Application, private val useCase: UseCase) :
     private fun getDatesFromModifiedJogInformation(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<ColoredDates> {
         val listOfDates: MutableList<ColoredDates> = mutableListOf()
         if (listOfModifiedJogDateInformation.isNotEmpty()) {
-            var tempDate: Date = Date.from(listOfModifiedJogDateInformation[0].dateTime.toInstant())
-            listOfDates.add(ColoredDates(tempDate, hasWorkedOutColor))
+            var tempDate = listOfModifiedJogDateInformation[0].dateTime
+            listOfDates.add(ColoredDates(getDateFromZonedDateTime(tempDate), hasWorkedOutColor))
             for (element in listOfModifiedJogDateInformation) {
-                if (tempDate != Date.from(element.dateTime.toInstant())) {
-                    tempDate = Date.from(element.dateTime.toInstant())
-                    listOfDates.add(ColoredDates(tempDate, hasWorkedOutColor))
+                if (tempDate.year != element.dateTime.year || tempDate.dayOfYear != element.dateTime.dayOfYear) {
+                    tempDate = element.dateTime
+                    listOfDates.add(
+                        ColoredDates(
+                            getDateFromZonedDateTime(tempDate),
+                            hasWorkedOutColor
+                        )
+                    )
                 }
             }
             return listOfDates
         }
-        for (element in viewState.listOfDates) {
-            listOfDates.add(ColoredDates(element.date, noJogRecorded))
-        }
         return listOfDates
     }
+
+
+//    private fun getDatesFromModifiedJogInformation(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<ColoredDates> {
+//        val listOfDates: MutableList<ColoredDates> = mutableListOf()
+//        if (listOfModifiedJogDateInformation.isNotEmpty()) {
+//            var tempDate = listOfModifiedJogDateInformation[0].dateTime
+//            listOfDates.add(ColoredDates(getDateFromZonedDateTime(tempDate), hasWorkedOutColor))
+//            for (element in listOfModifiedJogDateInformation) {
+//                if (tempDate.year != element.dateTime.year || tempDate.dayOfYear != element.dateTime.dayOfYear) {
+//                    tempDate = element.dateTime
+//                    listOfDates.add(
+//                        ColoredDates(
+//                            getDateFromZonedDateTime(tempDate),
+//                            hasWorkedOutColor
+//                        )
+//                    )
+//                }
+//            }
+//            return listOfDates
+//        }
+//        return listOfDates
+//    }
+
+    private fun getDateFromZonedDateTime(dateTime: ZonedDateTime): Date =
+        Date.from(dateTime.toInstant())
+
 
     private fun invalidateView() {
         viewStateObservable.onNext(viewState)

@@ -108,13 +108,53 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                dateTime = ZonedDateTime.now().minusDays(7),
                 1,
-                latLng
+                latLng8
             )
         )
         Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now().minusDays(5),
+                1,
+                latLng7
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now().minusDays(4),
+                1,
+                latLng6
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now().minusDays(3),
+                1,
+                latLng5
+            )
+        )
 
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now().minusDays(2),
+                1,
+                latLng4
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now().minusDays(1),
+                1,
+                latLng3
+            )
+        )
+        Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
@@ -125,49 +165,9 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(1),
+                dateTime = ZonedDateTime.now(),
                 1,
-                latLng3
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(2),
-                1,
-                latLng4
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(3),
-                1,
-                latLng5
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(4),
-                1,
-                latLng6
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(7),
-                1,
-                latLng7
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().plusDays(20),
-                1,
-                latLng8
+                latLng
             )
         )
     }

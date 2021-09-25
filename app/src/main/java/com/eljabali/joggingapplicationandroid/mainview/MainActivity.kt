@@ -1,7 +1,5 @@
 package com.eljabali.joggingapplicationandroid.mainview
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
     }
 
     override fun setNewViewState(viewState: ViewState) {
-        viewState.listOfDates.forEach { date ->
+        viewState.listOfColoredDates.forEach { date ->
             caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
         }
         caldroidFragment.refreshView()
