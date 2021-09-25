@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
-import androidx.core.content.contentValuesOf
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.mainview.ColoredDates
 import com.eljabali.joggingapplicationandroid.mainview.ViewState
@@ -93,9 +92,12 @@ class ViewModel(application: Application, private val useCase: UseCase) :
             }
             return listOfDates
         }
+        viewState.listOfColoredDates.forEach { coloredDates ->
+            listOfDates.add(ColoredDates(coloredDates.date, noJogRecorded))
+        }
         return listOfDates
     }
-    
+
     private fun getDateFromZonedDateTime(dateTime: ZonedDateTime): Date =
         Date.from(dateTime.toInstant())
 
