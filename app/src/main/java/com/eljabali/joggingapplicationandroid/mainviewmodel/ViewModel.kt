@@ -44,7 +44,6 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                     { listOfModifiedJogInformation ->
                         viewState =
                             viewState.copy(
-                                listOfModifiedDates = listOfModifiedJogInformation,
                                 listOfColoredDates = getDatesFromModifiedJogInformation(
                                     listOfModifiedJogInformation
                                 )
@@ -53,6 +52,21 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                     },
                     { error -> Log.e(VM_TAG, error.localizedMessage, error) }
                 ))
+    }
+
+    fun getAllJogsAtSpecificDate(date: Date) {
+        compositeDisposable.add(
+            useCase.getAllJogsAtSpecificDate(date)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { listOfSpecificDates ->
+                        viewState = viewState.copy(listOfSpecificDates = listOfSpecificDates)
+                        invalidateView()
+                    },
+                    { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+                )
+        )
     }
 
     private fun getDatesFromModifiedJogInformation(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<ColoredDates> {
@@ -101,13 +115,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
     private fun getDateFromZonedDateTime(dateTime: ZonedDateTime): Date =
         Date.from(dateTime.toInstant())
 
-
     private fun invalidateView() {
         viewStateObservable.onNext(viewState)
     }
-
-    private fun addDatesToCalendar() {
-
-    }
-
 }

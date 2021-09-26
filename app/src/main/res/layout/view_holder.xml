@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="10dp"
+    android:paddingEnd= "10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/average"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:cardBackgroundColor="@color/primary_background_color"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/jog_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/jog"
+            android:textAlignment="center"
+            android:textColor="@color/secondary_text_color" />
+
+        <TextView
+            android:id="@+id/total_distance_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/total_distance"
+            android:textAlignment="center"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/total_distance_value"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/total_time_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/total_time"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/total_time_value"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="40dp"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/miles_per_hour_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="60dp"
+            android:text="@string/miles_per_hour"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/miles_per_hour_value"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="60dp"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text_color"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/map_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp"
+            android:backgroundTint="@color/primary_button_color"
+            android:textColor="@color/black"
+            android:text="@string/map" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

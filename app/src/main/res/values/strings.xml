@@ -10,4 +10,12 @@
     <string name="click_to_start_run">Click to Start Run</string>
     <string name="delete_all_entries">Delete All Entries</string>
     <string name="delete">Delete</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="total_distance">Total Distance:</string>
+    <string name="total_time">Total Time:</string>
+    <string name="number_of_runs">Number Of Runs:</string>
+    <string name="jog">Jog #</string>
+    <string name="miles_per_hour">Miles Per Hour:</string>
+    <string name="map">Map</string>
 </resources>

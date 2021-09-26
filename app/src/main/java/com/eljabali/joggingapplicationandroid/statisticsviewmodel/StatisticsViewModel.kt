@@ -3,6 +3,7 @@ package com.eljabali.joggingapplicationandroid.statisticsviewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import com.eljabali.joggingapplicationandroid.libraries.getTotalDistance
 import com.eljabali.joggingapplicationandroid.statisticsview.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.usecase.UseCase
@@ -14,11 +15,8 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.ZonedDateTimes
 import zoneddatetime.extensions.print
-import java.lang.Math.*
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
-import kotlin.math.cos
-import kotlin.math.sin
 
 class StatisticsViewModel(application: Application, private val useCase: UseCase) :
     AndroidViewModel(application) {
@@ -170,36 +168,21 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
                 latLng
             )
         )
-    }
-
-    private fun getTotalDistance(listOfPoints: List<LatLng>): Double {
-        var totalDistance = 0.0
-        if (listOfPoints.size >= 2) {
-            var index = 1
-            while (index < listOfPoints.size) {
-                totalDistance += getDistanceBetweenTwoLatLngToMiles(
-                    listOfPoints[index - 1],
-                    listOfPoints[index]
-                )
-                index++
-            }
-            return String.format("%.3f", totalDistance).toDouble()
-        }
-        return totalDistance
-    }
-
-    private fun getDistanceBetweenTwoLatLngToMiles(point1: LatLng, point2: LatLng): Double {
-        val earthsRadius = 3958.8
-        val dLat = degreesToRadian(point1.latitude - point2.latitude)
-        val dLon = degreesToRadian(point1.longitude - point2.longitude)
-        val a =
-            sin(dLat / 2) * sin(dLat / 2) +
-                    cos(degreesToRadian(point1.latitude)) * cos(degreesToRadian(point2.latitude)) *
-                    sin(dLon / 2) * sin(dLon / 2)
-        val c = 2 * kotlin.math.atan2(kotlin.math.sqrt(a), kotlin.math.sqrt(1 - a))
-        val final = earthsRadius * c
-
-        return String.format("%.3f", final).toDouble()
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now(),
+                2,
+                latLng2
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                dateTime = ZonedDateTime.now(),
+                2,
+                latLng
+            )
+        )
     }
 
     private fun getListOfLatLangFromModifiedJogDates(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<LatLng> {
@@ -208,10 +191,6 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             listOfLatLng.add(element.latitudeLongitude)
         }
         return listOfLatLng
-    }
-
-    private fun degreesToRadian(degree: Double): Double {
-        return (degree * (PI / 180))
     }
 
     private fun invalidateView() {

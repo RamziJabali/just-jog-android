@@ -35,7 +35,7 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_jog_statistics, container, false)
+        return inflater.inflate(R.layout.statistics_fragment, container, false)
     }
 
     override fun onResume() {

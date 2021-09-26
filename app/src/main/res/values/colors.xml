@@ -10,6 +10,7 @@
     <color name="primary_background_color">#474245</color>
     <color name="secondary_background_color">#1E1E1E</color>
     <color name="primary_text_color">#FFFFFF</color>
+    <color name="secondary_text_color">#9B9B9B</color>
     <color name="primary_button_color">#BB86FC</color>
 
 </resources>
