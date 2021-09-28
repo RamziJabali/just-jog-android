@@ -98,8 +98,8 @@ class MainActivity : AppCompatActivity(), ViewListener {
                 R.id.statistics_page -> {
                     supportFragmentManager.beginTransaction()
                         .hide(caldroidFragment)
+                        .hide(recyclerViewFragment)
                         .show(statisticsFragment)
-                        .show(recyclerViewFragment)
                         .commit()
                     true
                 }
