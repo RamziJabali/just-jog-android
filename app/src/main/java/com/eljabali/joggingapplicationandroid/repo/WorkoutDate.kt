@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 
 @Entity(tableName = "user_workout_schedule")
 data class WorkoutDate(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "total_run_number")
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
     val totalRuns: Int,
     @ColumnInfo(name = "date_time")
     val dateTime: String,
