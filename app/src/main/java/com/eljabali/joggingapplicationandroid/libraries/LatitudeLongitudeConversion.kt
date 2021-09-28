@@ -20,6 +20,8 @@ fun getTotalDistance(listOfPoints: List<LatLng>): Double {
     return totalDistance
 }
 
+
+
 private fun getDistanceBetweenTwoLatLngToMiles(point1: LatLng, point2: LatLng): Double {
     val earthsRadius = 3958.8
     val dLat = degreesToRadian(point1.latitude - point2.latitude)

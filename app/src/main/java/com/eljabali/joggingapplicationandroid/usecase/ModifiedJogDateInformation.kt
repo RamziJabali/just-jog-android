@@ -6,7 +6,10 @@ import zoneddatetime.ZonedDateTimes
 import java.time.ZonedDateTime
 
 data class ModifiedJogDateInformation(
-    val dateTime: ZonedDateTime,
+    val date: ZonedDateTime,
     val runNumber: Int,
-    val latitudeLongitude: LatLng
+    val latitudeLongitude: LatLng,
+    val hours: Int = 0,
+    val minutes: Int = 0,
+    val seconds: Int = 0,
 )

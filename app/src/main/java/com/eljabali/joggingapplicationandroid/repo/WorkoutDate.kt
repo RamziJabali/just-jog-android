@@ -7,8 +7,20 @@ import com.google.android.gms.maps.model.LatLng
 
 @Entity(tableName = "user_workout_schedule")
 data class WorkoutDate(
-    @PrimaryKey @ColumnInfo(name = "date_time") val dateTime: String,
-    @ColumnInfo(name = "run_number") val runNumber: Int,
-    @ColumnInfo(name = "latitude") val latitude: Double,
-    @ColumnInfo(name = "longitude") val longitude: Double
-    )
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "total_run_number")
+    val totalRuns: Int,
+    @ColumnInfo(name = "date")
+    val date: String,
+    @ColumnInfo(name = "hour")
+    val hours: Int,
+    @ColumnInfo(name = "minute")
+    val minutes: Int,
+    @ColumnInfo(name = "second")
+    val seconds: Int,
+    @ColumnInfo(name = "daily_run_number")
+    val runNumber: Int,
+    @ColumnInfo(name = "latitude")
+    val latitude: Double,
+    @ColumnInfo(name = "longitude")
+    val longitude: Double
+)

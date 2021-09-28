@@ -52,8 +52,8 @@ class MainActivity : AppCompatActivity(), ViewListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupBottomNavigation()
-        setupPages()
         setupCalendar()
+        setupPages()
         monitorCalendarViewState()
     }
 
@@ -61,11 +61,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
         viewState.listOfColoredDates.forEach { date ->
             caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
         }
-        val listOfRecyclerViewProperties: MutableList<RecyclerViewProperties> = mutableListOf()
-        listOfRecyclerViewProperties.add(RecyclerViewProperties("20 Miles", "2:20:00", "Jog Entry # 1","9.5 MPH"))
-        listOfRecyclerViewProperties.add(RecyclerViewProperties("10 Miles", "2:00:00", "Jog Entry # 2","10 MPH"))
-        listOfRecyclerViewProperties.add(RecyclerViewProperties("2 Miles", "1:00:00", "Jog Entry # 3","2 MPH"))
-        recyclerViewFragment.updateListOfProperties(listOfRecyclerViewProperties)
+        recyclerViewFragment.updateListOfProperties(viewState.listOfSpecificDates)
         caldroidFragment.refreshView()
     }
 
@@ -103,6 +99,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
                     supportFragmentManager.beginTransaction()
                         .hide(caldroidFragment)
                         .show(statisticsFragment)
+                        .show(recyclerViewFragment)
                         .commit()
                     true
                 }
@@ -111,7 +108,9 @@ class MainActivity : AppCompatActivity(), ViewListener {
                     supportFragmentManager.beginTransaction()
                         .hide(statisticsFragment)
                         .show(caldroidFragment)
+                        .show(recyclerViewFragment)
                         .commit()
+
                     true
                 }
                 else -> false
@@ -134,9 +133,6 @@ class MainActivity : AppCompatActivity(), ViewListener {
         caldroidFragment.caldroidListener = object : CaldroidListener() {
             override fun onSelectDate(date: Date, view: View?) {
                 viewModel.getAllJogsAtSpecificDate(date)
-                supportFragmentManager.beginTransaction()
-                    .show(recyclerViewFragment)
-                    .commit()
             }
         }
     }

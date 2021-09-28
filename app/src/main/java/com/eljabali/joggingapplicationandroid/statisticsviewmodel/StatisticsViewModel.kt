@@ -106,7 +106,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(7),
+                date = ZonedDateTime.now().minusDays(1),
                 1,
                 latLng8
             )
@@ -114,7 +114,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(5),
+                date = ZonedDateTime.now().minusDays(1),
                 1,
                 latLng7
             )
@@ -122,7 +122,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(4),
+                date = ZonedDateTime.now().minusDays(1),
                 1,
                 latLng6
             )
@@ -130,7 +130,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(3),
+                date = ZonedDateTime.now().minusDays(1),
                 1,
                 latLng5
             )
@@ -139,7 +139,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(2),
+                date = ZonedDateTime.now().minusDays(1),
                 1,
                 latLng4
             )
@@ -147,30 +147,16 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now().minusDays(1),
-                1,
+                date = ZonedDateTime.now().minusDays(1),
+                2,
                 latLng3
             )
         )
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
-                1,
-                latLng2
-            )
-        )
-        Thread.sleep(1000)
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
-                1,
-                latLng
-            )
-        )
-        addJog(
-            modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                date = ZonedDateTime.now().minusDays(1),
+
                 2,
                 latLng2
             )
@@ -178,7 +164,24 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         Thread.sleep(1000)
         addJog(
             modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
+                date = ZonedDateTime.now().minusDays(1),
+
+                2,
+                latLng
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                date = ZonedDateTime.now().minusDays(1),
+                2,
+                latLng2
+            )
+        )
+        Thread.sleep(1000)
+        addJog(
+            modifiedJogDateInformation = ModifiedJogDateInformation(
+                date = ZonedDateTime.now().minusDays(1),
                 2,
                 latLng
             )

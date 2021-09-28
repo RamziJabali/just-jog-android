@@ -61,7 +61,7 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         timeTextView.text = statisticsViewState.time
         if (statisticsViewState.listOfModifiedJogDateInformation.isNotEmpty()){
             jogEntryTextView.text =
-                statisticsViewState.listOfModifiedJogDateInformation[0].dateTime.toString()
+                statisticsViewState.listOfModifiedJogDateInformation[0].date.toString()
         }
         averageWeeklyMillageTextView.text = " ${statisticsViewState.distance} Miles"
     }
