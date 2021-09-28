@@ -1,32 +1,18 @@
 package com.eljabali.joggingapplicationandroid.libraries
 
-import kotlin.math.abs
+fun hoursToMinutes(hours: Long): Long = hours * 60
+fun hoursToSeconds(hours: Long): Long = hours * 3600
+fun minutesToSeconds(minutes: Long): Long = minutes * 60
+fun minutesToHours(minutes: Long): Long = minutes / 60
+fun secondsToMinutes(seconds: Long): Long = seconds / 60
+fun secondsToHours(seconds: Long): Long = seconds / 3600
 
-data class Time(
-    val hours: Int = 0,
-    val minutes: Int = 0,
-    val seconds: Int = 0,
-)
-
-fun hoursToMinutes(hours: Int): Int = hours * 60
-fun hoursToSeconds(hours: Int): Int = hours * 3600
-fun minutesToSeconds(minutes: Int): Int = minutes * 60
-fun minutesToHours(minutes: Int): Int = minutes / 60
-fun secondsToMinutes(seconds: Int): Int = seconds / 60
-fun secondsToHours(seconds: Int): Int = seconds / 3600
-
-fun getTotalTime(listOfTime: List<Time>): String {
-    var totalTimeInSeconds: Int =
-        hoursToSeconds(listOfTime[0].hours) + minutesToSeconds(listOfTime[0].minutes) + listOfTime[0].seconds
-    var index = 1
-    while (index < listOfTime.size) {
-        totalTimeInSeconds -= hoursToSeconds(listOfTime[index].hours) + minutesToSeconds(listOfTime[index].minutes) + listOfTime[index].seconds
-        totalTimeInSeconds = abs(totalTimeInSeconds)
-        index += 1
-    }
-    val totalHours: Int = secondsToHours(totalTimeInSeconds)
-    val totalMinutes: Int = secondsToMinutes(totalTimeInSeconds)
-    val totalSeconds: Int =
-        totalTimeInSeconds - (hoursToSeconds(totalHours) + minutesToSeconds(totalMinutes))
-    return "${totalHours}:${totalMinutes}:${totalSeconds}"
+fun getFormattedTime(totalTimeInSeconds: Long): String {
+    var tempTime = totalTimeInSeconds
+    val totalHours = secondsToHours(tempTime)
+    tempTime -= hoursToSeconds(totalHours)
+    val totalMinutes = secondsToMinutes(tempTime)
+    tempTime -= minutesToSeconds(totalMinutes)
+    val totalSeconds = tempTime
+    return String.format("%02d:%02d:%02d", totalHours,totalMinutes,totalSeconds)
 }

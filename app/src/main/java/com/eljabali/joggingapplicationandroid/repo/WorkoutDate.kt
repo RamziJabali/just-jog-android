@@ -9,14 +9,8 @@ import com.google.android.gms.maps.model.LatLng
 data class WorkoutDate(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "total_run_number")
     val totalRuns: Int,
-    @ColumnInfo(name = "date")
-    val date: String,
-    @ColumnInfo(name = "hour")
-    val hours: Int,
-    @ColumnInfo(name = "minute")
-    val minutes: Int,
-    @ColumnInfo(name = "second")
-    val seconds: Int,
+    @ColumnInfo(name = "date_time")
+    val dateTime: String,
     @ColumnInfo(name = "daily_run_number")
     val runNumber: Int,
     @ColumnInfo(name = "latitude")

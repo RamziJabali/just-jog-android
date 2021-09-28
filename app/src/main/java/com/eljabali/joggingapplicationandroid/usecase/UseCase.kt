@@ -1,8 +1,6 @@
 package com.eljabali.joggingapplicationandroid.usecase
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import com.eljabali.joggingapplicationandroid.repo.WorkoutDate
 import com.eljabali.joggingapplicationandroid.repo.WorkoutRepository
@@ -42,7 +40,7 @@ class UseCase(private val repository: WorkoutRepository) {
 
     @SuppressLint("CheckResult")
     fun getAllJogsAtSpecificDate(date: Date): Maybe<List<ModifiedJogDateInformation>> =
-        repository.getWorkoutDate(date = convertDateToZonedDateTime(date).print("yyyy-MM-dd"))
+        repository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print("yyyy-MM-dd")}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -74,10 +72,7 @@ class UseCase(private val repository: WorkoutRepository) {
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): WorkoutDate =
         WorkoutDate(
             totalRuns = 0,
-            date = modifiedJogDateInformation.date.print("yyyy-MM-dd"),
-            hours = modifiedJogDateInformation.date.hour,
-            minutes = modifiedJogDateInformation.date.minute,
-            seconds = modifiedJogDateInformation.date.second,
+            dateTime = modifiedJogDateInformation.dateTime.print("yyyy-MM-dd'T'HH:mm:ss"),
             runNumber = modifiedJogDateInformation.runNumber,
             latitude = modifiedJogDateInformation.latitudeLongitude.latitude,
             longitude = modifiedJogDateInformation.latitudeLongitude.longitude
@@ -85,12 +80,9 @@ class UseCase(private val repository: WorkoutRepository) {
 
     private fun convertWorkOutDateToModifiedJogDate(workoutDate: WorkoutDate): ModifiedJogDateInformation =
         ModifiedJogDateInformation(
-            date = workoutDate.date.parseZonedDateTime()!!,
+            dateTime = workoutDate.dateTime.parseZonedDateTime()!!,
             runNumber = workoutDate.runNumber,
             latitudeLongitude = LatLng(workoutDate.latitude, workoutDate.longitude),
-            hours = workoutDate.hours,
-            minutes = workoutDate.minutes,
-            seconds = workoutDate.seconds,
         )
 
 
