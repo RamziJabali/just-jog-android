@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eljabali.joggingapplicationandroid.R
 
-class RecyclerViewAdapter : RecyclerView.Adapter<ItemViewHolder>() {
+class RecyclerViewAdapter(private val itemClickListener: ItemClickListener): RecyclerView.Adapter<ItemViewHolder>() {
 
     private var recyclerViewProperties: Array<RecyclerViewProperties> = emptyArray()
 
@@ -16,10 +16,7 @@ class RecyclerViewAdapter : RecyclerView.Adapter<ItemViewHolder>() {
     }
 
     override fun onBindViewHolder(holderItem: ItemViewHolder, position: Int) {
-        holderItem.jogEntryNumberTextView.text = recyclerViewProperties[position].jogEntry
-        holderItem.milePerHourTextView.text = recyclerViewProperties[position].milesPerHour
-        holderItem.totalDistanceTextView.text = recyclerViewProperties[position].totalDistance
-        holderItem.totalTimeTextView.text = recyclerViewProperties[position].totalTime
+        holderItem.bind(recyclerViewProperties[position], itemClickListener)
     }
 
     override fun getItemCount(): Int = recyclerViewProperties.size
@@ -28,4 +25,5 @@ class RecyclerViewAdapter : RecyclerView.Adapter<ItemViewHolder>() {
         recyclerViewProperties = items.toTypedArray()
         notifyDataSetChanged()
     }
+
 }

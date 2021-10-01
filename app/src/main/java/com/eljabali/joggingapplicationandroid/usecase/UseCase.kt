@@ -1,7 +1,7 @@
 package com.eljabali.joggingapplicationandroid.usecase
 
-import android.annotation.SuppressLint
 import android.util.Log
+import com.eljabali.joggingapplicationandroid.libraries.DateFormat
 import com.eljabali.joggingapplicationandroid.repo.WorkoutDate
 import com.eljabali.joggingapplicationandroid.repo.WorkoutRepository
 import com.google.android.gms.maps.model.LatLng
@@ -10,8 +10,11 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import localdate.extensions.print
 import zoneddatetime.extensions.parseZonedDateTime
 import zoneddatetime.extensions.print
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
@@ -27,7 +30,6 @@ class UseCase(private val repository: WorkoutRepository) {
             convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
         )
 
-    @SuppressLint("CheckResult")
     fun getAllJogs(): Observable<List<ModifiedJogDateInformation>> =
         repository.getAllWorkoutDates()
             .subscribeOn(Schedulers.io())
@@ -38,9 +40,18 @@ class UseCase(private val repository: WorkoutRepository) {
                 }
             }
 
-    @SuppressLint("CheckResult")
     fun getAllJogsAtSpecificDate(date: Date): Maybe<List<ModifiedJogDateInformation>> =
-        repository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print("yyyy-MM-dd")}%")
+        repository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfSpecificJogDates ->
+                return@map listOfSpecificJogDates.map { workoutDate ->
+                    convertWorkOutDateToModifiedJogDate(workoutDate)
+                }
+            }
+
+    fun getAllJogsAtSpecificDate(localDate: LocalDate): Maybe<List<ModifiedJogDateInformation>> =
+        repository.getWorkoutDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -56,7 +67,6 @@ class UseCase(private val repository: WorkoutRepository) {
         )
 
 
-    @SuppressLint("CheckResult")
     fun deleteAllEntries() {
         repository.deleteAllWorkoutDates()
             .subscribeOn(Schedulers.io())
@@ -72,7 +82,7 @@ class UseCase(private val repository: WorkoutRepository) {
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): WorkoutDate =
         WorkoutDate(
             totalRuns = 0,
-            dateTime = modifiedJogDateInformation.dateTime.print("yyyy-MM-dd'T'HH:mm:ss"),
+            dateTime = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD_T_TIME.format),
             runNumber = modifiedJogDateInformation.runNumber,
             latitude = modifiedJogDateInformation.latitudeLongitude.latitude,
             longitude = modifiedJogDateInformation.latitudeLongitude.longitude

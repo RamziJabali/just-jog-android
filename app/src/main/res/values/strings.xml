@@ -18,4 +18,6 @@
     <string name="jog">Jog #</string>
     <string name="miles_per_hour">Miles Per Hour:</string>
     <string name="map">Map</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="date">Date:</string>
 </resources>

@@ -5,6 +5,9 @@ import com.eljabali.joggingapplicationandroid.repo.WorkoutRepository
 import com.eljabali.joggingapplicationandroid.statisticsviewmodel.StatisticsViewModel
 import com.eljabali.joggingapplicationandroid.usecase.UseCase
 import com.eljabali.joggingapplicationandroid.mainviewmodel.ViewModel
+import com.eljabali.joggingapplicationandroid.mapsviewmodel.MapsViewModel
+import com.eljabali.joggingapplicationandroid.recyclerview.ItemClickListener
+import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewAdapter
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -17,5 +20,11 @@ val calendarModule = module {
 }
 
 val statisticsModule = module {
-    viewModel {StatisticsViewModel(androidApplication(), get<UseCase>())}
+    viewModel { StatisticsViewModel(androidApplication(), get<UseCase>()) }
 }
+val mapsModule = module {
+    viewModel { MapsViewModel(get<UseCase>()) }
+}
+
+
+

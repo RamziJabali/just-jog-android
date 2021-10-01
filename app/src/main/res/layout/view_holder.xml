@@ -50,7 +50,7 @@
 
         <TextView
             android:id="@+id/total_time_text"
-            android:layout_width="100dp"
+            android:layout_width="99dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="40dp"
@@ -84,6 +84,26 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
             android:layout_marginTop="60dp"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="80dp"
+            android:text="@string/date"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/date_value"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="80dp"
             android:textAlignment="center"
             android:textColor="@color/primary_text_color"
             android:textSize="14sp" />

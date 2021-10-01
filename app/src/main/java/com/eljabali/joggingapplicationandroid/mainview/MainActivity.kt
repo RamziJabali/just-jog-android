@@ -4,15 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
+import android.widget.Button
 import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.statisticsview.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.mainviewmodel.ViewModel
-import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewAdapter
+import com.eljabali.joggingapplicationandroid.mapsview.MapsActivity
 import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewFragment
-import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewProperties
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
@@ -27,12 +25,13 @@ class MainActivity : AppCompatActivity(), ViewListener {
 
     companion object {
         const val CAL_TAG = "CaldroidFragment"
-        const val RCV_TAG = "REcyclerViewFragment"
-        const val MVM_TAG = "Main ViewModel"
+        const val RCV_TAG = "RecyclerViewFragment"
+        const val MVM_TAG = "MainViewModel"
     }
 
-    private val viewModel: ViewModel by viewModel()
+    private var viewState: ViewState = ViewState()
 
+    private val viewModel: ViewModel by viewModel()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
     private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
@@ -61,6 +60,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
         viewState.listOfColoredDates.forEach { date ->
             caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
         }
+
         recyclerViewFragment.updateListOfProperties(viewState.listOfSpecificDates)
         caldroidFragment.refreshView()
     }
@@ -71,7 +71,10 @@ class MainActivity : AppCompatActivity(), ViewListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { viewState -> setNewViewState(viewState) },
+                    { viewState ->
+                        this.viewState = viewState
+                        setNewViewState(viewState)
+                    },
                     { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
         )
     }
@@ -83,7 +86,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
             .hide(caldroidFragment)
             .commit()
         supportFragmentManager.beginTransaction()
-            .add(R.id.recycler_view_frame_layout,recyclerViewFragment, RCV_TAG)
+            .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RCV_TAG)
             .hide(recyclerViewFragment)
             .commit()
 
