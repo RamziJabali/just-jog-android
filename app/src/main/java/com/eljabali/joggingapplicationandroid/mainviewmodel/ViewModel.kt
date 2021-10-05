@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.libraries.DateFormat
 import com.eljabali.joggingapplicationandroid.libraries.getFormattedTime
+import com.eljabali.joggingapplicationandroid.libraries.getMPH
 import com.eljabali.joggingapplicationandroid.libraries.getTotalDistance
 import com.eljabali.joggingapplicationandroid.mainview.ColoredDates
 import com.eljabali.joggingapplicationandroid.mainview.ViewState
@@ -20,7 +21,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.extensions.print
 import java.time.Duration
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -37,8 +37,8 @@ class ViewModel(application: Application, private val useCase: UseCase) :
             ColorDrawable(Color.WHITE)
     }
 
+    private val compositeDisposable = CompositeDisposable()
     private var viewState = ViewState()
-    private var compositeDisposable = CompositeDisposable()
 
     val viewStateObservable = BehaviorSubject.create<ViewState>()
 
@@ -52,14 +52,15 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                     { listOfModifiedJogInformation ->
                         viewState =
                             viewState.copy(
-                                listOfColoredDates = getDatesFromModifiedJogInformation(
+                                listOfColoredDates = getColoredDatesFromModifiedJogInformation(
                                     listOfModifiedJogInformation
                                 )
                             )
                         invalidateView()
                     },
                     { error -> Log.e(VM_TAG, error.localizedMessage, error) }
-                ))
+                )
+        )
     }
 
     fun getAllJogsAtSpecificDate(date: Date) {
@@ -102,7 +103,11 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                             ).seconds
                         ),
                         jogEntry = currentEntry.toString(),
-                        milesPerHour = "",
+                        milesPerHour = getMPH(
+                            getTotalDistance(listOfLatLng), Duration.between(
+                                listOfTime[0],
+                                listOfTime[listOfTime.size - 1]
+                            ).seconds),
                         date = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD.format)
                     )
                 )
@@ -115,17 +120,17 @@ class ViewModel(application: Application, private val useCase: UseCase) :
         return listOfRecyclerViewProperties
     }
 
-    private fun getDatesFromModifiedJogInformation(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<ColoredDates> {
-        val listOfDates: MutableList<ColoredDates> = mutableListOf()
+    private fun getColoredDatesFromModifiedJogInformation(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<ColoredDates> {
+        val listOfColoredDates: MutableList<ColoredDates> = mutableListOf()
         val listOfZonedDateTime: MutableList<ZonedDateTime> = mutableListOf()
         if (listOfModifiedJogDateInformation.isNotEmpty()) {
             var tempDate = listOfModifiedJogDateInformation[0].dateTime
-            listOfDates.add(ColoredDates(convertZonedDateTimeToDate(tempDate), hasWorkedOutColor))
+            listOfColoredDates.add(ColoredDates(convertZonedDateTimeToDate(tempDate), hasWorkedOutColor))
             listOfZonedDateTime.add(tempDate)
             for (element in listOfModifiedJogDateInformation) {
                 if (tempDate.year != element.dateTime.year || tempDate.dayOfYear != element.dateTime.dayOfYear) {
                     tempDate = element.dateTime
-                    listOfDates.add(
+                    listOfColoredDates.add(
                         ColoredDates(
                             convertZonedDateTimeToDate(tempDate),
                             hasWorkedOutColor
@@ -137,8 +142,8 @@ class ViewModel(application: Application, private val useCase: UseCase) :
             tempDate = listOfModifiedJogDateInformation[0].dateTime
             var index = 0
             while (tempDate.year != ZonedDateTime.now().year || tempDate.dayOfYear != ZonedDateTime.now().dayOfYear) {
-                if (index >= listOfZonedDateTime.size ||tempDate.year != listOfZonedDateTime[index].year || tempDate.dayOfYear != listOfZonedDateTime[index].dayOfYear) {
-                    listOfDates.add(
+                if (index >= listOfZonedDateTime.size || tempDate.year != listOfZonedDateTime[index].year || tempDate.dayOfYear != listOfZonedDateTime[index].dayOfYear) {
+                    listOfColoredDates.add(
                         ColoredDates(
                             convertZonedDateTimeToDate(tempDate),
                             hasNotWorkedOutColor
@@ -150,12 +155,12 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                 }
                 tempDate = tempDate.plusDays(1)
             }
-            return listOfDates
+            return listOfColoredDates
         }
         viewState.listOfColoredDates.forEach { coloredDates ->
-            listOfDates.add(ColoredDates(coloredDates.date, noJogRecorded))
+            listOfColoredDates.add(ColoredDates(coloredDates.date, noJogRecorded))
         }
-        return listOfDates
+        return listOfColoredDates
     }
 
 

@@ -6,6 +6,7 @@ fun minutesToSeconds(minutes: Long): Long = minutes * 60
 fun minutesToHours(minutes: Long): Long = minutes / 60
 fun secondsToMinutes(seconds: Long): Long = seconds / 60
 fun secondsToHours(seconds: Long): Long = seconds / 3600
+fun secondsToHoursDouble(seconds: Long): Double = seconds / 3600.0
 
 fun getFormattedTime(totalTimeInSeconds: Long): String {
     var tempTime = totalTimeInSeconds

@@ -16,6 +16,7 @@ import com.eljabali.joggingapplicationandroid.recyclerviewmodel.RecyclerViewMode
 import com.eljabali.joggingapplicationandroid.recyclerviewmodel.RecyclerViewState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import localdate.extensions.parseLocalDate
 import java.lang.RuntimeException
@@ -29,8 +30,6 @@ class RecyclerViewFragment : Fragment(), ItemClickListener, RecyclerViewListener
     private val recyclerView: RecyclerView by lazy {
         requireView().findViewById(R.id.horizontal_recycler_view)
     }
-
-    private val mapButton: Button by lazy { requireView().findViewById(R.id.map_button) }
     private val compositeDisposable = CompositeDisposable()
 
     companion object {
@@ -63,16 +62,15 @@ class RecyclerViewFragment : Fragment(), ItemClickListener, RecyclerViewListener
     }
 
     override fun monitorRecyclerViewState() {
-        compositeDisposable.add(
-            recyclerViewModel.recyclerViewStateObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { viewState ->
-                        setRecyclerViewState(viewState)
-                    },
-                    { error -> Log.e(RVF_TAG, error.localizedMessage, error) })
-        )
+        recyclerViewModel.recyclerViewStateObservable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { viewState ->
+                    setRecyclerViewState(viewState)
+                },
+                { error -> Log.e(RVF_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
     }
 
     fun updateListOfProperties(listOfProperties: List<RecyclerViewProperties>) {

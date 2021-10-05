@@ -4,12 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.statisticsview.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.mainviewmodel.ViewModel
-import com.eljabali.joggingapplicationandroid.mapsview.MapsActivity
 import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
@@ -32,8 +30,10 @@ class MainActivity : AppCompatActivity(), ViewListener {
     private var viewState: ViewState = ViewState()
 
     private val viewModel: ViewModel by viewModel()
+
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
+
     private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
     private val recyclerViewFragment: RecyclerViewFragment by lazy { RecyclerViewFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
@@ -51,18 +51,9 @@ class MainActivity : AppCompatActivity(), ViewListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupBottomNavigation()
-        setupCalendar()
-        setupPages()
+        setupFragments()
+        setupCalendarListener()
         monitorCalendarViewState()
-    }
-
-    override fun setNewViewState(viewState: ViewState) {
-        viewState.listOfColoredDates.forEach { date ->
-            caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
-        }
-
-        recyclerViewFragment.updateListOfProperties(viewState.listOfSpecificDates)
-        caldroidFragment.refreshView()
     }
 
     override fun monitorCalendarViewState() {
@@ -79,8 +70,17 @@ class MainActivity : AppCompatActivity(), ViewListener {
         )
     }
 
+    override fun setNewViewState(viewState: ViewState) {
+        viewState.listOfColoredDates.forEach { date ->
+            caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
+        }
 
-    private fun setupPages() {
+        recyclerViewFragment.updateListOfProperties(viewState.listOfSpecificDates)
+        caldroidFragment.refreshView()
+    }
+
+
+    private fun setupFragments() {
         supportFragmentManager.beginTransaction()
             .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
             .hide(caldroidFragment)
@@ -113,7 +113,6 @@ class MainActivity : AppCompatActivity(), ViewListener {
                         .show(caldroidFragment)
                         .show(recyclerViewFragment)
                         .commit()
-
                     true
                 }
                 else -> false
@@ -132,7 +131,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
         }
     }
 
-    private fun setupCalendar() {
+    private fun setupCalendarListener() {
         caldroidFragment.caldroidListener = object : CaldroidListener() {
             override fun onSelectDate(date: Date, view: View?) {
                 viewModel.getAllJogsAtSpecificDate(date)

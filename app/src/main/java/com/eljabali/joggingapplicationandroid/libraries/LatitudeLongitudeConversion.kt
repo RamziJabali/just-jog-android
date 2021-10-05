@@ -20,6 +20,9 @@ fun getTotalDistance(listOfPoints: List<LatLng>): Double {
     return totalDistance
 }
 
+fun getMPH(totalDistance: Double, totalTimeInSeconds: Long):String {
+    return String.format("%.3f",  totalDistance/ secondsToHoursDouble(totalTimeInSeconds))
+}
 
 
 private fun getDistanceBetweenTwoLatLngToMiles(point1: LatLng, point2: LatLng): Double {
@@ -40,3 +43,4 @@ private fun getDistanceBetweenTwoLatLngToMiles(point1: LatLng, point2: LatLng): 
 private fun degreesToRadian(degree: Double): Double {
     return (degree * (Math.PI / 180))
 }
+
