@@ -30,6 +30,7 @@ class RecyclerViewFragment : Fragment(), ItemClickListener, RecyclerViewListener
     private val recyclerView: RecyclerView by lazy {
         requireView().findViewById(R.id.horizontal_recycler_view)
     }
+
     private val compositeDisposable = CompositeDisposable()
 
     companion object {

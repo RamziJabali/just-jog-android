@@ -19,7 +19,6 @@ class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         totalDistanceTextView.text = recyclerViewProperties.totalDistance
         totalTimeTextView.text = recyclerViewProperties.totalTime
         dateTextView.text = recyclerViewProperties.date
-
         mapsButton.setOnClickListener {
             onClickListener.onItemClickedListener(recyclerViewProperties.jogEntry.toInt(),recyclerViewProperties.date)
         }

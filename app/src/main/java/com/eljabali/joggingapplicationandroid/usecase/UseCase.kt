@@ -9,6 +9,7 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import localdate.extensions.print
 import zoneddatetime.extensions.parseZonedDateTime
@@ -25,6 +26,8 @@ class UseCase(private val repository: WorkoutRepository) {
         const val UC_TAG = "USECASE"
     }
 
+    private val compositeDisposable = CompositeDisposable()
+
     fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
         repository.addWorkoutDate(
             convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
@@ -36,6 +39,22 @@ class UseCase(private val repository: WorkoutRepository) {
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfAllJogDates ->
                 return@map listOfAllJogDates.map { workoutDate ->
+                    convertWorkOutDateToModifiedJogDate(workoutDate)
+                }
+            }
+
+    fun getRangeOfJogsBetweenStartAndEndDate(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Observable<List<ModifiedJogDateInformation>> =
+        repository.getRangeOfDates(
+            startDate =startDate.print(DateFormat.YYYY_MM_DD.format),
+            endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfSpecificJogDates ->
+                return@map listOfSpecificJogDates.map { workoutDate ->
                     convertWorkOutDateToModifiedJogDate(workoutDate)
                 }
             }
@@ -60,6 +79,7 @@ class UseCase(private val repository: WorkoutRepository) {
                 }
             }
 
+
     private fun convertDateToZonedDateTime(date: Date): ZonedDateTime =
         ZonedDateTime.ofInstant(
             date.toInstant(),
@@ -68,14 +88,15 @@ class UseCase(private val repository: WorkoutRepository) {
 
 
     fun deleteAllEntries() {
-        repository.deleteAllWorkoutDates()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { Log.i(UC_TAG, "Success") },
-                { error -> Log.e(UC_TAG, error.localizedMessage, error) }
-            )
-
+        compositeDisposable.add(
+            repository.deleteAllWorkoutDates()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { Log.i(UC_TAG, "Success") },
+                    { error -> Log.e(UC_TAG, error.localizedMessage, error) }
+                )
+        )
     }
 
 
@@ -94,6 +115,4 @@ class UseCase(private val repository: WorkoutRepository) {
             runNumber = workoutDate.runNumber,
             latitudeLongitude = LatLng(workoutDate.latitude, workoutDate.longitude),
         )
-
-
 }

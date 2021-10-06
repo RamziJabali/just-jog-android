@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.eljabali.joggingapplicationandroid.R
+import com.eljabali.joggingapplicationandroid.libraries.DateFormat
 import com.eljabali.joggingapplicationandroid.statisticsviewmodel.StatisticsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import zoneddatetime.extensions.print
 
 class JogStatisticsFragment : Fragment(), ViewListener {
 
@@ -59,11 +61,8 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     override fun setNewViewState(statisticsViewState: StatisticsViewState) {
         dateTextView.text = statisticsViewState.date
         timeTextView.text = statisticsViewState.time
-        if (statisticsViewState.listOfModifiedJogDateInformation.isNotEmpty()){
-            jogEntryTextView.text =
-                statisticsViewState.listOfModifiedJogDateInformation[0].dateTime.toString()
-        }
-        averageWeeklyMillageTextView.text = " ${statisticsViewState.distance} Miles"
+        averageWeeklyMillageTextView.text = statisticsViewState.weeklyAverage
+        jogEntryTextView.text = statisticsViewState.dailyRecord
     }
 
     private fun onLaunch() {

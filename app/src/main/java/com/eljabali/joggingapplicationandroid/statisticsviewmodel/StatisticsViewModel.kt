@@ -3,6 +3,7 @@ package com.eljabali.joggingapplicationandroid.statisticsviewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import com.eljabali.joggingapplicationandroid.libraries.DateFormat
 import com.eljabali.joggingapplicationandroid.libraries.getTotalDistance
 import com.eljabali.joggingapplicationandroid.statisticsview.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.usecase.ModifiedJogDateInformation
@@ -15,6 +16,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.ZonedDateTimes
 import zoneddatetime.extensions.print
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +39,45 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
     fun onFragmentLaunch() {
         setUpClock()
-        getAllJogs()
+        getAllJogsBetweenTwoDates(
+            ZonedDateTimes.today.minusDays(7).toLocalDate(),
+            ZonedDateTimes.today.toLocalDate()
+        )
+        getAllJogsAtSpecificDate(ZonedDateTimes.today.toLocalDate())
+    }
+
+    private fun getAllJogsAtSpecificDate(date: LocalDate) {
+        compositeDisposable.add(
+            useCase.getAllJogsAtSpecificDate(date)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { listOfModifiedJogDateInformation ->
+                        statisticsViewState = statisticsViewState.copy(
+                            dailyRecord = getTodaysRecord(listOfModifiedJogDateInformation)
+                        )
+                        invalidateView()
+                    },
+                    { error -> Log.e(SVM_TAG, error.localizedMessage, error) },
+                )
+        )
+    }
+
+    private fun getAllJogsBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
+        compositeDisposable.add(
+            useCase.getRangeOfJogsBetweenStartAndEndDate(startDate, endDate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { listOfModifiedJogDateInformation ->
+                        statisticsViewState = statisticsViewState.copy(
+                            weeklyAverage = getWeeklyAverage(listOfModifiedJogDateInformation)
+                        )
+                        invalidateView()
+                    },
+                    { error -> Log.e(SVM_TAG, error.localizedMessage, error) })
+        )
+
     }
 
     private fun setUpClock() {
@@ -47,32 +87,11 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             .subscribe {
                 val now = ZonedDateTimes.now
                 statisticsViewState = statisticsViewState.copy(
-                    time = now.print("HH:mm:ss"),
-                    date = now.print("EEE, MMM d yyyy")
+                    time = now.print(DateFormat.HH_MM_SS.format),
+                    date = now.print(DateFormat.EEE_MMM_D_YYYY.format)
                 )
                 invalidateView()
             })
-    }
-
-    private fun getAllJogs() {
-        compositeDisposable.add(
-            useCase.getAllJogs()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { listOfModifiedJogDates ->
-                        statisticsViewState = statisticsViewState.copy(
-                            listOfModifiedJogDateInformation = listOfModifiedJogDates,
-                            distance = getTotalDistance(
-                                getListOfLatLangFromModifiedJogDates(
-                                    listOfModifiedJogDates
-                                )
-                            )
-                        )
-                        invalidateView()
-                    },
-                    { error -> Log.e(SVM_TAG, error.localizedMessage, error) })
-        )
     }
 
     fun deleteAll() {
@@ -186,6 +205,36 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
                 latLng
             )
         )
+    }
+
+
+    private fun getWeeklyAverage(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): String {
+        val listOfLatLng: MutableList<LatLng> = mutableListOf()
+        var totalWeeklyMiles = 0.0
+        var jogNumber = 1
+        var index = 0
+        listOfModifiedJogDateInformation.forEach { modifiedJogDateInformation ->
+            if (jogNumber != modifiedJogDateInformation.runNumber || index == listOfModifiedJogDateInformation.size) {
+                totalWeeklyMiles += getTotalDistance(listOfLatLng)
+                jogNumber = modifiedJogDateInformation.runNumber
+                listOfLatLng.clear()
+            } else {
+                listOfLatLng.add(modifiedJogDateInformation.latitudeLongitude)
+            }
+            index++
+        }
+        return String.format("%.2f", totalWeeklyMiles / 7.0) + " Miles"
+    }
+
+
+    private fun getTodaysRecord(listOfModifiedJogDates: List<ModifiedJogDateInformation>): String {
+        return if (listOfModifiedJogDates.isNotEmpty()) {
+            getTotalDistance(
+                getListOfLatLangFromModifiedJogDates(listOfModifiedJogDates)
+            ).toString() + "Miles"
+        } else {
+            "No Entry For Today"
+        }
     }
 
     private fun getListOfLatLangFromModifiedJogDates(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): List<LatLng> {
