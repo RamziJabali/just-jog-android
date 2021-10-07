@@ -1,5 +1,6 @@
 package com.eljabali.joggingapplicationandroid.statisticsview
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,13 +10,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.libraries.DateFormat
+import com.eljabali.joggingapplicationandroid.foregroundservice.ForegroundService
 import com.eljabali.joggingapplicationandroid.statisticsviewmodel.StatisticsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import zoneddatetime.extensions.print
 
 class JogStatisticsFragment : Fragment(), ViewListener {
 
@@ -70,11 +70,13 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         statisticsViewModel.onFragmentLaunch()
 
         startRunButton.setOnClickListener {
-            statisticsViewModel.addFiveJogs()
+            activity?.startService(Intent(requireContext(),ForegroundService::class.java))
+
         }
 
         deleteAllRunsButton.setOnClickListener {
-            statisticsViewModel.deleteAll()
+//            statisticsViewModel.deleteAll()
+            activity?.stopService(Intent(requireContext(),ForegroundService::class.java))
         }
     }
 }
