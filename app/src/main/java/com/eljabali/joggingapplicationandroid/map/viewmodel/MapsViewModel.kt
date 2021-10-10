@@ -7,6 +7,7 @@ import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import java.time.LocalDate
@@ -23,23 +24,22 @@ class MapsViewModel(private val useCase: UseCase) : ViewModel() {
     val mapsViewStateObservable = BehaviorSubject.create<MapsViewState>()
 
     fun getAllJogsAtSpecificDate(localDate: LocalDate, runID: Int) {
-        compositeDisposable.add(
-            useCase.getAllJogsAtSpecificDate(localDate)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { listOfSpecificDates ->
-                        mapsViewState = mapsViewState.copy(
-                            listOfLatLng = getSpecificJogListOfLatLng(
-                                runID,
-                                listOfSpecificDates
-                            )
+        useCase.getAllJogsAtSpecificDate(localDate)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfSpecificDates ->
+                    mapsViewState = mapsViewState.copy(
+                        listOfLatLng = getSpecificJogListOfLatLng(
+                            runID,
+                            listOfSpecificDates
                         )
-                        invalidateView()
-                    },
-                    { error -> Log.e(MVM_TAG, error.localizedMessage, error) }
-                )
-        )
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(MVM_TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
     }
 
     private fun getSpecificJogListOfLatLng(

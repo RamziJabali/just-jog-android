@@ -17,6 +17,7 @@ import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.extensions.print
@@ -42,44 +43,41 @@ class ViewModel(application: Application, private val useCase: UseCase) :
 
     val viewStateObservable = BehaviorSubject.create<ViewState>()
 
-
     fun getAllEntries() {
-        compositeDisposable.add(
-            useCase.getAllJogs()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { listOfModifiedJogInformation ->
-                        viewState =
-                            viewState.copy(
-                                listOfColoredDates = getColoredDatesFromModifiedJogInformation(
-                                    listOfModifiedJogInformation
-                                )
+        useCase.getAllJogs()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfModifiedJogInformation ->
+                    viewState =
+                        viewState.copy(
+                            listOfColoredDates = getColoredDatesFromModifiedJogInformation(
+                                listOfModifiedJogInformation
                             )
-                        invalidateView()
-                    },
-                    { error -> Log.e(VM_TAG, error.localizedMessage, error) }
-                )
-        )
+                        )
+                    invalidateView()
+                },
+                { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
     }
 
     fun getAllJogsAtSpecificDate(date: Date) {
-        compositeDisposable.add(
-            useCase.getAllJogsAtSpecificDate(date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { listOfSpecificDates ->
-                        viewState = viewState.copy(
-                            listOfSpecificDates = convertModifiedJoggingListToRecyclerViewProperties(
-                                listOfSpecificDates
-                            )
+        useCase.getAllJogsAtSpecificDate(date)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfSpecificDates ->
+                    viewState = viewState.copy(
+                        listOfSpecificDates = convertModifiedJoggingListToRecyclerViewProperties(
+                            listOfSpecificDates
                         )
-                        invalidateView()
-                    },
-                    { error -> Log.e(VM_TAG, error.localizedMessage, error) }
-                )
-        )
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
     }
 
 
@@ -107,7 +105,8 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                             getTotalDistance(listOfLatLng), Duration.between(
                                 listOfTime[0],
                                 listOfTime[listOfTime.size - 1]
-                            ).seconds),
+                            ).seconds
+                        ),
                         date = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD.format)
                     )
                 )
@@ -125,7 +124,12 @@ class ViewModel(application: Application, private val useCase: UseCase) :
         val listOfZonedDateTime: MutableList<ZonedDateTime> = mutableListOf()
         if (listOfModifiedJogDateInformation.isNotEmpty()) {
             var tempDate = listOfModifiedJogDateInformation[0].dateTime
-            listOfColoredDates.add(ColoredDates(convertZonedDateTimeToDate(tempDate), hasWorkedOutColor))
+            listOfColoredDates.add(
+                ColoredDates(
+                    convertZonedDateTimeToDate(tempDate),
+                    hasWorkedOutColor
+                )
+            )
             listOfZonedDateTime.add(tempDate)
             for (element in listOfModifiedJogDateInformation) {
                 if (tempDate.year != element.dateTime.year || tempDate.dayOfYear != element.dateTime.dayOfYear) {

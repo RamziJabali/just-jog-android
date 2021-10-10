@@ -10,6 +10,7 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import localdate.extensions.print
 import zoneddatetime.extensions.parseZonedDateTime
@@ -47,7 +48,7 @@ class UseCase(private val repository: WorkoutRepository) {
         endDate: LocalDate
     ): Observable<List<ModifiedJogDateInformation>> =
         repository.getRangeOfDates(
-            startDate =startDate.print(DateFormat.YYYY_MM_DD.format),
+            startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
             endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
         )
             .subscribeOn(Schedulers.io())
@@ -87,15 +88,14 @@ class UseCase(private val repository: WorkoutRepository) {
 
 
     fun deleteAllEntries() {
-        compositeDisposable.add(
-            repository.deleteAllWorkoutDates()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { Log.i(UC_TAG, "Success") },
-                    { error -> Log.e(UC_TAG, error.localizedMessage, error) }
-                )
-        )
+        repository.deleteAllWorkoutDates()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { Log.i(UC_TAG, "Success") },
+                { error -> Log.e(UC_TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
     }
 
 

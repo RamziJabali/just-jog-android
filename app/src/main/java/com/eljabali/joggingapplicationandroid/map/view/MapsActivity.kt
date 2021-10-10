@@ -16,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import localdate.extensions.parseLocalDate
 import localdate.extensions.print
@@ -37,7 +38,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
             }
     }
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private val mapsViewModel: MapsViewModel by viewModel()
     private val compositeDisposable = CompositeDisposable()
 
@@ -56,26 +57,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
 
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        map = googleMap
     }
 
     override fun setMapsViewState(mapsViewState: MapsViewState) {
         mapsViewState.listOfLatLng.forEach { latLng ->
-            mMap.addMarker(MarkerOptions().position(latLng))
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_LEVEL))
+            map.addMarker(MarkerOptions().position(latLng))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_LEVEL))
         }
     }
 
     override fun monitorMapsViewState() {
-        compositeDisposable.add(
-            mapsViewModel.mapsViewStateObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { viewState ->
-                        setMapsViewState(viewState)
-                    },
-                    { error -> Log.e(MA_TAG, error.localizedMessage, error) })
-        )
+        mapsViewModel.mapsViewStateObservable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { viewState ->
+                    setMapsViewState(viewState)
+                },
+                { error -> Log.e(MA_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
     }
 }

@@ -14,6 +14,7 @@ import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -47,15 +48,14 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     }
 
     override fun monitorStatisticsViewState() {
-        compositeDisposable.add(
-            statisticsViewModel.observableStatisticsViewState
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { statisticsViewState -> setNewViewState(statisticsViewState) },
-                    { error -> Log.e(TAG, error.localizedMessage, error) }
-                )
-        )
+        statisticsViewModel.observableStatisticsViewState
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { statisticsViewState -> setNewViewState(statisticsViewState) },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
     }
 
     override fun setNewViewState(statisticsViewState: StatisticsViewState) {
@@ -70,13 +70,13 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         statisticsViewModel.onFragmentLaunch()
 
         startRunButton.setOnClickListener {
-            activity?.startService(Intent(requireContext(),ForegroundService::class.java))
+            activity?.startService(Intent(requireContext(), ForegroundService::class.java))
 
         }
 
         deleteAllRunsButton.setOnClickListener {
 //            statisticsViewModel.deleteAll()
-            activity?.stopService(Intent(requireContext(),ForegroundService::class.java))
+            activity?.stopService(Intent(requireContext(), ForegroundService::class.java))
         }
     }
 }

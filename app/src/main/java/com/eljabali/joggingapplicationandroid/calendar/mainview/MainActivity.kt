@@ -14,6 +14,7 @@ import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import zoneddatetime.ZonedDateTimes
@@ -57,8 +58,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
     }
 
     override fun monitorCalendarViewState() {
-        compositeDisposable.add(
-            viewModel.viewStateObservable
+        viewModel.viewStateObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -67,14 +67,13 @@ class MainActivity : AppCompatActivity(), ViewListener {
                         setNewViewState(viewState)
                     },
                     { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
-        )
+            .addTo(compositeDisposable)
     }
 
     override fun setNewViewState(viewState: ViewState) {
         viewState.listOfColoredDates.forEach { date ->
             caldroidFragment.setBackgroundDrawableForDate(date.colorDrawable, date.date)
         }
-
         recyclerViewFragment.updateListOfProperties(viewState.listOfSpecificDates)
         caldroidFragment.refreshView()
     }
@@ -89,7 +88,6 @@ class MainActivity : AppCompatActivity(), ViewListener {
             .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RCV_TAG)
             .hide(recyclerViewFragment)
             .commit()
-
         supportFragmentManager.beginTransaction()
             .add(R.id.frameLayout, statisticsFragment, JogStatisticsFragment.TAG)
             .commit()

@@ -1,8 +1,6 @@
 package com.eljabali.joggingapplicationandroid.statistics.viewmodel
 
 import android.app.Application
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.util.DateFormat
@@ -49,20 +47,19 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     private fun getAllJogsAtSpecificDate(date: LocalDate) {
-        compositeDisposable.add(
-            useCase.getAllJogsAtSpecificDate(date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { listOfModifiedJogDateInformation ->
-                        statisticsViewState = statisticsViewState.copy(
-                            dailyRecord = getTodaysRecord(listOfModifiedJogDateInformation)
-                        )
-                        invalidateView()
-                    },
-                    { error -> Log.e(SVM_TAG, error.localizedMessage, error) },
-                )
-        )
+        useCase.getAllJogsAtSpecificDate(date)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfModifiedJogDateInformation ->
+                    statisticsViewState = statisticsViewState.copy(
+                        dailyRecord = getTodaysRecord(listOfModifiedJogDateInformation)
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(SVM_TAG, error.localizedMessage, error) },
+            )
+            .addTo(compositeDisposable)
     }
 
     private fun getAllJogsBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
@@ -102,17 +99,16 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
-        compositeDisposable.add(
-            useCase.addJog(modifiedJogDateInformation)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        Log.i(UseCase.UC_TAG, "Success")
-                        invalidateView()
-                    },
-                    { error -> Log.e(UseCase.UC_TAG, error.localizedMessage, error) })
-        )
+        useCase.addJog(modifiedJogDateInformation)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    Log.i(UseCase.UC_TAG, "Success")
+                    invalidateView()
+                },
+                { error -> Log.e(UseCase.UC_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
     }
 
 //    fun addFiveJogs() {
