@@ -1,13 +1,11 @@
 package com.eljabali.joggingapplicationandroid.koin
 
-import com.eljabali.joggingapplicationandroid.repo.WorkoutDatabase
-import com.eljabali.joggingapplicationandroid.repo.WorkoutRepository
-import com.eljabali.joggingapplicationandroid.statisticsviewmodel.StatisticsViewModel
-import com.eljabali.joggingapplicationandroid.usecase.UseCase
-import com.eljabali.joggingapplicationandroid.mainviewmodel.ViewModel
-import com.eljabali.joggingapplicationandroid.mapsviewmodel.MapsViewModel
-import com.eljabali.joggingapplicationandroid.recyclerview.ItemClickListener
-import com.eljabali.joggingapplicationandroid.recyclerview.RecyclerViewAdapter
+import com.eljabali.joggingapplicationandroid.data.repo.WorkoutDatabase
+import com.eljabali.joggingapplicationandroid.data.repo.WorkoutRepository
+import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
+import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
+import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

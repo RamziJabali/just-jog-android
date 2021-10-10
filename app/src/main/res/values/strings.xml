@@ -20,4 +20,11 @@
     <string name="map">Map</string>
     <string name="title_activity_maps">Map</string>
     <string name="date">Date:</string>
+
+    <!-- Notification Channel -->
+    <string name="active_run">Active Run</string>
+    <string name="active_run_desc">Notification shown when the user is actively jogging.</string>
+
+    <!-- Notification -->
+    <string name="notification_title">Actively Running</string>
 </resources>
