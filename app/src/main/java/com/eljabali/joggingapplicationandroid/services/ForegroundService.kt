@@ -30,6 +30,9 @@ class ForegroundService : Service() {
     private val pendingIntent by lazy {
         PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
     }
+    private val stopServicePendingIntent by lazy {
+        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_CANCEL_CURRENT)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notificationManager =
@@ -81,8 +84,7 @@ class ForegroundService : Service() {
                     .setContentText(contentText)
                     .setSmallIcon(R.drawable.ic_action_directions_run)
                     .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.checkbox_off_background, getString(R.string.stop), //TODO: add extra to intent
-                            PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
+                    .addAction(android.R.drawable.checkbox_off_background, getString(R.string.stop), stopServicePendingIntent)
                     .build()
 
 
