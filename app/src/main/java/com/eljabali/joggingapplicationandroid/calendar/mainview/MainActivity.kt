@@ -9,6 +9,7 @@ import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.statistics.view.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewFragment
+import com.eljabali.joggingapplicationandroid.services.ForegroundService.Companion.STOP_SERVICE_KEY
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity(), ViewListener {
         const val RCV_TAG = "RecyclerViewFragment"
         const val MVM_TAG = "MainViewModel"
     }
+
+    var stopService = false
 
     private var viewState: ViewState = ViewState()
 
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        stopService = intent.getBooleanExtra("STOP_SERVICE_KEY", false)
         setupBottomNavigation()
         setupFragments()
         setupCalendarListener()

@@ -23,6 +23,7 @@ class ForegroundService : Service() {
 
     companion object {
         const val NOTIFICATION_ID = 1
+        const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
     }
 
     private val compositeDisposable = CompositeDisposable()
@@ -31,7 +32,10 @@ class ForegroundService : Service() {
         PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
     }
     private val stopServicePendingIntent by lazy {
-        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_CANCEL_CURRENT)
+        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java).apply {
+            putExtra(STOP_SERVICE_KEY, true)
+        },
+                PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
