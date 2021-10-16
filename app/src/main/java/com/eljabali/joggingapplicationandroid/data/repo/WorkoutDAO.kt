@@ -24,6 +24,9 @@ interface WorkoutDAO {
     @Query("DELETE FROM user_jog_schedule")
     fun deleteAll(): Completable
 
+    @Query("SELECT * FROM user_jog_schedule ORDER BY id DESC LIMIT 1")
+    fun getLastRunID(): Maybe<WorkoutDate>
+
     @Delete
     fun delete(workoutDate: WorkoutDate): Single<Int>
 }

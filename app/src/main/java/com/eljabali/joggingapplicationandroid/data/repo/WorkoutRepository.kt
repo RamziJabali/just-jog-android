@@ -8,7 +8,8 @@ class WorkoutRepository(private val workoutDAO: WorkoutDAO) {
 
     fun getAllWorkoutDates(): Observable<List<WorkoutDate>> = workoutDAO.getAll()
 
-    fun getRangeOfDates(startDate: String, endDate: String): Observable<List<WorkoutDate>> = workoutDAO.getByRangeOfDates(startDate, endDate)
+    fun getRangeOfDates(startDate: String, endDate: String): Observable<List<WorkoutDate>> =
+        workoutDAO.getByRangeOfDates(startDate, endDate)
 
     fun getWorkoutDate(date: String): Maybe<List<WorkoutDate>> = workoutDAO.getByDate(date)
 
@@ -16,4 +17,6 @@ class WorkoutRepository(private val workoutDAO: WorkoutDAO) {
         workoutDAO.addUpdateWorkout(workoutDate)
 
     fun deleteAllWorkoutDates(): Completable = workoutDAO.deleteAll()
+
+    fun getLastRunID(): Maybe<WorkoutDate> = workoutDAO.getLastRunID()
 }

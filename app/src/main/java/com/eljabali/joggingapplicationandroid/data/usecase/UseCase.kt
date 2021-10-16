@@ -43,6 +43,14 @@ class UseCase(private val repository: WorkoutRepository) {
                 }
             }
 
+    fun getNewRunID(): Maybe<Int> =
+        repository.getLastRunID().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { workoutDate ->
+                return@map workoutDate.runNumber + 1
+            }
+
+
     fun getRangeOfJogsBetweenStartAndEndDate(
         startDate: LocalDate,
         endDate: LocalDate

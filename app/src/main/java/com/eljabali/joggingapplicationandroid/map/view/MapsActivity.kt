@@ -2,6 +2,7 @@ package com.eljabali.joggingapplicationandroid.map.view
 
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -55,7 +57,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
         mapsViewModel.getAllJogsAtSpecificDate(runID = runID, localDate = localDate)
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
     }
@@ -78,4 +79,5 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
                 { error -> Log.e(MA_TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
+
 }

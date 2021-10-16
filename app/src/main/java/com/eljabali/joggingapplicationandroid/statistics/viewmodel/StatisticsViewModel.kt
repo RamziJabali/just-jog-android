@@ -1,7 +1,9 @@
 package com.eljabali.joggingapplicationandroid.statistics.viewmodel
 
 import android.app.Application
+import android.location.LocationManager
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.getTotalDistance
@@ -98,114 +100,6 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         invalidateView()
     }
 
-    fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
-        useCase.addJog(modifiedJogDateInformation)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    Log.i(UseCase.UC_TAG, "Success")
-                    invalidateView()
-                },
-                { error -> Log.e(UseCase.UC_TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
-    }
-
-//    fun addFiveJogs() {
-//        val latLng = LatLng(33.378407552340995, -112.13377654418115)
-//        val latLng2 = LatLng(33.38074586452286, -112.13377654416735)
-//        val latLng3 = LatLng(33.38264513696114, -112.13367998464074)
-//        val latLng4 = LatLng(33.38373809566478, -112.13371217114684)
-//        val latLng5 = LatLng(33.38512686005226, -112.13364808651048)
-//        val latLng6 = LatLng(33.38748122592157, -112.13368226534573)
-//        val latLng7 = LatLng(33.389855392762904, -112.13359635767495)
-//        val latLng8 = LatLng(33.39222026263584, -112.13362891719325)
-//
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                1,
-//                latLng8
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                1,
-//                latLng7
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                1,
-//                latLng6
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                1,
-//                latLng5
-//            )
-//        )
-//
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                1,
-//                latLng4
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                2,
-//                latLng3
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//
-//                2,
-//                latLng2
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//
-//                2,
-//                latLng
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                2,
-//                latLng2
-//            )
-//        )
-//        Thread.sleep(1000)
-//        addJog(
-//            modifiedJogDateInformation = ModifiedJogDateInformation(
-//                dateTime = ZonedDateTime.now().minusDays(1),
-//                2,
-//                latLng
-//            )
-//        )
-//    }
-
-
     private fun getWeeklyAverage(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): String {
         val listOfLatLng: MutableList<LatLng> = mutableListOf()
         var totalWeeklyMiles = 0.0
@@ -246,4 +140,5 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     private fun invalidateView() {
         observableStatisticsViewState.onNext(statisticsViewState)
     }
+
 }

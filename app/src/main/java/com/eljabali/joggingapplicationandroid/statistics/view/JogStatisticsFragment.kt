@@ -72,17 +72,14 @@ class JogStatisticsFragment : Fragment(), ViewListener {
 
         startRunButton.setOnClickListener {
             activity?.startService(Intent(requireContext(), ForegroundService::class.java))
-
         }
 
         deleteAllRunsButton.setOnClickListener {
-//            statisticsViewModel.deleteAll()
+            statisticsViewModel.deleteAll()
         }
 
         val mainActivity = activity as MainActivity
-
-
-        if(mainActivity.stopService){
+        if (mainActivity.stopService) {
             activity?.stopService(Intent(requireContext(), ForegroundService::class.java))
         }
     }

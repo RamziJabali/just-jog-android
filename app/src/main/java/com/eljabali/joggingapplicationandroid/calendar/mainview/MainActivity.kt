@@ -9,7 +9,6 @@ import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.statistics.view.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewFragment
-import com.eljabali.joggingapplicationandroid.services.ForegroundService.Companion.STOP_SERVICE_KEY
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
