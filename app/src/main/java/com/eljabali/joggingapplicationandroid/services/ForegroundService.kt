@@ -1,11 +1,13 @@
 package com.eljabali.joggingapplicationandroid.services
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
@@ -19,6 +21,7 @@ import com.eljabali.joggingapplicationandroid.calendar.mainview.MainActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
+import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
@@ -40,8 +43,16 @@ class ForegroundService : Service() {
         const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
     }
 
+    private var id: Int = 0
+
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
+    }
+
+    private val locationListener: LocationListener by lazy {
+        LocationListener { location ->
+            recordRunEvent(id, location)
+        }
     }
     private val useCase by inject<UseCase>()
     private val compositeDisposable = CompositeDisposable()
@@ -83,6 +94,7 @@ class ForegroundService : Service() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
+        locationManager.removeUpdates(locationListener)
     }
 
     private fun startTrackingJog() {
@@ -96,17 +108,14 @@ class ForegroundService : Service() {
                 ).addTo(compositeDisposable)
     }
 
+    @SuppressLint("MissingPermission")
     private fun jogListener(id: Int) {
-        if (ActivityCompat.checkSelfPermission(
-                        application,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        application,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED)
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0F) { location ->
-                recordRunEvent(id, location)
-            }
+        if (!PermissionUtil.isGpsLocationGranted(applicationContext)) {
+            Log.e(FS_TAG, "Don't have permissions")
+            return
+        }
+        this.id = id
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0F, locationListener)
     }
 
     private fun recordRunEvent(id: Int, location: Location) {
@@ -159,3 +168,5 @@ class ForegroundService : Service() {
 
 
 }
+
+
