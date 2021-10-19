@@ -1,10 +1,15 @@
 package com.eljabali.joggingapplicationandroid.calendar.mainview
 
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.statistics.view.JogStatisticsFragment
 import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
@@ -26,6 +31,8 @@ class MainActivity : AppCompatActivity(), ViewListener {
         const val CAL_TAG = "CaldroidFragment"
         const val RCV_TAG = "RecyclerViewFragment"
         const val MVM_TAG = "MainViewModel"
+        const val FINE_LOCATION_RQ = 101
+        const val COARSE_LOCATION_RQ = 102
     }
 
     var stopService = false
@@ -37,7 +44,10 @@ class MainActivity : AppCompatActivity(), ViewListener {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
 
-    private val statisticsFragment: JogStatisticsFragment by lazy { JogStatisticsFragment.newInstance() }
+    private val statisticsFragment: JogStatisticsFragment by lazy {
+        checkForPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, "Fine Location", FINE_LOCATION_RQ)
+        checkForPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION, "Coarse Location", COARSE_LOCATION_RQ)
+        JogStatisticsFragment.newInstance() }
     private val recyclerViewFragment: RecyclerViewFragment by lazy { RecyclerViewFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
         val today = ZonedDateTimes.today
@@ -62,14 +72,14 @@ class MainActivity : AppCompatActivity(), ViewListener {
 
     override fun monitorCalendarViewState() {
         viewModel.viewStateObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { viewState ->
-                        this.viewState = viewState
-                        setNewViewState(viewState)
-                    },
-                    { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { viewState ->
+                    this.viewState = viewState
+                    setNewViewState(viewState)
+                },
+                { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 
@@ -138,5 +148,42 @@ class MainActivity : AppCompatActivity(), ViewListener {
                 viewModel.getAllJogsAtSpecificDate(date)
             }
         }
+    }
+
+    private fun checkForPermissions(permission: String, name: String, requestCode: Int) {
+        when {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.i(CAL_TAG, "Permission $name Granted")
+            }
+            shouldShowRequestPermissionRationale(permission) -> showDialog(
+                permission,
+                name,
+                requestCode
+            )
+            else -> ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+        }
+    }
+
+
+    private fun showDialog(permission: String, name: String, requestCode: Int) {
+        val builder = AlertDialog.Builder(this)
+
+        builder.apply {
+            setMessage("Permission to access your $name is required to use this app")
+            setTitle("Permission Required")
+            setPositiveButton("OK") { dialog, which ->
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(permission),
+                    requestCode
+                )
+            }
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 }

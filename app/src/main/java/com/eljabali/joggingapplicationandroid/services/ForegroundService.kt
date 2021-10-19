@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit
 class ForegroundService : Service() {
 
     companion object {
+        const val FS_TAG = "Foreground Service"
         const val NOTIFICATION_ID = 1
         const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
     }
@@ -90,7 +91,7 @@ class ForegroundService : Service() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { currentRunId -> jogListener(currentRunId) },
-                        { error -> Log.e(StatisticsViewModel.SVM_TAG, error.localizedMessage, error) },
+                        { error -> Log.e(FS_TAG, error.localizedMessage, error) },
                         { jogListener(1) }
                 ).addTo(compositeDisposable)
     }
@@ -99,19 +100,18 @@ class ForegroundService : Service() {
         if (ActivityCompat.checkSelfPermission(
                         application,
                         Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                         application,
                         Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-        )
+                ) == PackageManager.PERMISSION_GRANTED)
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0F) { location ->
                 recordRunEvent(id, location)
             }
     }
 
     private fun recordRunEvent(id: Int, location: Location) {
-        Log.i(StatisticsViewModel.SVM_TAG, "${location.latitude} Success")
-        var latLng = LatLng(location.latitude, location.longitude)
+        Log.i(FS_TAG, "${location.latitude} Success")
+        val latLng = LatLng(location.latitude, location.longitude)
         val modifiedJogDateInformation = ModifiedJogDateInformation(
                 dateTime = ZonedDateTime.now(),
                 latitudeLongitude = latLng,
@@ -120,15 +120,16 @@ class ForegroundService : Service() {
         addJog(modifiedJogDateInformation)
     }
 
+
     private fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
         useCase.addJog(modifiedJogDateInformation)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            Log.i(UseCase.UC_TAG, "Success")
+                            Log.i(FS_TAG, "Success")
                         },
-                        { error -> Log.e(UseCase.UC_TAG, error.localizedMessage, error) })
+                        { error -> Log.e(FS_TAG, error.localizedMessage, error) })
                 .addTo(compositeDisposable)
     }
 
