@@ -80,4 +80,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
             .addTo(compositeDisposable)
     }
 
+    fun draw(){
+
+    }
+
 }

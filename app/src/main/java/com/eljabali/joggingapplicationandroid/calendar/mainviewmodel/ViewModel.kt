@@ -26,16 +26,16 @@ import java.time.ZonedDateTime
 import java.util.*
 
 class ViewModel(application: Application, private val useCase: UseCase) :
-    AndroidViewModel(application) {
+        AndroidViewModel(application) {
 
     companion object {
         const val VM_TAG = "ViewModel"
         val hasWorkedOutColor: ColorDrawable =
-            ColorDrawable(Color.GREEN)
+                ColorDrawable(Color.GREEN)
         val hasNotWorkedOutColor: ColorDrawable =
-            ColorDrawable(Color.RED)
+                ColorDrawable(Color.RED)
         val noJogRecorded: ColorDrawable =
-            ColorDrawable(Color.WHITE)
+                ColorDrawable(Color.WHITE)
     }
 
     private val compositeDisposable = CompositeDisposable()
@@ -45,39 +45,39 @@ class ViewModel(application: Application, private val useCase: UseCase) :
 
     fun getAllEntries() {
         useCase.getAllJogs()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { listOfModifiedJogInformation ->
-                    viewState =
-                        viewState.copy(
-                            listOfColoredDates = getColoredDatesFromModifiedJogInformation(
-                                listOfModifiedJogInformation
-                            )
-                        )
-                    invalidateView()
-                },
-                { error -> Log.e(VM_TAG, error.localizedMessage, error) }
-            )
-            .addTo(compositeDisposable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { listOfModifiedJogInformation ->
+                            viewState =
+                                    viewState.copy(
+                                            listOfColoredDates = getColoredDatesFromModifiedJogInformation(
+                                                    listOfModifiedJogInformation
+                                            )
+                                    )
+                            invalidateView()
+                        },
+                        { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+                )
+                .addTo(compositeDisposable)
     }
 
     fun getAllJogsAtSpecificDate(date: Date) {
         useCase.getAllJogsAtSpecificDate(date)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { listOfSpecificDates ->
-                    viewState = viewState.copy(
-                        listOfSpecificDates = convertModifiedJoggingListToRecyclerViewProperties(
-                            listOfSpecificDates
-                        )
-                    )
-                    invalidateView()
-                },
-                { error -> Log.e(VM_TAG, error.localizedMessage, error) }
-            )
-            .addTo(compositeDisposable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { listOfSpecificDates ->
+                            viewState = viewState.copy(
+                                    listOfSpecificDates = convertModifiedJoggingListToRecyclerViewProperties(
+                                            listOfSpecificDates
+                                    )
+                            )
+                            invalidateView()
+                        },
+                        { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+                )
+                .addTo(compositeDisposable)
     }
 
 
@@ -85,34 +85,41 @@ class ViewModel(application: Application, private val useCase: UseCase) :
         val listOfRecyclerViewProperties = mutableListOf<RecyclerViewProperties>()
         val listOfLatLng = mutableListOf<LatLng>()
         val listOfTime = mutableListOf<ZonedDateTime>()
-        var currentEntry = 1
         var index = 0
+        var currentEntry = 0
+        if (listOfModifiedJogDateInformation.isNotEmpty()) {
+            currentEntry = listOfModifiedJogDateInformation[0].runNumber
+        }
+        var currentRun = 1
         listOfModifiedJogDateInformation.forEach { modifiedJogDateInformation ->
-            listOfLatLng.add(modifiedJogDateInformation.latitudeLongitude)
-            listOfTime.add(modifiedJogDateInformation.dateTime)
+            if (modifiedJogDateInformation.runNumber == currentEntry) {
+                listOfLatLng.add(modifiedJogDateInformation.latitudeLongitude)
+                listOfTime.add(modifiedJogDateInformation.dateTime)
+            }
             if (currentEntry != modifiedJogDateInformation.runNumber || index == listOfModifiedJogDateInformation.size - 1) {
                 listOfRecyclerViewProperties.add(
-                    RecyclerViewProperties(
-                        totalDistance = getTotalDistance(listOfLatLng).toString(),
-                        totalTime = getFormattedTime(
-                            Duration.between(
-                                listOfTime[0],
-                                listOfTime[listOfTime.size - 1]
-                            ).seconds
-                        ),
-                        jogEntry = currentEntry.toString(),
-                        milesPerHour = getMPH(
-                            getTotalDistance(listOfLatLng), Duration.between(
-                                listOfTime[0],
-                                listOfTime[listOfTime.size - 1]
-                            ).seconds
-                        ),
-                        date = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD.format)
-                    )
+                        RecyclerViewProperties(
+                                totalDistance = getTotalDistance(listOfLatLng).toString(),
+                                totalTime = getFormattedTime(
+                                        Duration.between(
+                                                listOfTime[0],
+                                                listOfTime[listOfTime.size - 1]
+                                        ).seconds
+                                ),
+                                jogEntry = currentRun.toString(),
+                                milesPerHour = getMPH(
+                                        getTotalDistance(listOfLatLng), Duration.between(
+                                        listOfTime[0],
+                                        listOfTime[listOfTime.size - 1]
+                                ).seconds
+                                ),
+                                date = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD.format)
+                        )
                 )
                 listOfLatLng.clear()
                 listOfTime.clear()
                 currentEntry = modifiedJogDateInformation.runNumber
+                currentRun++
             }
             index++
         }
@@ -125,20 +132,20 @@ class ViewModel(application: Application, private val useCase: UseCase) :
         if (listOfModifiedJogDateInformation.isNotEmpty()) {
             var tempDate = listOfModifiedJogDateInformation[0].dateTime
             listOfColoredDates.add(
-                ColoredDates(
-                    convertZonedDateTimeToDate(tempDate),
-                    hasWorkedOutColor
-                )
+                    ColoredDates(
+                            convertZonedDateTimeToDate(tempDate),
+                            hasWorkedOutColor
+                    )
             )
             listOfZonedDateTime.add(tempDate)
             for (element in listOfModifiedJogDateInformation) {
                 if (tempDate.year != element.dateTime.year || tempDate.dayOfYear != element.dateTime.dayOfYear) {
                     tempDate = element.dateTime
                     listOfColoredDates.add(
-                        ColoredDates(
-                            convertZonedDateTimeToDate(tempDate),
-                            hasWorkedOutColor
-                        )
+                            ColoredDates(
+                                    convertZonedDateTimeToDate(tempDate),
+                                    hasWorkedOutColor
+                            )
                     )
                     listOfZonedDateTime.add(tempDate)
                 }
@@ -148,10 +155,10 @@ class ViewModel(application: Application, private val useCase: UseCase) :
             while (tempDate.year != ZonedDateTime.now().year || tempDate.dayOfYear != ZonedDateTime.now().dayOfYear) {
                 if (index >= listOfZonedDateTime.size || tempDate.year != listOfZonedDateTime[index].year || tempDate.dayOfYear != listOfZonedDateTime[index].dayOfYear) {
                     listOfColoredDates.add(
-                        ColoredDates(
-                            convertZonedDateTimeToDate(tempDate),
-                            hasNotWorkedOutColor
-                        )
+                            ColoredDates(
+                                    convertZonedDateTimeToDate(tempDate),
+                                    hasNotWorkedOutColor
+                            )
                     )
                     listOfZonedDateTime.add(tempDate)
                 } else {
@@ -169,7 +176,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
 
 
     private fun convertZonedDateTimeToDate(dateTime: ZonedDateTime): Date =
-        Date.from(dateTime.toInstant())
+            Date.from(dateTime.toInstant())
 
     private fun invalidateView() {
         viewStateObservable.onNext(viewState)

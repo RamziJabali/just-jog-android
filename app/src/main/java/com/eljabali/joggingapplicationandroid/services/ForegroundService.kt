@@ -1,18 +1,15 @@
 package com.eljabali.joggingapplicationandroid.services
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
@@ -20,7 +17,6 @@ import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTI
 import com.eljabali.joggingapplicationandroid.calendar.mainview.MainActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
-import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
 import com.google.android.gms.maps.model.LatLng
@@ -165,8 +161,6 @@ class ForegroundService : Service() {
                     .setContentIntent(pendingIntent)
                     .addAction(android.R.drawable.checkbox_off_background, getString(R.string.stop), stopServicePendingIntent)
                     .build()
-
-
 }
 
 

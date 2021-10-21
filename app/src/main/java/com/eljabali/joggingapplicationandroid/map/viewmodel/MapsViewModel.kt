@@ -46,9 +46,10 @@ class MapsViewModel(private val useCase: UseCase) : ViewModel() {
         jogID: Int,
         specificDate: List<ModifiedJogDateInformation>
     ): List<LatLng> {
+        val trueJogID = specificDate[0].runNumber + (jogID - 1)
         val listOfLatLng = mutableListOf<LatLng>()
         specificDate.forEach { date ->
-            if (date.runNumber == jogID) {
+            if (date.runNumber == trueJogID) {
                 listOfLatLng.add(date.latitudeLongitude)
             }
         }
