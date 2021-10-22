@@ -1,9 +1,10 @@
 package com.eljabali.joggingapplicationandroid.data.usecase
 
 import android.util.Log
+import com.eljabali.joggingapplicationandroid.data.repo.calendar.CalendarRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.data.repo.WorkoutDate
-import com.eljabali.joggingapplicationandroid.data.repo.WorkoutRepository
+import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDate
+import com.eljabali.joggingapplicationandroid.data.repo.jog.JogRepository
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -20,7 +21,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
-class UseCase(private val repository: WorkoutRepository) {
+class UseCase(private val jogRepository: JogRepository,private val calendarRepository: CalendarRepository) {
 
     companion object {
         const val UC_TAG = "USECASE"
@@ -29,12 +30,12 @@ class UseCase(private val repository: WorkoutRepository) {
     private val compositeDisposable = CompositeDisposable()
 
     fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
-        repository.addWorkoutDate(
+        jogRepository.addWorkoutDate(
             convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
         )
 
     fun getAllJogs(): Observable<List<ModifiedJogDateInformation>> =
-        repository.getAllWorkoutDates()
+        jogRepository.getAllWorkoutDates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfAllJogDates ->
@@ -44,7 +45,7 @@ class UseCase(private val repository: WorkoutRepository) {
             }
 
     fun getNewRunID(): Maybe<Int> =
-        repository.getLastRunID().subscribeOn(Schedulers.io())
+        jogRepository.getLastRunID().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { workoutDate ->
                 return@map workoutDate.runNumber + 1
@@ -55,7 +56,7 @@ class UseCase(private val repository: WorkoutRepository) {
         startDate: LocalDate,
         endDate: LocalDate
     ): Observable<List<ModifiedJogDateInformation>> =
-        repository.getRangeOfDates(
+        jogRepository.getRangeOfDates(
             startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
             endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
         )
@@ -68,7 +69,7 @@ class UseCase(private val repository: WorkoutRepository) {
             }
 
     fun getAllJogsAtSpecificDate(date: Date): Maybe<List<ModifiedJogDateInformation>> =
-        repository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
+        jogRepository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -78,7 +79,7 @@ class UseCase(private val repository: WorkoutRepository) {
             }
 
     fun getAllJogsAtSpecificDate(localDate: LocalDate): Maybe<List<ModifiedJogDateInformation>> =
-        repository.getWorkoutDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
+        jogRepository.getWorkoutDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -96,7 +97,7 @@ class UseCase(private val repository: WorkoutRepository) {
 
 
     fun deleteAllEntries() {
-        repository.deleteAllWorkoutDates()
+        jogRepository.deleteAllWorkoutDates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -107,8 +108,8 @@ class UseCase(private val repository: WorkoutRepository) {
     }
 
 
-    private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): WorkoutDate =
-        WorkoutDate(
+    private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogDate =
+        JogDate(
             totalRuns = 0,
             dateTime = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD_T_TIME.format),
             runNumber = modifiedJogDateInformation.runNumber,
@@ -116,10 +117,10 @@ class UseCase(private val repository: WorkoutRepository) {
             longitude = modifiedJogDateInformation.latitudeLongitude.longitude
         )
 
-    private fun convertWorkOutDateToModifiedJogDate(workoutDate: WorkoutDate): ModifiedJogDateInformation =
+    private fun convertWorkOutDateToModifiedJogDate(jogDate: JogDate): ModifiedJogDateInformation =
         ModifiedJogDateInformation(
-            dateTime = workoutDate.dateTime.parseZonedDateTime()!!,
-            runNumber = workoutDate.runNumber,
-            latitudeLongitude = LatLng(workoutDate.latitude, workoutDate.longitude),
+            dateTime = jogDate.dateTime.parseZonedDateTime()!!,
+            runNumber = jogDate.runNumber,
+            latitudeLongitude = LatLng(jogDate.latitude, jogDate.longitude),
         )
 }

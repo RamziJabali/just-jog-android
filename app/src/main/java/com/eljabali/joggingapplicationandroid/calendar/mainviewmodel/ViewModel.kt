@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
+import androidx.annotation.ColorRes
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime

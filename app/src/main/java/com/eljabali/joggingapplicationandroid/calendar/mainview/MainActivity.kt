@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity(), ViewListener {
     private val statisticsFragment: JogStatisticsFragment by lazy {
         checkForPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, "Fine Location", FINE_LOCATION_RQ)
         checkForPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION, "Coarse Location", COARSE_LOCATION_RQ)
-        JogStatisticsFragment.newInstance() }
+        JogStatisticsFragment.newInstance()
+    }
     private val recyclerViewFragment: RecyclerViewFragment by lazy { RecyclerViewFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
         val today = ZonedDateTimes.today
@@ -72,15 +73,15 @@ class MainActivity : AppCompatActivity(), ViewListener {
 
     override fun monitorCalendarViewState() {
         viewModel.viewStateObservable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { viewState ->
-                    this.viewState = viewState
-                    setNewViewState(viewState)
-                },
-                { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { viewState ->
+                            this.viewState = viewState
+                            setNewViewState(viewState)
+                        },
+                        { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
+                .addTo(compositeDisposable)
     }
 
     override fun setNewViewState(viewState: ViewState) {
@@ -94,16 +95,16 @@ class MainActivity : AppCompatActivity(), ViewListener {
 
     private fun setupFragments() {
         supportFragmentManager.beginTransaction()
-            .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
-            .hide(caldroidFragment)
-            .commit()
+                .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
+                .hide(caldroidFragment)
+                .commit()
         supportFragmentManager.beginTransaction()
-            .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RCV_TAG)
-            .hide(recyclerViewFragment)
-            .commit()
+                .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RCV_TAG)
+                .hide(recyclerViewFragment)
+                .commit()
         supportFragmentManager.beginTransaction()
-            .add(R.id.frameLayout, statisticsFragment, JogStatisticsFragment.TAG)
-            .commit()
+                .add(R.id.frameLayout, statisticsFragment, JogStatisticsFragment.TAG)
+                .commit()
     }
 
     private fun setupBottomNavigation() {
@@ -111,19 +112,18 @@ class MainActivity : AppCompatActivity(), ViewListener {
             when (item.itemId) {
                 R.id.statistics_page -> {
                     supportFragmentManager.beginTransaction()
-                        .hide(caldroidFragment)
-                        .hide(recyclerViewFragment)
-                        .show(statisticsFragment)
-                        .commit()
+                            .hide(caldroidFragment)
+                            .hide(recyclerViewFragment)
+                            .show(statisticsFragment)
+                            .commit()
                     true
                 }
                 R.id.calendar_page -> {
                     viewModel.getAllEntries()
                     supportFragmentManager.beginTransaction()
-                        .hide(statisticsFragment)
-                        .show(caldroidFragment)
-                        .show(recyclerViewFragment)
-                        .commit()
+                            .hide(statisticsFragment)
+                            .show(caldroidFragment)
+                            .commit()
                     true
                 }
                 else -> false
@@ -145,6 +145,9 @@ class MainActivity : AppCompatActivity(), ViewListener {
     private fun setupCalendarListener() {
         caldroidFragment.caldroidListener = object : CaldroidListener() {
             override fun onSelectDate(date: Date, view: View?) {
+                supportFragmentManager.beginTransaction()
+                        .show(recyclerViewFragment)
+                        .commit()
                 viewModel.getAllJogsAtSpecificDate(date)
             }
         }
@@ -153,15 +156,15 @@ class MainActivity : AppCompatActivity(), ViewListener {
     private fun checkForPermissions(permission: String, name: String, requestCode: Int) {
         when {
             ContextCompat.checkSelfPermission(
-                applicationContext,
-                permission
+                    applicationContext,
+                    permission
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.i(CAL_TAG, "Permission $name Granted")
             }
             shouldShowRequestPermissionRationale(permission) -> showDialog(
-                permission,
-                name,
-                requestCode
+                    permission,
+                    name,
+                    requestCode
             )
             else -> ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
         }
@@ -176,9 +179,9 @@ class MainActivity : AppCompatActivity(), ViewListener {
             setTitle("Permission Required")
             setPositiveButton("OK") { dialog, which ->
                 ActivityCompat.requestPermissions(
-                    this@MainActivity,
-                    arrayOf(permission),
-                    requestCode
+                        this@MainActivity,
+                        arrayOf(permission),
+                        requestCode
                 )
             }
         }
