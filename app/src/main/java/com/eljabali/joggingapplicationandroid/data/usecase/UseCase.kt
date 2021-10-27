@@ -1,7 +1,8 @@
 package com.eljabali.joggingapplicationandroid.data.usecase
 
 import android.util.Log
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.CalendarRepository
+import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummary
+import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummaryRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDate
 import com.eljabali.joggingapplicationandroid.data.repo.jog.JogRepository
@@ -21,7 +22,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
-class UseCase(private val jogRepository: JogRepository,private val calendarRepository: CalendarRepository) {
+class UseCase(
+    private val jogRepository: JogRepository,
+    private val jogSummaryRepository: JogSummaryRepository
+) {
 
     companion object {
         const val UC_TAG = "USECASE"
@@ -88,13 +92,45 @@ class UseCase(private val jogRepository: JogRepository,private val calendarRepos
                 }
             }
 
+    fun getAllJogSummaries(): Observable<List<ModifiedJogSummary>> =
+        jogSummaryRepository.getAllJogSummaries().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfJogSummaries ->
+                return@map listOfJogSummaries.map { jogSummary ->
+                    ModifiedJogSummary(
+                        jogId = jogSummary.jogId,
+                        date = jogSummary.jogStartDate.parseZonedDateTime()!!
+                    )
+                }
+            }
+
+    fun addJogSummary(startDate: ZonedDateTime, jogNumber: Int): Completable =
+        jogSummaryRepository.addJogDate(
+            JogSummary(
+                jogNumber,
+                startDate.print(DateFormat.YYYY_MM_DD.format),
+            )
+        )
+
+    fun getJogSummariesAtDate(localDate: LocalDate): Maybe<List<ModifiedJogSummary>> =
+        jogSummaryRepository.getJogDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfJogSummaries ->
+                return@map listOfJogSummaries.map { jogSummary ->
+                    ModifiedJogSummary(
+                        jogId = jogSummary.jogId,
+                        date = jogSummary.jogStartDate.parseZonedDateTime()!!
+                    )
+                }
+            }
+
 
     private fun convertDateToZonedDateTime(date: Date): ZonedDateTime =
         ZonedDateTime.ofInstant(
             date.toInstant(),
             ZoneId.systemDefault()
         )
-
 
     fun deleteAllEntries() {
         jogRepository.deleteAllWorkoutDates()
@@ -105,8 +141,15 @@ class UseCase(private val jogRepository: JogRepository,private val calendarRepos
                 { error -> Log.e(UC_TAG, error.localizedMessage, error) }
             )
             .addTo(compositeDisposable)
-    }
 
+        jogSummaryRepository.deleteAllJogDates()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { Log.i(UC_TAG, "Success") },
+                { error -> Log.e(UC_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
+    }
 
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogDate =
         JogDate(

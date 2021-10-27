@@ -4,16 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.CalendarDAO
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.CalendarJogDate
+import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummaryDAO
+import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDAO
 import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDate
 
-@Database(entities = [JogDate::class, CalendarJogDate::class], version = 1, exportSchema = false)
+@Database(entities = [JogDate::class, JogSummary::class], version = 2, exportSchema = false)
 abstract class JogDatabase : RoomDatabase() {
 
     abstract fun jogDAO(): JogDAO
-    abstract fun calendarDAO(): CalendarDAO
+    abstract fun calendarDAO(): JogSummaryDAO
 
     companion object {
         @Volatile
@@ -27,7 +27,7 @@ abstract class JogDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         JogDatabase::class.java,
-                        "user_jog_schedule"
+                        "TOTAL_JOGS"
                     ).fallbackToDestructiveMigration()
                         .build()
                     INSTANCE = instance

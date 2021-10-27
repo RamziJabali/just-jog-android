@@ -40,6 +40,7 @@ class ForegroundService : Service() {
     }
 
     private var id: Int = 0
+    private var hasJogSummaryBeenEntered = false
 
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
@@ -57,30 +58,32 @@ class ForegroundService : Service() {
         PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
     }
     private val stopServicePendingIntent by lazy {
-        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java).apply {
-            putExtra(STOP_SERVICE_KEY, true)
-        },
-                PendingIntent.FLAG_CANCEL_CURRENT)
+        PendingIntent.getActivity(
+            this, 0, Intent(this, MainActivity::class.java).apply {
+                putExtra(STOP_SERVICE_KEY, true)
+            },
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(notificationManager)
         }
 
         Observable.interval(1, TimeUnit.SECONDS)
-                .timeInterval()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    val duration = Duration.between(jogStart, ZonedDateTimes.now)
-                    val time = getFormattedTime(duration.seconds)
-                    startForeground(NOTIFICATION_ID, createNotification(time))
-                }
-                .addTo(compositeDisposable)
+            .timeInterval()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val duration = Duration.between(jogStart, ZonedDateTimes.now)
+                val time = getFormattedTime(duration.seconds)
+                startForeground(NOTIFICATION_ID, createNotification(time))
+            }
+            .addTo(compositeDisposable)
         startForeground(NOTIFICATION_ID, createNotification(""))
         startTrackingJog()
         return START_STICKY
@@ -95,13 +98,13 @@ class ForegroundService : Service() {
 
     private fun startTrackingJog() {
         useCase.getNewRunID()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { currentRunId -> jogListener(currentRunId) },
-                        { error -> Log.e(FS_TAG, error.localizedMessage, error) },
-                        { jogListener(1) }
-                ).addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { currentRunId -> jogListener(currentRunId) },
+                { error -> Log.e(FS_TAG, error.localizedMessage, error) },
+                { jogListener(1) }
+            ).addTo(compositeDisposable)
     }
 
     @SuppressLint("MissingPermission")
@@ -111,39 +114,60 @@ class ForegroundService : Service() {
             return
         }
         this.id = id
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0F, locationListener)
+        locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            2000,
+            0F,
+            locationListener
+        )
     }
 
     private fun recordRunEvent(id: Int, location: Location) {
-        Log.i(FS_TAG, "${location.latitude} Success")
+        Log.i(FS_TAG, "Success getting location")
         val latLng = LatLng(location.latitude, location.longitude)
+        val timeNow = ZonedDateTime.now()
         val modifiedJogDateInformation = ModifiedJogDateInformation(
-                dateTime = ZonedDateTime.now(),
-                latitudeLongitude = latLng,
-                runNumber = id
+            dateTime = timeNow,
+            latitudeLongitude = latLng,
+            runNumber = id
         )
+        if (!hasJogSummaryBeenEntered) {
+            addJogSummary(timeNow, id)
+            hasJogSummaryBeenEntered = true
+        }
         addJog(modifiedJogDateInformation)
     }
 
-
     private fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
         useCase.addJog(modifiedJogDateInformation)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        {
-                            Log.i(FS_TAG, "Success")
-                        },
-                        { error -> Log.e(FS_TAG, error.localizedMessage, error) })
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    Log.i(FS_TAG, "Success")
+                },
+                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
+    }
+
+    private fun addJogSummary(startDateTime: ZonedDateTime, jogNumber: Int) {
+        useCase.addJogSummary(startDate = startDateTime, jogNumber = jogNumber)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    Log.i(FS_TAG, "Success")
+                },
+                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
     }
 
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         with(ACTIVE_RUN) {
             val channel = NotificationChannel(
-                    channelId,
-                    baseContext.getString(channelName),
-                    channelImportance
+                channelId,
+                baseContext.getString(channelName),
+                channelImportance
             ).apply {
                 description = baseContext.getString(channelDescription)
             }
@@ -152,15 +176,19 @@ class ForegroundService : Service() {
     }
 
     private fun createNotification(contentText: String): Notification =
-            NotificationCompat.Builder(this, ACTIVE_RUN.channelId)
-                    .setContentTitle(baseContext.getString(R.string.active_run))
-                    .setAutoCancel(false)
-                    .setOngoing(true)
-                    .setContentText(contentText)
-                    .setSmallIcon(R.drawable.ic_action_directions_run)
-                    .setContentIntent(pendingIntent)
-                    .addAction(android.R.drawable.checkbox_off_background, getString(R.string.stop), stopServicePendingIntent)
-                    .build()
+        NotificationCompat.Builder(this, ACTIVE_RUN.channelId)
+            .setContentTitle(baseContext.getString(R.string.active_run))
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setContentText(contentText)
+            .setSmallIcon(R.drawable.ic_action_directions_run)
+            .setContentIntent(pendingIntent)
+            .addAction(
+                android.R.drawable.checkbox_off_background,
+                getString(R.string.stop),
+                stopServicePendingIntent
+            )
+            .build()
 }
 
 

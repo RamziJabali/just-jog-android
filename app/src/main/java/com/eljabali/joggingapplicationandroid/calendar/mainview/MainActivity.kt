@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
                     true
                 }
                 R.id.calendar_page -> {
-                    viewModel.getAllEntries()
+                    viewModel.getAllDates()
                     supportFragmentManager.beginTransaction()
                             .hide(statisticsFragment)
                             .show(caldroidFragment)
