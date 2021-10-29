@@ -13,7 +13,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         app:cardBackgroundColor="@color/primary_background_color"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="@dimen/xl_corner_radius"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
