@@ -17,9 +17,9 @@
             android:id="@+id/current_date_time"
             android:layout_width="400dp"
             android:layout_height="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/s_padding"
             app:cardBackgroundColor="@color/primary_background_color"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="@dimen/xl_corner_radius"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -69,10 +69,10 @@
                 android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/s_padding"
                 android:layout_marginTop="60dp"
                 android:textColor="@color/primary_text_color"
-                android:textSize="18sp"
+                android:textSize="@dimen/m_text_size"
                 tools:text="07:30:21" />
 
             <TextView
@@ -82,7 +82,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="30dp"
                 android:textColor="@color/primary_text_color"
-                android:textSize="18sp"
+                android:textSize="@dimen/m_text_size"
                 tools:text="09/13/2021" />
         </com.google.android.material.card.MaterialCardView>
 
@@ -90,10 +90,10 @@
             android:id="@+id/average"
             android:layout_width="194dp"
             android:layout_height="150dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/l_horizontal_spacing"
+            android:layout_marginTop="@dimen/s_padding"
             app:cardBackgroundColor="@color/primary_background_color"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="@dimen/xl_corner_radius"
             app:layout_constraintEnd_toStartOf="@+id/daily_record"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/current_date_time">
@@ -120,10 +120,10 @@
             android:id="@+id/daily_record"
             android:layout_width="194dp"
             android:layout_height="150dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginTop="@dimen/s_vertical_spacing"
+            android:layout_marginEnd="@dimen/l_horizontal_spacing"
             app:cardBackgroundColor="@color/primary_background_color"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="@dimen/xl_corner_radius"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/average"
             app:layout_constraintTop_toBottomOf="@id/current_date_time">
