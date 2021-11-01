@@ -27,6 +27,8 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
     companion object {
         const val SVM_TAG = "Statistics ViewModel"
+        const val NOTHING_JOGGED = "0.00 Miles"
+        const val NOTHING_JOGGED_TODAY = "No Entry For Today"
     }
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
@@ -97,6 +99,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
     fun deleteAll() {
         useCase.deleteAllEntries()
+        statisticsViewState = statisticsViewState.copy(weeklyAverage = NOTHING_JOGGED, dailyRecord = NOTHING_JOGGED_TODAY)
         invalidateView()
     }
 
