@@ -1,11 +1,11 @@
 package com.eljabali.joggingapplicationandroid.data.usecase
 
 import android.util.Log
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummary
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummaryRepository
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDate
-import com.eljabali.joggingapplicationandroid.data.repo.jog.JogRepository
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 import java.util.*
 
 class UseCase(
-    private val jogRepository: JogRepository,
+    private val jogEntriesRepository: JogEntriesRepository,
     private val jogSummaryRepository: JogSummaryRepository
 ) {
 
@@ -34,12 +34,12 @@ class UseCase(
     private val compositeDisposable = CompositeDisposable()
 
     fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
-        jogRepository.addWorkoutDate(
+        jogEntriesRepository.add(
             convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
         )
 
     fun getAllJogs(): Observable<List<ModifiedJogDateInformation>> =
-        jogRepository.getAllWorkoutDates()
+        jogEntriesRepository.getAll()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfAllJogDates ->
@@ -49,10 +49,10 @@ class UseCase(
             }
 
     fun getNewRunID(): Maybe<Int> =
-        jogRepository.getLastRunID().subscribeOn(Schedulers.io())
+        jogSummaryRepository.getLast().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { workoutDate ->
-                return@map workoutDate.runNumber + 1
+                return@map workoutDate.id + 1
             }
 
 
@@ -60,7 +60,7 @@ class UseCase(
         startDate: LocalDate,
         endDate: LocalDate
     ): Observable<List<ModifiedJogDateInformation>> =
-        jogRepository.getRangeOfDates(
+        jogEntriesRepository.getByRangeOfDates(
             startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
             endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
         )
@@ -73,7 +73,7 @@ class UseCase(
             }
 
     fun getAllJogsAtSpecificDate(date: Date): Maybe<List<ModifiedJogDateInformation>> =
-        jogRepository.getWorkoutDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
+        jogEntriesRepository.getByDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -83,7 +83,7 @@ class UseCase(
             }
 
     fun getAllJogsAtSpecificDate(localDate: LocalDate): Maybe<List<ModifiedJogDateInformation>> =
-        jogRepository.getWorkoutDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
+        jogEntriesRepository.getByDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -93,19 +93,19 @@ class UseCase(
             }
 
     fun getAllJogSummaries(): Observable<List<ModifiedJogSummary>> =
-        jogSummaryRepository.getAllJogSummaries().subscribeOn(Schedulers.io())
+        jogSummaryRepository.getAll().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->
                 return@map listOfJogSummaries.map { jogSummary ->
                     ModifiedJogSummary(
-                        jogId = jogSummary.jogId,
-                        date = jogSummary.jogStartDate.parseZonedDateTime()!!
+                        jogId = jogSummary.id,
+                        date = jogSummary.startDate.parseZonedDateTime()!!
                     )
                 }
             }
 
     fun addJogSummary(startDate: ZonedDateTime, jogNumber: Int): Completable =
-        jogSummaryRepository.addJogDate(
+        jogSummaryRepository.add(
             JogSummary(
                 jogNumber,
                 startDate.print(DateFormat.YYYY_MM_DD.format),
@@ -113,14 +113,14 @@ class UseCase(
         )
 
     fun getJogSummariesAtDate(localDate: LocalDate): Maybe<List<ModifiedJogSummary>> =
-        jogSummaryRepository.getJogDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
+        jogSummaryRepository.getByDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->
                 return@map listOfJogSummaries.map { jogSummary ->
                     ModifiedJogSummary(
-                        jogId = jogSummary.jogId,
-                        date = jogSummary.jogStartDate.parseZonedDateTime()!!
+                        jogId = jogSummary.id,
+                        date = jogSummary.startDate.parseZonedDateTime()!!
                     )
                 }
             }
@@ -133,7 +133,7 @@ class UseCase(
         )
 
     fun deleteAllEntries() {
-        jogRepository.deleteAllWorkoutDates()
+        jogEntriesRepository.deleteAll()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -142,7 +142,7 @@ class UseCase(
             )
             .addTo(compositeDisposable)
 
-        jogSummaryRepository.deleteAllJogDates()
+        jogSummaryRepository.deleteAll()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -151,19 +151,18 @@ class UseCase(
             .addTo(compositeDisposable)
     }
 
-    private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogDate =
-        JogDate(
-            totalRuns = 0,
+    private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogEntries =
+        JogEntries(
             dateTime = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD_T_TIME.format),
-            runNumber = modifiedJogDateInformation.runNumber,
+            jogSummaryID = modifiedJogDateInformation.runNumber,
             latitude = modifiedJogDateInformation.latitudeLongitude.latitude,
             longitude = modifiedJogDateInformation.latitudeLongitude.longitude
         )
 
-    private fun convertWorkOutDateToModifiedJogDate(jogDate: JogDate): ModifiedJogDateInformation =
+    private fun convertWorkOutDateToModifiedJogDate(jogEntries: JogEntries): ModifiedJogDateInformation =
         ModifiedJogDateInformation(
-            dateTime = jogDate.dateTime.parseZonedDateTime()!!,
-            runNumber = jogDate.runNumber,
-            latitudeLongitude = LatLng(jogDate.latitude, jogDate.longitude),
+            dateTime = jogEntries.dateTime.parseZonedDateTime()!!,
+            runNumber = jogEntries.jogSummaryID,
+            latitudeLongitude = LatLng(jogEntries.latitude, jogEntries.longitude),
         )
 }

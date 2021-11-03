@@ -32,7 +32,6 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
-
     private var statisticsViewState = StatisticsViewState()
     private val compositeDisposable = CompositeDisposable()
 
@@ -44,7 +43,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     fun onFragmentLaunch() {
         setUpClock()
         getAllJogsBetweenTwoDates(
-            ZonedDateTimes.today.minusDays(7).toLocalDate(),
+            ZonedDateTimes.lastMonday.toLocalDate(),
             ZonedDateTimes.today.toLocalDate()
         )
         getAllJogsAtSpecificDate(ZonedDateTimes.today.toLocalDate())
@@ -109,7 +108,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         var jogNumber = 1
         var index = 0
         listOfModifiedJogDateInformation.forEach { modifiedJogDateInformation ->
-            if (jogNumber != modifiedJogDateInformation.runNumber || index == listOfModifiedJogDateInformation.size) {
+            if (jogNumber != modifiedJogDateInformation.runNumber || index == listOfModifiedJogDateInformation.size-1) {
                 totalWeeklyMiles += getTotalDistance(listOfLatLng)
                 jogNumber = modifiedJogDateInformation.runNumber
                 listOfLatLng.clear()

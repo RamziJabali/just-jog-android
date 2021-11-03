@@ -1,4 +1,4 @@
-package com.eljabali.joggingapplicationandroid.data.repo.calendar
+package com.eljabali.joggingapplicationandroid.data.repo.jogsummary
 
 import androidx.room.*
 import io.reactivex.Completable
@@ -14,17 +14,17 @@ interface JogSummaryDAO {
     @Query("SELECT * FROM jog_summary")
     fun getAll(): Observable<List<JogSummary>>
 
-    @Query("SELECT * FROM jog_summary WHERE jog_start_date LIKE (:stringDate)")
+    @Query("SELECT * FROM jog_summary WHERE start_date LIKE (:stringDate)")
     fun getByDate(stringDate: String): Maybe<List<JogSummary>>
 
-    @Query("SELECT * FROM jog_summary WHERE jog_start_date BETWEEN (:startDate) AND (:endDate)")
+    @Query("SELECT * FROM jog_summary WHERE start_date BETWEEN (:startDate) AND (:endDate)")
     fun getByRangeOfDates(startDate: String, endDate: String): Observable<List<JogSummary>>
 
     @Query("DELETE FROM jog_summary")
     fun deleteAll(): Completable
 
-    @Query("SELECT * FROM jog_summary ORDER BY jog_id DESC LIMIT 1")
-    fun getLastJogDate(): Maybe<JogSummary>
+    @Query("SELECT * FROM jog_summary ORDER BY id DESC LIMIT 1")
+    fun getLast(): Maybe<JogSummary>
 
     @Delete
     fun delete(jogSummary: JogSummary): Single<Int>

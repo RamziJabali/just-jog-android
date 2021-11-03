@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummaryDAO
-import com.eljabali.joggingapplicationandroid.data.repo.calendar.JogSummary
-import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDAO
-import com.eljabali.joggingapplicationandroid.data.repo.jog.JogDate
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryDAO
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesDAO
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
 
-@Database(entities = [JogDate::class, JogSummary::class], version = 2, exportSchema = false)
+@Database(entities = [JogEntries::class, JogSummary::class], version = 2, exportSchema = false)
 abstract class JogDatabase : RoomDatabase() {
 
-    abstract fun jogDAO(): JogDAO
+    abstract fun jogDAO(): JogEntriesDAO
     abstract fun calendarDAO(): JogSummaryDAO
 
     companion object {
