@@ -2,6 +2,7 @@ package com.eljabali.joggingapplicationandroid.map.view
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -32,7 +34,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
         const val ZOOM_LEVEL = 13f
         const val RUN_ID = "com.eljabali.joggingapplicationandroid.map.mapsview"
         const val DATE_ID = "GOOGLYMOOGLY"
-
         fun newInstance(context: Context, localDate: LocalDate, runID: Int): Intent =
             Intent(context, MapsActivity::class.java).apply {
                 putExtra(RUN_ID, runID)
@@ -62,10 +63,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
     }
 
     override fun setMapsViewState(mapsViewState: MapsViewState) {
-        mapsViewState.listOfLatLng.forEach { latLng ->
-            map.addMarker(MarkerOptions().position(latLng))
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_LEVEL))
-        }
+        val midpoint = mapsViewState.listOfLatLng[mapsViewState.listOfLatLng.size / 2]
+        map.addPolyline(
+            PolylineOptions()
+                .clickable(false)
+                .color(R.color.light_blue)
+                .addAll(mapsViewState.listOfLatLng)
+        )
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(midpoint, ZOOM_LEVEL))
     }
 
     override fun monitorMapsViewState() {
@@ -79,9 +84,4 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
                 { error -> Log.e(MA_TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
-
-    fun draw(){
-
-    }
-
 }
