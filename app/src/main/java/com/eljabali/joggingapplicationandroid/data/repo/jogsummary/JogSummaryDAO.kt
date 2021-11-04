@@ -17,7 +17,7 @@ interface JogSummaryDAO {
     @Query("SELECT * FROM jog_summary WHERE start_date_time LIKE (:stringDate)")
     fun getByDate(stringDate: String): Maybe<List<JogSummary>>
 
-    @Query("SELECT * FROM jog_summary WHERE start_date_time BETWEEN (:startDate) AND (:endDate)")
+    @Query("SELECT * FROM jog_summary WHERE CAST(start_date_time AS DATE) BETWEEN CAST(:startDate AS DATE) AND CAST(:endDate AS DATE)")
     fun getByRangeOfDates(startDate: String, endDate: String): Observable<List<JogSummary>>
 
     @Query("DELETE FROM jog_summary")

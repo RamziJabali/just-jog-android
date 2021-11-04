@@ -152,6 +152,22 @@ class UseCase(
                 }
             }
 
+    fun getGetJogSummariesBetweenDates(startDate: LocalDate, endDate: LocalDate): Observable<List<ModifiedJogSummary>> =
+        jogSummaryRepository.getByRangeOfDates(
+            startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
+            endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
+        )  .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfJogSummaries ->
+                return@map listOfJogSummaries.map { jogSummary ->
+                    ModifiedJogSummary(
+                        jogId = jogSummary.id,
+                        date = jogSummary.startDate.parseZonedDateTime()!!,
+                        timeDurationInSeconds = jogSummary.totalJogDuration,
+                        totalDistance = jogSummary.totalJogDistance
+                    )
+                }
+    }
 
     private fun convertDateToZonedDateTime(date: Date): ZonedDateTime =
         ZonedDateTime.ofInstant(

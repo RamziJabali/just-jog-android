@@ -1,14 +1,13 @@
 package com.eljabali.joggingapplicationandroid.statistics.viewmodel
 
 import android.app.Application
-import android.location.LocationManager
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.getTotalDistance
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
+import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
@@ -42,7 +41,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
     fun onFragmentLaunch() {
         setUpClock()
-        getAllJogsBetweenTwoDates(
+        getJogSummariesBetweenTwoDates(
             ZonedDateTimes.lastMonday.toLocalDate(),
             ZonedDateTimes.today.toLocalDate()
         )
@@ -65,8 +64,8 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             .addTo(compositeDisposable)
     }
 
-    private fun getAllJogsBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
-        useCase.getRangeOfJogsBetweenStartAndEndDate(startDate, endDate)
+    private fun getJogSummariesBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
+        useCase.getGetJogSummariesBetweenDates(startDate, endDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -102,20 +101,10 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
         invalidateView()
     }
 
-    private fun getWeeklyAverage(listOfModifiedJogDateInformation: List<ModifiedJogDateInformation>): String {
-        val listOfLatLng: MutableList<LatLng> = mutableListOf()
+    private fun getWeeklyAverage(listOfModifiedJogSummaries: List<ModifiedJogSummary>): String {
         var totalWeeklyMiles = 0.0
-        var jogNumber = 1
-        var index = 0
-        listOfModifiedJogDateInformation.forEach { modifiedJogDateInformation ->
-            if (jogNumber != modifiedJogDateInformation.runNumber || index == listOfModifiedJogDateInformation.size-1) {
-                totalWeeklyMiles += getTotalDistance(listOfLatLng)
-                jogNumber = modifiedJogDateInformation.runNumber
-                listOfLatLng.clear()
-            } else {
-                listOfLatLng.add(modifiedJogDateInformation.latitudeLongitude)
-            }
-            index++
+        listOfModifiedJogSummaries.forEach { jogSummary ->
+           totalWeeklyMiles += jogSummary.totalDistance
         }
         return String.format("%.2f", totalWeeklyMiles / 7.0) + " Miles"
     }
