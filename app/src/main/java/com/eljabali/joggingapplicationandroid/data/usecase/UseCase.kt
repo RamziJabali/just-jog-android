@@ -17,6 +17,7 @@ import io.reactivex.schedulers.Schedulers
 import localdate.extensions.print
 import zoneddatetime.extensions.parseZonedDateTime
 import zoneddatetime.extensions.print
+import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -92,6 +93,16 @@ class UseCase(
                 }
             }
 
+    fun getJogEntriesById(jogID: Int): Maybe<List<ModifiedJogDateInformation>> =
+        jogEntriesRepository.getByJogID(jogID)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { listOfSpecificJogDates ->
+                return@map listOfSpecificJogDates.map { workoutDate ->
+                    convertWorkOutDateToModifiedJogDate(workoutDate)
+                }
+            }
+
     fun getAllJogSummaries(): Observable<List<ModifiedJogSummary>> =
         jogSummaryRepository.getAll().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -99,28 +110,44 @@ class UseCase(
                 return@map listOfJogSummaries.map { jogSummary ->
                     ModifiedJogSummary(
                         jogId = jogSummary.id,
-                        date = jogSummary.startDate.parseZonedDateTime()!!
+                        date = jogSummary.startDate.parseZonedDateTime()!!,
+                        timeDurationInSeconds = jogSummary.totalJogDuration,
+                        totalDistance = jogSummary.totalJogDistance
                     )
                 }
             }
 
-    fun addJogSummary(startDate: ZonedDateTime, jogNumber: Int): Completable =
+    fun addJogSummary(
+        startDate: ZonedDateTime,
+        jogId: Int,
+        endDate: ZonedDateTime,
+        totalJogDistance: Double
+    ): Completable =
         jogSummaryRepository.add(
             JogSummary(
-                jogNumber,
-                startDate.print(DateFormat.YYYY_MM_DD.format),
+                jogId,
+                startDate.print(DateFormat.YYYY_MM_DD_T_TIME.format),
+                Duration.between(startDate, endDate).seconds,
+                totalJogDistance
             )
         )
 
-    fun getJogSummariesAtDate(localDate: LocalDate): Maybe<List<ModifiedJogSummary>> =
-        jogSummaryRepository.getByDate(date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%")
+    fun getJogSummariesAtDate(date: Date): Maybe<List<ModifiedJogSummary>> =
+        jogSummaryRepository.getByDate(
+            date = "%${
+                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    .print(DateFormat.YYYY_MM_DD.format)
+            }%"
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->
                 return@map listOfJogSummaries.map { jogSummary ->
                     ModifiedJogSummary(
                         jogId = jogSummary.id,
-                        date = jogSummary.startDate.parseZonedDateTime()!!
+                        date = jogSummary.startDate.parseZonedDateTime()!!,
+                        timeDurationInSeconds = jogSummary.totalJogDuration,
+                        totalDistance = jogSummary.totalJogDistance
                     )
                 }
             }

@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), ViewListener {
                 supportFragmentManager.beginTransaction()
                         .show(recyclerViewFragment)
                         .commit()
-                viewModel.getAllJogsAtSpecificDate(date)
+                viewModel.getAllJogSummariesAtSpecificDate(date)
             }
         }
     }

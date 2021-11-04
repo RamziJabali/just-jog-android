@@ -19,6 +19,7 @@ import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInform
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
+import com.eljabali.joggingapplicationandroid.util.getTotalDistance
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -40,7 +41,6 @@ class ForegroundService : Service() {
     }
 
     private var id: Int = 0
-    private var hasJogSummaryBeenEntered = false
 
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
@@ -92,8 +92,31 @@ class ForegroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        compositeDisposable.clear()
-        locationManager.removeUpdates(locationListener)
+        useCase.getJogEntriesById(id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { lisOfJogs ->
+                    addJogSummary(
+                        lisOfJogs[0].dateTime,
+                        lisOfJogs.last().dateTime,
+                        id,
+                        getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
+                    )
+                    compositeDisposable.clear()
+                    locationManager.removeUpdates(locationListener)
+                },
+                { error -> Log.e(FS_TAG, error.localizedMessage, error) }
+            )
+            .addTo(compositeDisposable)
+    }
+
+    private fun getListOfLatLngFromModifiedJogEntry(lisOfJogs: List<ModifiedJogDateInformation>): List<LatLng> {
+        val listOfLatLng = mutableListOf<LatLng>()
+        lisOfJogs.forEach{ jog ->
+            listOfLatLng.add(jog.latitudeLongitude)
+        }
+        return listOfLatLng
     }
 
     private fun startTrackingJog() {
@@ -124,17 +147,11 @@ class ForegroundService : Service() {
 
     private fun recordRunEvent(id: Int, location: Location) {
         Log.i(FS_TAG, "Success getting location")
-        val latLng = LatLng(location.latitude, location.longitude)
-        val timeNow = ZonedDateTime.now()
         val modifiedJogDateInformation = ModifiedJogDateInformation(
-            dateTime = timeNow,
-            latitudeLongitude = latLng,
+            dateTime = ZonedDateTime.now(),
+            latitudeLongitude = LatLng(location.latitude, location.longitude),
             runNumber = id
         )
-        if (!hasJogSummaryBeenEntered) {
-            addJogSummary(timeNow, id)
-            hasJogSummaryBeenEntered = true
-        }
         addJog(modifiedJogDateInformation)
     }
 
@@ -150,8 +167,13 @@ class ForegroundService : Service() {
             .addTo(compositeDisposable)
     }
 
-    private fun addJogSummary(startDateTime: ZonedDateTime, jogNumber: Int) {
-        useCase.addJogSummary(startDate = startDateTime, jogNumber = jogNumber)
+    private fun addJogSummary(
+        startDateTime: ZonedDateTime,
+        endDateTime: ZonedDateTime,
+        jogId: Int,
+        totalJogDistance: Double
+    ) {
+        useCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

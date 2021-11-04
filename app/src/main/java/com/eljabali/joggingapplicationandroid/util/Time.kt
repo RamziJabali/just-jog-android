@@ -17,3 +17,12 @@ fun getFormattedTime(totalTimeInSeconds: Long): String {
     val totalSeconds = tempTime
     return String.format("%02d:%02d:%02d", totalHours,totalMinutes,totalSeconds)
 }
+fun getFormattedTimeMinutes(totalTimeInMinutes: Long): String {
+    var tempTime = minutesToSeconds(totalTimeInMinutes)
+    val totalHours = secondsToHours(tempTime)
+    tempTime -= hoursToSeconds(totalHours)
+    val totalMinutes = secondsToMinutes(tempTime)
+    tempTime -= minutesToSeconds(totalMinutes)
+    val totalSeconds = tempTime
+    return String.format("%02d:%02d:%02d", totalHours,totalMinutes,totalSeconds)
+}

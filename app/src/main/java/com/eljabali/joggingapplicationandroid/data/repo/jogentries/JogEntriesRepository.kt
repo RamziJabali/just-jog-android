@@ -16,5 +16,7 @@ class JogEntriesRepository(private val jogEntriesDAO: JogEntriesDAO) {
     fun add(jogEntries: JogEntries): Completable =
         jogEntriesDAO.addUpdateWorkout(jogEntries)
 
+    fun getByJogID(jogId: Int): Maybe<List<JogEntries>> = jogEntriesDAO.getByID(jogId)
+
     fun deleteAll(): Completable = jogEntriesDAO.deleteAll()
 }

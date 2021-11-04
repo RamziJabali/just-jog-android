@@ -14,12 +14,14 @@ interface JogEntriesDAO {
     @Query("SELECT * FROM jog_entries")
     fun getAll(): Observable<List<JogEntries>>
 
-    //    @Query("SELECT * FROM user_workout_schedule WHERE date IN (:stringDate)")
     @Query("SELECT * FROM jog_entries WHERE date_time LIKE (:stringDate)")
     fun getByDate(stringDate: String): Maybe<List<JogEntries>>
 
     @Query("SELECT * FROM jog_entries WHERE date_time BETWEEN (:startDate) AND (:endDate)")
     fun getByRangeOfDates(startDate: String, endDate: String): Observable<List<JogEntries>>
+
+    @Query("SELECT * FROM jog_entries WHERE jog_summary_id IS :jogId")
+    fun getByID(jogId: Int): Maybe<List<JogEntries>>
 
     @Query("DELETE FROM jog_entries")
     fun deleteAll(): Completable
