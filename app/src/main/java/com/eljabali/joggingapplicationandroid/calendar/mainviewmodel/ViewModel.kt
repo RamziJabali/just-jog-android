@@ -9,7 +9,7 @@ import com.eljabali.joggingapplicationandroid.calendar.mainview.ColoredDates
 import com.eljabali.joggingapplicationandroid.calendar.mainview.ViewState
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewProperties
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
-import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
@@ -24,7 +24,7 @@ import zoneddatetime.extensions.print
 import java.time.ZonedDateTime
 import java.util.*
 
-class ViewModel(application: Application, private val useCase: UseCase) :
+class ViewModel(application: Application, private val jogUseCase: JogUseCase) :
     AndroidViewModel(application) {
 
     companion object {
@@ -42,7 +42,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
     val viewStateObservable = BehaviorSubject.create<ViewState>()
 
     fun getAllDates() {
-        useCase.getAllJogSummaries()
+        jogUseCase.getAllJogSummaries()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -58,7 +58,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
 
     fun getAllJogSummariesAtSpecificDate(date: Date) {
         val localDateTimeSelected = LocalDateUtil.new(date)
-        useCase.getJogSummariesAtDate(localDateTimeSelected)
+        jogUseCase.getJogSummariesAtDate(localDateTimeSelected)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

@@ -3,7 +3,7 @@ package com.eljabali.joggingapplicationandroid.map.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
-import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import java.time.LocalDate
 
-class MapsViewModel(private val useCase: UseCase) : ViewModel() {
+class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
 
     private var mapsViewState = MapsViewState()
     private val compositeDisposable = CompositeDisposable()
@@ -26,7 +26,7 @@ class MapsViewModel(private val useCase: UseCase) : ViewModel() {
     }
 
     fun getAllJogsAtSpecificDate(localDate: LocalDate, runID: Int) {
-        useCase.getAllJogsAtSpecificDate(localDate)
+        jogUseCase.getAllJogsAtSpecificDate(localDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewFragment
-import com.eljabali.joggingapplicationandroid.statistics.view.JogStatisticsFragment
+import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsFragment
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
@@ -39,10 +39,10 @@ class HomeActivity : AppCompatActivity(), ViewListener {
     private val viewModel: ViewModel by viewModel()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
-    private val statisticsFragment: JogStatisticsFragment by lazy {
+    private val statisticsFragment: StatisticsFragment by lazy {
         checkForPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, "Fine Location", FINE_LOCATION_RQ)
         checkForPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION, "Coarse Location", COARSE_LOCATION_RQ)
-        JogStatisticsFragment.newInstance(shouldStopService)
+        StatisticsFragment.newInstance(shouldStopService)
     }
     private val recyclerViewFragment: RecyclerViewFragment by lazy { RecyclerViewFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
@@ -98,7 +98,7 @@ class HomeActivity : AppCompatActivity(), ViewListener {
                 .hide(recyclerViewFragment)
                 .commit()
         supportFragmentManager.beginTransaction()
-                .add(R.id.frameLayout, statisticsFragment, JogStatisticsFragment.TAG)
+                .add(R.id.frameLayout, statisticsFragment, StatisticsFragment.TAG)
                 .commit()
     }
 

@@ -14,9 +14,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
-import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
-import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTIVE_RUN
+import com.eljabali.joggingapplicationandroid.services.NotificationChannel.ACTIVE_RUN
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 class ForegroundService : Service() {
 
     companion object {
-        const val NOTIFICATION_ID = 1
+        private const val NOTIFICATION_ID = 1
     }
 
     private var id: Int = 0
@@ -49,9 +49,9 @@ class ForegroundService : Service() {
             recordRunEvent(id, location)
         }
     }
-    private val useCase by inject<UseCase>()
+    private val jogUseCase by inject<JogUseCase>()
     private val compositeDisposable = CompositeDisposable()
-    private val jogStart by lazy { ZonedDateTimes.now }
+    private val jogStartZonedDateTime by lazy { ZonedDateTimes.now }
     private val pendingIntent by lazy {
         PendingIntent.getActivity(this, 0, Intent(this, HomeActivity::class.java), 0)
     }
@@ -77,7 +77,7 @@ class ForegroundService : Service() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val duration = Duration.between(jogStart, ZonedDateTimes.now)
+                val duration = Duration.between(jogStartZonedDateTime, ZonedDateTimes.now)
                 val time = getFormattedTime(duration.seconds)
                 startForeground(NOTIFICATION_ID, createNotification(time))
             }
@@ -90,7 +90,7 @@ class ForegroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        useCase.getJogEntriesById(id)
+        jogUseCase.getJogEntriesById(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -103,8 +103,14 @@ class ForegroundService : Service() {
                     )
                     compositeDisposable.clear()
                     locationManager.removeUpdates(locationListener)
+                    super.onDestroy()
                 },
-                { error -> Log.e(TAG, error.localizedMessage, error) }
+                { error ->
+                    Log.e(TAG, error.localizedMessage, error)
+                    compositeDisposable.clear()
+                    locationManager.removeUpdates(locationListener)
+                    super.onDestroy()
+                }
             )
             .addTo(compositeDisposable)
     }
@@ -118,7 +124,7 @@ class ForegroundService : Service() {
     }
 
     private fun startTrackingJog() {
-        useCase.getNewRunID()
+        jogUseCase.getNewRunID()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -154,7 +160,7 @@ class ForegroundService : Service() {
     }
 
     private fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
-        useCase.addJog(modifiedJogDateInformation)
+        jogUseCase.addJog(modifiedJogDateInformation)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -171,7 +177,7 @@ class ForegroundService : Service() {
         jogId: Int,
         totalJogDistance: Double
     ) {
-        useCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
+        jogUseCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -205,7 +211,7 @@ class ForegroundService : Service() {
             .setContentIntent(pendingIntent)
             .addAction(
                 android.R.drawable.checkbox_off_background,
-                getString(R.string.stop),
+                getString(R.string.stop_jog),
                 stopServicePendingIntent
             )
             .build()

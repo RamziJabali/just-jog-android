@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
-import com.eljabali.joggingapplicationandroid.databinding.StatisticsFragmentBinding
+import com.eljabali.joggingapplicationandroid.databinding.FragmentStatisticsBinding
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import com.eljabali.joggingapplicationandroid.util.TAG
@@ -18,12 +18,12 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class JogStatisticsFragment : Fragment() {
+class StatisticsFragment : Fragment() {
 
     companion object {
         private const val SHOULD_STOP_SERVICE_KEY = "SHOULD_STOP_SERVICE_KEY"
 
-        fun newInstance(shouldStopService: Boolean) = JogStatisticsFragment().apply {
+        fun newInstance(shouldStopService: Boolean) = StatisticsFragment().apply {
             arguments = Bundle().apply {
                 putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
             }
@@ -32,7 +32,7 @@ class JogStatisticsFragment : Fragment() {
 
     private val statisticsViewModel: StatisticsViewModel by viewModel()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private lateinit var binding: StatisticsFragmentBinding
+    private lateinit var binding: FragmentStatisticsBinding
     private var shouldStopService = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class JogStatisticsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = StatisticsFragmentBinding.inflate(inflater)
+        binding = FragmentStatisticsBinding.inflate(inflater)
         return binding.root
     }
 

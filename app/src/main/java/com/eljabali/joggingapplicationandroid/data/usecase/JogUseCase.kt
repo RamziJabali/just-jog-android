@@ -22,7 +22,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
-class UseCase(
+class JogUseCase(
     private val jogEntriesRepository: JogEntriesRepository,
     private val jogSummaryRepository: JogSummaryRepository
 ) {

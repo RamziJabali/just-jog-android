@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
-import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
@@ -23,7 +23,7 @@ import zoneddatetime.extensions.print
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-class StatisticsViewModel(application: Application, private val useCase: UseCase) :
+class StatisticsViewModel(application: Application, private val jogUseCase: JogUseCase) :
     AndroidViewModel(application) {
 
     companion object {
@@ -50,7 +50,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     private fun getAllJogsAtSpecificDate(date: LocalDate) {
-        useCase.getAllJogsAtSpecificDate(date)
+        jogUseCase.getAllJogsAtSpecificDate(date)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -66,7 +66,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     private fun getJogSummariesBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
-        useCase.getGetJogSummariesBetweenDates(startDate, endDate)
+        jogUseCase.getGetJogSummariesBetweenDates(startDate, endDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -97,7 +97,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     }
 
     fun deleteAll() {
-        useCase.deleteAllEntries()
+        jogUseCase.deleteAllEntries()
         statisticsViewState = statisticsViewState.copy(weeklyAverageDistance = NOTHING_JOGGED, todayLastJogDistance = NOTHING_JOGGED_TODAY)
         invalidateView()
     }

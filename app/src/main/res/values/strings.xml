@@ -27,5 +27,5 @@
 
     <!-- Notification -->
     <string name="notification_title">Actively Running</string>
-    <string name="stop">stop</string>
+    <string name="stop_jog">Stop Jog</string>
 </resources>
