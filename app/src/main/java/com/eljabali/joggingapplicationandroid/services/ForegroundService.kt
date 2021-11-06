@@ -13,7 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
+import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.services.NotificationChannel.ACTIVE_RUN

@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
+import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.databinding.FragmentStatisticsBinding
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel

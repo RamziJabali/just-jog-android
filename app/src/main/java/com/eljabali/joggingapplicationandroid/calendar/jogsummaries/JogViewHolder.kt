@@ -1,4 +1,4 @@
-package com.eljabali.joggingapplicationandroid.calendar.recyclerview
+package com.eljabali.joggingapplicationandroid.calendar.jogsummaries
 
 import android.view.View
 import android.widget.Button
@@ -6,21 +6,21 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.eljabali.joggingapplicationandroid.R
 
-class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class JogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val jogEntryNumberTextView: TextView = itemView.findViewById(R.id.jog_number)
     private val milePerHourTextView: TextView = itemView.findViewById(R.id.miles_per_hour_value)
     private val totalDistanceTextView: TextView = itemView.findViewById(R.id.total_distance_value)
     private val totalTimeTextView: TextView = itemView.findViewById(R.id.total_time_value)
     private val dateTextView: TextView = itemView.findViewById(R.id.date_value)
     private val mapsButton: Button = itemView.findViewById(R.id.map_button)
-    fun bind(recyclerViewProperties: RecyclerViewProperties, onClickListener: ItemClickListener) {
-        jogEntryNumberTextView.text = recyclerViewProperties.jogEntry
-        milePerHourTextView.text = recyclerViewProperties.milesPerHour
-        totalDistanceTextView.text = recyclerViewProperties.totalDistance
-        totalTimeTextView.text = recyclerViewProperties.totalTime
-        dateTextView.text = recyclerViewProperties.date
+    fun bind(jogSummaryProperties: JogSummaryProperties, onClickListener: JogClickListener) {
+        jogEntryNumberTextView.text = jogSummaryProperties.jogEntryCountOfDay
+        milePerHourTextView.text = jogSummaryProperties.milesPerHour
+        totalDistanceTextView.text = jogSummaryProperties.totalDistance
+        totalTimeTextView.text = jogSummaryProperties.totalTime
+        dateTextView.text = jogSummaryProperties.date
         mapsButton.setOnClickListener {
-            onClickListener.onItemClickedListener(recyclerViewProperties.jogEntry.toInt(),recyclerViewProperties.date)
+            onClickListener.onJogClickedListener(jogSummaryProperties.jogEntryCountOfDay.toInt(),jogSummaryProperties.date)
         }
     }
 }

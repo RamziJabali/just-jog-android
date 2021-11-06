@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary_background_color"
-    tools:context=".calendar.mainview.HomeActivity">
+    tools:context=".home.HomeActivity">
 
 
     <FrameLayout
@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        tools:context=".calendar.recyclerview.RecyclerViewFragment"/>
+        tools:context=".calendar.jogsummaries.JogSummariesFragment"/>
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
