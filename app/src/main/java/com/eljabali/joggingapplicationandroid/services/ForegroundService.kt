@@ -37,11 +37,9 @@ class ForegroundService : Service() {
 
     companion object {
         const val NOTIFICATION_ID = 1
-        const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
     }
 
     private var id: Int = 0
-
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
     }
@@ -60,7 +58,7 @@ class ForegroundService : Service() {
     private val stopServicePendingIntent by lazy {
         PendingIntent.getActivity(
             this, 0, Intent(this, HomeActivity::class.java).apply {
-                putExtra(STOP_SERVICE_KEY, true)
+                putExtra(HomeActivity.STOP_SERVICE_KEY, true)
             },
             PendingIntent.FLAG_CANCEL_CURRENT
         )

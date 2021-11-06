@@ -29,23 +29,20 @@ class HomeActivity : AppCompatActivity(), ViewListener {
 
     companion object {
         const val CAL_TAG = "CaldroidFragment.TAG"
+        const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
         const val FINE_LOCATION_RQ = 101
         const val COARSE_LOCATION_RQ = 102
     }
 
-    var stopService = false
-
+    private var shouldStopService = false
     private var viewState: ViewState = ViewState()
-
     private val viewModel: ViewModel by viewModel()
-
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
-
     private val statisticsFragment: JogStatisticsFragment by lazy {
         checkForPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, "Fine Location", FINE_LOCATION_RQ)
         checkForPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION, "Coarse Location", COARSE_LOCATION_RQ)
-        JogStatisticsFragment.newInstance()
+        JogStatisticsFragment.newInstance(shouldStopService)
     }
     private val recyclerViewFragment: RecyclerViewFragment by lazy { RecyclerViewFragment.newInstance() }
     private val caldroidFragment: CaldroidFragment by lazy {
@@ -62,7 +59,7 @@ class HomeActivity : AppCompatActivity(), ViewListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        stopService = intent.getBooleanExtra("STOP_SERVICE_KEY", false)
+        shouldStopService = intent.getBooleanExtra(STOP_SERVICE_KEY, false)
         setupBottomNavigation()
         setupFragments()
         setupCalendarListener()

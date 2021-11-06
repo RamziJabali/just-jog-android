@@ -18,15 +18,27 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class JogStatisticsFragment : Fragment(), ViewListener {
+class JogStatisticsFragment : Fragment() {
 
     companion object {
-        fun newInstance() = JogStatisticsFragment()
+        private const val SHOULD_STOP_SERVICE_KEY = "SHOULD_STOP_SERVICE_KEY"
+
+        fun newInstance(shouldStopService: Boolean) = JogStatisticsFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
+            }
+        }
     }
 
     private val statisticsViewModel: StatisticsViewModel by viewModel()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private lateinit var binding: StatisticsFragmentBinding
+    private var shouldStopService = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        shouldStopService = arguments?.getBoolean(SHOULD_STOP_SERVICE_KEY) ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +51,13 @@ class JogStatisticsFragment : Fragment(), ViewListener {
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "onResume()")
-        onLaunch()
+        statisticsViewModel.onFragmentLaunch()
+        monitorStatisticsViewState()
+        setClickListeners()
+        if (shouldStopService) {
+            val homeActivity = activity as HomeActivity
+            homeActivity.stopService(Intent(requireContext(), ForegroundService::class.java))
+        }
     }
 
     override fun onStop() {
@@ -47,7 +65,7 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         compositeDisposable.clear()
     }
 
-    override fun monitorStatisticsViewState() {
+    private fun monitorStatisticsViewState() {
         statisticsViewModel.observableStatisticsViewState
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -58,29 +76,23 @@ class JogStatisticsFragment : Fragment(), ViewListener {
             .addTo(compositeDisposable)
     }
 
-    override fun setNewViewState(statisticsViewState: StatisticsViewState) {
+    private fun setClickListeners() {
+        with (binding) {
+            startRunButton.setOnClickListener {
+                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
+            }
+            deleteAllRunsButton.setOnClickListener {
+                statisticsViewModel.deleteAll()
+            }
+        }
+    }
+
+    private fun setNewViewState(statisticsViewState: StatisticsViewState) {
         with(binding) {
             date.text = statisticsViewState.dateToday
             time.text = statisticsViewState.timeNow
             averageWeeklyMilage.text = statisticsViewState.weeklyAverageDistance
             jogEntry.text = statisticsViewState.todayLastJogDistance
-        }
-    }
-
-    private fun onLaunch() {
-        monitorStatisticsViewState()
-        statisticsViewModel.onFragmentLaunch()
-        with (binding) {
-            startRun.setOnClickListener {
-                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
-            }
-            deleteAllRuns.setOnClickListener {
-                statisticsViewModel.deleteAll()
-            }
-        }
-        val homeActivity = activity as HomeActivity
-        if (homeActivity.stopService) {
-            homeActivity.stopService(Intent(requireContext(), ForegroundService::class.java))
         }
     }
 }
