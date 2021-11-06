@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -14,14 +15,15 @@ import java.time.LocalDate
 
 class MapsViewModel(private val useCase: UseCase) : ViewModel() {
 
-    companion object {
-        const val MVM_TAG = "MapsViewModel"
-    }
-
     private var mapsViewState = MapsViewState()
     private val compositeDisposable = CompositeDisposable()
 
     val mapsViewStateObservable = BehaviorSubject.create<MapsViewState>()
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 
     fun getAllJogsAtSpecificDate(localDate: LocalDate, runID: Int) {
         useCase.getAllJogsAtSpecificDate(localDate)
@@ -37,7 +39,7 @@ class MapsViewModel(private val useCase: UseCase) : ViewModel() {
                     )
                     invalidateView()
                 },
-                { error -> Log.e(MVM_TAG, error.localizedMessage, error) }
+                { error -> Log.e(TAG, error.localizedMessage, error) }
             )
             .addTo(compositeDisposable)
     }
@@ -58,11 +60,6 @@ class MapsViewModel(private val useCase: UseCase) : ViewModel() {
 
     private fun invalidateView() {
         mapsViewStateObservable.onNext(mapsViewState)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
     }
 
 }

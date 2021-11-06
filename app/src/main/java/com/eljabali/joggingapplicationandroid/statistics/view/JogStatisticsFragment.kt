@@ -11,7 +11,7 @@ import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
 import com.eljabali.joggingapplicationandroid.databinding.StatisticsFragmentBinding
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
-import com.eljabali.joggingapplicationandroid.util.getTag
+import com.eljabali.joggingapplicationandroid.util.TAG
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -21,7 +21,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class JogStatisticsFragment : Fragment(), ViewListener {
 
     companion object {
-        val TAG: String = JogStatisticsFragment.getTag()
         fun newInstance() = JogStatisticsFragment()
     }
 

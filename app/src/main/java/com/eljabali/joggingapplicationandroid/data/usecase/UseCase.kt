@@ -6,6 +6,7 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRep
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -25,10 +26,6 @@ class UseCase(
     private val jogEntriesRepository: JogEntriesRepository,
     private val jogSummaryRepository: JogSummaryRepository
 ) {
-
-    companion object {
-        const val UC_TAG = "USECASE"
-    }
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -159,8 +156,8 @@ class UseCase(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { Log.i(UC_TAG, "Success") },
-                { error -> Log.e(UC_TAG, error.localizedMessage, error) }
+                { Log.i(TAG, "Success") },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
             )
             .addTo(compositeDisposable)
 
@@ -168,8 +165,8 @@ class UseCase(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { Log.i(UC_TAG, "Success") },
-                { error -> Log.e(UC_TAG, error.localizedMessage, error) })
+                { Log.i(TAG, "Success") },
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 

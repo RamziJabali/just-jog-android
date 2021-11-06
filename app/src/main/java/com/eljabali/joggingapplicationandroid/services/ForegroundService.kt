@@ -13,11 +13,12 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTIVE_RUN
 import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTIVE_RUN
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
 import com.eljabali.joggingapplicationandroid.util.getTotalDistance
 import com.google.android.gms.maps.model.LatLng
@@ -35,7 +36,6 @@ import java.util.concurrent.TimeUnit
 class ForegroundService : Service() {
 
     companion object {
-        const val FS_TAG = "Foreground Service"
         const val NOTIFICATION_ID = 1
         const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
     }
@@ -106,7 +106,7 @@ class ForegroundService : Service() {
                     compositeDisposable.clear()
                     locationManager.removeUpdates(locationListener)
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) }
+                { error -> Log.e(TAG, error.localizedMessage, error) }
             )
             .addTo(compositeDisposable)
     }
@@ -125,7 +125,7 @@ class ForegroundService : Service() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { currentRunId -> jogListener(currentRunId) },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) },
+                { error -> Log.e(TAG, error.localizedMessage, error) },
                 { jogListener(1) }
             ).addTo(compositeDisposable)
     }
@@ -133,7 +133,7 @@ class ForegroundService : Service() {
     @SuppressLint("MissingPermission")
     private fun jogListener(id: Int) {
         if (!PermissionUtil.isGpsLocationGranted(applicationContext)) {
-            Log.e(FS_TAG, "Don't have permissions")
+            Log.e(TAG, "Don't have permissions")
             return
         }
         this.id = id
@@ -146,7 +146,7 @@ class ForegroundService : Service() {
     }
 
     private fun recordRunEvent(id: Int, location: Location) {
-        Log.i(FS_TAG, "Success getting location")
+        Log.i(TAG, "Success getting location")
         val modifiedJogDateInformation = ModifiedJogDateInformation(
             dateTime = ZonedDateTime.now(),
             latitudeLongitude = LatLng(location.latitude, location.longitude),
@@ -161,9 +161,9 @@ class ForegroundService : Service() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.i(FS_TAG, "Success")
+                    Log.i(TAG, "Success")
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 
@@ -178,9 +178,9 @@ class ForegroundService : Service() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.i(FS_TAG, "Success")
+                    Log.i(TAG, "Success")
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 

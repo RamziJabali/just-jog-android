@@ -3,12 +3,13 @@ package com.eljabali.joggingapplicationandroid.statistics.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.util.getTotalDistance
-import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
+import com.eljabali.joggingapplicationandroid.util.DateFormat
+import com.eljabali.joggingapplicationandroid.util.TAG
+import com.eljabali.joggingapplicationandroid.util.getTotalDistance
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import localdate.LocalDates
 import zoneddatetime.ZonedDateTimes
 import zoneddatetime.extensions.print
 import java.time.LocalDate
@@ -25,7 +27,6 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     AndroidViewModel(application) {
 
     companion object {
-        const val SVM_TAG = "Statistics ViewModel"
         const val NOTHING_JOGGED = "0.00 Miles"
         const val NOTHING_JOGGED_TODAY = "No Entry For Today"
     }
@@ -42,8 +43,8 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
     fun onFragmentLaunch() {
         setUpClock()
         getJogSummariesBetweenTwoDates(
-            ZonedDateTimes.lastMonday.toLocalDate(),
-            ZonedDateTimes.today.toLocalDate()
+            LocalDates.lastMonday,
+            LocalDates.today
         )
         getAllJogsAtSpecificDate(ZonedDateTimes.today.toLocalDate())
     }
@@ -59,7 +60,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
                     )
                     invalidateView()
                 },
-                { error -> Log.e(SVM_TAG, error.localizedMessage, error) },
+                { error -> Log.e(TAG, error.localizedMessage, error) },
             )
             .addTo(compositeDisposable)
     }
@@ -75,7 +76,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
                     )
                     invalidateView()
                 },
-                { error -> Log.e(SVM_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
 
     }

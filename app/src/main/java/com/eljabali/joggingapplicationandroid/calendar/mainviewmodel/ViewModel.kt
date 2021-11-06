@@ -10,7 +10,10 @@ import com.eljabali.joggingapplicationandroid.calendar.mainview.ViewState
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewProperties
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
-import com.eljabali.joggingapplicationandroid.util.*
+import com.eljabali.joggingapplicationandroid.util.DateFormat
+import com.eljabali.joggingapplicationandroid.util.TAG
+import com.eljabali.joggingapplicationandroid.util.getFormattedTime
+import com.eljabali.joggingapplicationandroid.util.getMPH
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -25,7 +28,6 @@ class ViewModel(application: Application, private val useCase: UseCase) :
     AndroidViewModel(application) {
 
     companion object {
-        const val VM_TAG = "ViewModel"
         val hasWorkedOutColor: ColorDrawable =
             ColorDrawable(Color.GREEN)
         val hasNotWorkedOutColor: ColorDrawable =
@@ -50,7 +52,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                     )
                     invalidateView()
                 },
-                { error -> Log.e(VM_TAG, error.localizedMessage, error) }
+                { error -> Log.e(TAG, error.localizedMessage, error) }
             ).addTo(compositeDisposable)
     }
 
@@ -68,7 +70,7 @@ class ViewModel(application: Application, private val useCase: UseCase) :
                     )
                     invalidateView()
                 },
-                { error -> Log.e(VM_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
 
     }

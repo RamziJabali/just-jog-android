@@ -2,21 +2,18 @@ package com.eljabali.joggingapplicationandroid.map.view
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewState
+import com.eljabali.joggingapplicationandroid.util.DateFormat
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,12 +22,10 @@ import io.reactivex.schedulers.Schedulers
 import localdate.extensions.parseLocalDate
 import localdate.extensions.print
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.RuntimeException
 import java.time.LocalDate
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
     companion object {
-        const val MA_TAG = "MapsActivity"
         const val ZOOM_LEVEL = 13f
         const val RUN_ID = "com.eljabali.joggingapplicationandroid.map.mapsview"
         const val DATE_ID = "GOOGLYMOOGLY"
@@ -81,7 +76,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
                 { viewState ->
                     setMapsViewState(viewState)
                 },
-                { error -> Log.e(MA_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 }

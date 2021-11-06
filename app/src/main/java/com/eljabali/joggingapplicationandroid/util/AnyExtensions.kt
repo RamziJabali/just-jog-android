@@ -1,3 +1,3 @@
 package com.eljabali.joggingapplicationandroid.util
 
-fun Any.getTag(): String = javaClass.simpleName
+val Any.TAG: String get() = javaClass.simpleName

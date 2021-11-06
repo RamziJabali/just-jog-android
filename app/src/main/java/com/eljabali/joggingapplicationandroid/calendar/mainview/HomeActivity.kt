@@ -13,6 +13,7 @@ import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.mainviewmodel.ViewModel
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewFragment
 import com.eljabali.joggingapplicationandroid.statistics.view.JogStatisticsFragment
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
@@ -27,9 +28,7 @@ import java.util.*
 class HomeActivity : AppCompatActivity(), ViewListener {
 
     companion object {
-        const val CAL_TAG = "CaldroidFragment"
-        const val RCV_TAG = "RecyclerViewFragment"
-        const val MVM_TAG = "MainViewModel"
+        const val CAL_TAG = "CaldroidFragment.TAG"
         const val FINE_LOCATION_RQ = 101
         const val COARSE_LOCATION_RQ = 102
     }
@@ -79,7 +78,7 @@ class HomeActivity : AppCompatActivity(), ViewListener {
                             this.viewState = viewState
                             setNewViewState(viewState)
                         },
-                        { error -> Log.e(MVM_TAG, error.localizedMessage, error) })
+                        { error -> Log.e(ViewModel.TAG, error.localizedMessage, error) })
                 .addTo(compositeDisposable)
     }
 
@@ -98,7 +97,7 @@ class HomeActivity : AppCompatActivity(), ViewListener {
                 .hide(caldroidFragment)
                 .commit()
         supportFragmentManager.beginTransaction()
-                .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RCV_TAG)
+                .add(R.id.recycler_view_frame_layout, recyclerViewFragment, RecyclerViewFragment.TAG)
                 .hide(recyclerViewFragment)
                 .commit()
         supportFragmentManager.beginTransaction()
