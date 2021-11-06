@@ -1,11 +1,11 @@
 package com.eljabali.joggingapplicationandroid.data.usecase
 
 import android.util.Log
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
-import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -19,9 +19,7 @@ import zoneddatetime.extensions.parseZonedDateTime
 import zoneddatetime.extensions.print
 import java.time.Duration
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.*
 
 class UseCase(
     private val jogEntriesRepository: JogEntriesRepository,
@@ -65,16 +63,6 @@ class UseCase(
             startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
             endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
         )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { listOfSpecificJogDates ->
-                return@map listOfSpecificJogDates.map { workoutDate ->
-                    convertWorkOutDateToModifiedJogDate(workoutDate)
-                }
-            }
-
-    fun getAllJogsAtSpecificDate(date: Date): Maybe<List<ModifiedJogDateInformation>> =
-        jogEntriesRepository.getByDate(date = "%${convertDateToZonedDateTime(date).print(DateFormat.YYYY_MM_DD.format)}%")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfSpecificJogDates ->
@@ -132,12 +120,9 @@ class UseCase(
             )
         )
 
-    fun getJogSummariesAtDate(date: Date): Maybe<List<ModifiedJogSummary>> =
+    fun getJogSummariesAtDate(localDate: LocalDate): Maybe<List<ModifiedJogSummary>> =
         jogSummaryRepository.getByDate(
-            date = "%${
-                date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    .print(DateFormat.YYYY_MM_DD.format)
-            }%"
+            date = "%${localDate.print(DateFormat.YYYY_MM_DD.format)}%"
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -168,12 +153,6 @@ class UseCase(
                     )
                 }
     }
-
-    private fun convertDateToZonedDateTime(date: Date): ZonedDateTime =
-        ZonedDateTime.ofInstant(
-            date.toInstant(),
-            ZoneId.systemDefault()
-        )
 
     fun deleteAllEntries() {
         jogEntriesRepository.deleteAll()

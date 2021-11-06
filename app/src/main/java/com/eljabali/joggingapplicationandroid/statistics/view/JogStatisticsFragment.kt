@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.calendar.mainview.MainActivity
+import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -78,7 +78,7 @@ class JogStatisticsFragment : Fragment(), ViewListener {
             statisticsViewModel.deleteAll()
         }
 
-        val mainActivity = activity as MainActivity
+        val mainActivity = activity as HomeActivity
         if (mainActivity.stopService) {
             activity?.stopService(Intent(requireContext(), ForegroundService::class.java))
 

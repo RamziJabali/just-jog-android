@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTIVE_RUN
-import com.eljabali.joggingapplicationandroid.calendar.mainview.MainActivity
+import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
@@ -55,11 +55,11 @@ class ForegroundService : Service() {
     private val compositeDisposable = CompositeDisposable()
     private val jogStart by lazy { ZonedDateTimes.now }
     private val pendingIntent by lazy {
-        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
+        PendingIntent.getActivity(this, 0, Intent(this, HomeActivity::class.java), 0)
     }
     private val stopServicePendingIntent by lazy {
         PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java).apply {
+            this, 0, Intent(this, HomeActivity::class.java).apply {
                 putExtra(STOP_SERVICE_KEY, true)
             },
             PendingIntent.FLAG_CANCEL_CURRENT

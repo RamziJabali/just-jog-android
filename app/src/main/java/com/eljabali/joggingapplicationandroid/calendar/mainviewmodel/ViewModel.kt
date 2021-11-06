@@ -8,19 +8,16 @@ import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.calendar.mainview.ColoredDates
 import com.eljabali.joggingapplicationandroid.calendar.mainview.ViewState
 import com.eljabali.joggingapplicationandroid.calendar.recyclerview.RecyclerViewProperties
-import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
 import com.eljabali.joggingapplicationandroid.util.*
-import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.annotations.SchedulerSupport
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import localdate.LocalDateUtil
 import zoneddatetime.extensions.print
-import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -58,7 +55,8 @@ class ViewModel(application: Application, private val useCase: UseCase) :
     }
 
     fun getAllJogSummariesAtSpecificDate(date: Date) {
-        useCase.getJogSummariesAtDate(date)
+        val localDateTimeSelected = LocalDateUtil.new(date)
+        useCase.getJogSummariesAtDate(localDateTimeSelected)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
