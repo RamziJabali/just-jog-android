@@ -11,6 +11,7 @@ import com.eljabali.joggingapplicationandroid.calendar.mainview.HomeActivity
 import com.eljabali.joggingapplicationandroid.databinding.StatisticsFragmentBinding
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
+import com.eljabali.joggingapplicationandroid.util.getTag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -20,7 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class JogStatisticsFragment : Fragment(), ViewListener {
 
     companion object {
-        const val TAG = "Statistics Fragment"
+        val TAG: String = JogStatisticsFragment.getTag()
         fun newInstance() = JogStatisticsFragment()
     }
 
@@ -42,6 +43,11 @@ class JogStatisticsFragment : Fragment(), ViewListener {
         onLaunch()
     }
 
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
     override fun monitorStatisticsViewState() {
         statisticsViewModel.observableStatisticsViewState
             .subscribeOn(Schedulers.io())
@@ -55,29 +61,27 @@ class JogStatisticsFragment : Fragment(), ViewListener {
 
     override fun setNewViewState(statisticsViewState: StatisticsViewState) {
         with(binding) {
-            date.text = statisticsViewState.date
-            time.text = statisticsViewState.time
-            averageWeeklyMilage.text = statisticsViewState.weeklyAverage
-            jogEntry.text = statisticsViewState.dailyRecord
+            date.text = statisticsViewState.dateToday
+            time.text = statisticsViewState.timeNow
+            averageWeeklyMilage.text = statisticsViewState.weeklyAverageDistance
+            jogEntry.text = statisticsViewState.todayLastJogDistance
         }
     }
 
     private fun onLaunch() {
         monitorStatisticsViewState()
         statisticsViewModel.onFragmentLaunch()
-
-        binding.startRun.setOnClickListener {
-            activity?.startService(Intent(requireContext(), ForegroundService::class.java))
+        with (binding) {
+            startRun.setOnClickListener {
+                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
+            }
+            deleteAllRuns.setOnClickListener {
+                statisticsViewModel.deleteAll()
+            }
         }
-
-        binding.deleteAllRuns.setOnClickListener {
-            statisticsViewModel.deleteAll()
-        }
-
-        val mainActivity = activity as HomeActivity
-        if (mainActivity.stopService) {
-            activity?.stopService(Intent(requireContext(), ForegroundService::class.java))
-
+        val homeActivity = activity as HomeActivity
+        if (homeActivity.stopService) {
+            homeActivity.stopService(Intent(requireContext(), ForegroundService::class.java))
         }
     }
 }

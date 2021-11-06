@@ -55,7 +55,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             .subscribe(
                 { listOfModifiedJogDateInformation ->
                     statisticsViewState = statisticsViewState.copy(
-                        dailyRecord = getTodaysRecord(listOfModifiedJogDateInformation)
+                        todayLastJogDistance = getTodaysRecord(listOfModifiedJogDateInformation)
                     )
                     invalidateView()
                 },
@@ -71,7 +71,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             .subscribe(
                 { listOfModifiedJogDateInformation ->
                     statisticsViewState = statisticsViewState.copy(
-                        weeklyAverage = getWeeklyAverage(listOfModifiedJogDateInformation)
+                        weeklyAverageDistance = getWeeklyAverage(listOfModifiedJogDateInformation)
                     )
                     invalidateView()
                 },
@@ -87,8 +87,8 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
             .subscribe {
                 val now = ZonedDateTimes.now
                 statisticsViewState = statisticsViewState.copy(
-                    time = now.print(DateFormat.HH_MM_SS.format),
-                    date = now.print(DateFormat.EEE_MMM_D_YYYY.format)
+                    timeNow = now.print(DateFormat.HH_MM_SS.format),
+                    dateToday = now.print(DateFormat.EEE_MMM_D_YYYY.format)
                 )
                 invalidateView()
             }
@@ -97,7 +97,7 @@ class StatisticsViewModel(application: Application, private val useCase: UseCase
 
     fun deleteAll() {
         useCase.deleteAllEntries()
-        statisticsViewState = statisticsViewState.copy(weeklyAverage = NOTHING_JOGGED, dailyRecord = NOTHING_JOGGED_TODAY)
+        statisticsViewState = statisticsViewState.copy(weeklyAverageDistance = NOTHING_JOGGED, todayLastJogDistance = NOTHING_JOGGED_TODAY)
         invalidateView()
     }
 
