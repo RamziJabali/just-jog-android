@@ -2,8 +2,8 @@ package com.eljabali.joggingapplicationandroid.map.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
+import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,10 +15,10 @@ import java.time.LocalDate
 
 class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
 
+    val mapsViewStateObservable = BehaviorSubject.create<MapsViewState>()
+
     private var mapsViewState = MapsViewState()
     private val compositeDisposable = CompositeDisposable()
-
-    val mapsViewStateObservable = BehaviorSubject.create<MapsViewState>()
 
     override fun onCleared() {
         super.onCleared()
@@ -31,11 +31,10 @@ class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { listOfSpecificDates ->
+                    val pointsOfRun = getJogLatLngPoints(runID, listOfSpecificDates)
                     mapsViewState = mapsViewState.copy(
-                        listOfLatLng = getSpecificJogListOfLatLng(
-                            runID,
-                            listOfSpecificDates
-                        )
+                        listOfLatLng = pointsOfRun,
+                        midpoint = pointsOfRun[pointsOfRun.size / 2]
                     )
                     invalidateView()
                 },
@@ -44,7 +43,7 @@ class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
             .addTo(compositeDisposable)
     }
 
-    private fun getSpecificJogListOfLatLng(
+    private fun getJogLatLngPoints(
         jogID: Int,
         specificDate: List<ModifiedJogDateInformation>
     ): List<LatLng> {

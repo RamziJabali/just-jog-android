@@ -24,11 +24,12 @@ import localdate.extensions.print
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
-        const val ZOOM_LEVEL = 13f
-        const val RUN_ID = "com.eljabali.joggingapplicationandroid.map.mapsview"
-        const val DATE_ID = "GOOGLYMOOGLY"
+        private const val ZOOM_LEVEL = 13f
+        private const val RUN_ID = "com.eljabali.joggingapplicationandroid.map.mapsview"
+        private const val DATE_ID = "GOOGLYMOOGLY"
+
         fun newInstance(context: Context, localDate: LocalDate, runID: Int): Intent =
             Intent(context, MapsActivity::class.java).apply {
                 putExtra(RUN_ID, runID)
@@ -46,29 +47,36 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, MapsViewListener {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        setupViewModel()
         monitorMapsViewState()
-        val runID = intent.getIntExtra(RUN_ID, -1)
-        val localDate = intent.getStringExtra(DATE_ID)?.parseLocalDate() ?: throw RuntimeException()
-
-        mapsViewModel.getAllJogsAtSpecificDate(runID = runID, localDate = localDate)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
     }
 
-    override fun setMapsViewState(mapsViewState: MapsViewState) {
-        val midpoint = mapsViewState.listOfLatLng[mapsViewState.listOfLatLng.size / 2]
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
+    private fun setupViewModel() {
+        val runID = intent.getIntExtra(RUN_ID, -1)
+        val localDate = intent.getStringExtra(DATE_ID)?.parseLocalDate() ?: throw RuntimeException()
+        mapsViewModel.getAllJogsAtSpecificDate(runID = runID, localDate = localDate)
+    }
+
+    private fun setMapsViewState(mapsViewState: MapsViewState) {
         map.addPolyline(
             PolylineOptions()
                 .clickable(false)
                 .color(R.color.light_blue)
                 .addAll(mapsViewState.listOfLatLng)
         )
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(midpoint, ZOOM_LEVEL))
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(mapsViewState.midpoint, ZOOM_LEVEL))
     }
 
-    override fun monitorMapsViewState() {
+    private fun monitorMapsViewState() {
         mapsViewModel.mapsViewStateObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
