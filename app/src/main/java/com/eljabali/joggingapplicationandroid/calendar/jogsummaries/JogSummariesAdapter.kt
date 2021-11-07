@@ -11,7 +11,7 @@ class JogSummariesAdapter(private val jogClickListener: JogClickListener): Recyc
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JogViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.view_holder, parent, false)
+            .inflate(R.layout.item_jog_summary, parent, false)
         return JogViewHolder(view)
     }
 
