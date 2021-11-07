@@ -12,6 +12,7 @@ class JogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val totalDistanceTextView: TextView = itemView.findViewById(R.id.total_distance_value)
     private val totalTimeTextView: TextView = itemView.findViewById(R.id.total_time_value)
     private val dateTextView: TextView = itemView.findViewById(R.id.date_value)
+    private val jogSummaryId: TextView = itemView.findViewById(R.id.jog_summary_id)
     private val mapsButton: Button = itemView.findViewById(R.id.map_button)
     fun bind(jogSummaryProperties: JogSummaryProperties, onClickListener: JogClickListener) {
         jogEntryNumberTextView.text = jogSummaryProperties.jogEntryCountOfDay
@@ -19,8 +20,12 @@ class JogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         totalDistanceTextView.text = jogSummaryProperties.totalDistance
         totalTimeTextView.text = jogSummaryProperties.totalTime
         dateTextView.text = jogSummaryProperties.date
+        jogSummaryId.text = jogSummaryProperties.jogSummaryId
         mapsButton.setOnClickListener {
-            onClickListener.onJogClickedListener(jogSummaryProperties.jogEntryCountOfDay.toInt(),jogSummaryProperties.date)
+            onClickListener.onJogClickedListener(
+                jogSummaryProperties.jogSummaryId.toInt(),
+                jogSummaryProperties.date
+            )
         }
     }
 }

@@ -2,6 +2,7 @@ package com.eljabali.joggingapplicationandroid.services
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.app.NotificationChannel
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -13,9 +14,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
+import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.services.NotificationChannel.ACTIVE_RUN
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.TAG
@@ -91,16 +92,18 @@ class ForegroundService : Service() {
 
     override fun onDestroy() {
         jogUseCase.getJogEntriesById(id)
+            .map { lisOfJogs ->
+                addJogSummary(
+                    lisOfJogs[0].dateTime,
+                    lisOfJogs.last().dateTime,
+                    id,
+                    getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { lisOfJogs ->
-                    addJogSummary(
-                        lisOfJogs[0].dateTime,
-                        lisOfJogs.last().dateTime,
-                        id,
-                        getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
-                    )
+                {
                     compositeDisposable.clear()
                     locationManager.removeUpdates(locationListener)
                     super.onDestroy()

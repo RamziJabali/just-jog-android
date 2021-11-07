@@ -77,6 +77,7 @@ class HomeViewModel(
         listOfModifiedJogSummary.forEach { jogSummary ->
             listOfRecyclerViewProperties.add(
                     JogSummaryProperties(
+                            jogSummaryId = jogSummary.jogId.toString(),
                             totalDistance = "${jogSummary.totalDistance} Miles",
                             totalTime = getFormattedTime(jogSummary.timeDurationInSeconds),
                             jogEntryCountOfDay = jogNumber.toString(),
