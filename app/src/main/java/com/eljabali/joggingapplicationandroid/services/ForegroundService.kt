@@ -2,6 +2,7 @@ package com.eljabali.joggingapplicationandroid.services
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.app.NotificationChannel
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -13,11 +14,12 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
-import com.eljabali.joggingapplicationandroid.services.NotificationChannels.ACTIVE_RUN
-import com.eljabali.joggingapplicationandroid.calendar.mainview.MainActivity
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
-import com.eljabali.joggingapplicationandroid.data.usecase.UseCase
+import com.eljabali.joggingapplicationandroid.home.HomeActivity
+import com.eljabali.joggingapplicationandroid.services.NotificationChannel.ACTIVE_RUN
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
+import com.eljabali.joggingapplicationandroid.util.TAG
 import com.eljabali.joggingapplicationandroid.util.getFormattedTime
 import com.eljabali.joggingapplicationandroid.util.getTotalDistance
 import com.google.android.gms.maps.model.LatLng
@@ -35,13 +37,10 @@ import java.util.concurrent.TimeUnit
 class ForegroundService : Service() {
 
     companion object {
-        const val FS_TAG = "Foreground Service"
-        const val NOTIFICATION_ID = 1
-        const val STOP_SERVICE_KEY = "STOP_SERVICE_KEY"
+        private const val NOTIFICATION_ID = 1
     }
 
     private var id: Int = 0
-
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
     }
@@ -51,16 +50,16 @@ class ForegroundService : Service() {
             recordRunEvent(id, location)
         }
     }
-    private val useCase by inject<UseCase>()
+    private val jogUseCase by inject<JogUseCase>()
     private val compositeDisposable = CompositeDisposable()
-    private val jogStart by lazy { ZonedDateTimes.now }
+    private val jogStartZonedDateTime by lazy { ZonedDateTimes.now }
     private val pendingIntent by lazy {
-        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
+        PendingIntent.getActivity(this, 0, Intent(this, HomeActivity::class.java), 0)
     }
     private val stopServicePendingIntent by lazy {
         PendingIntent.getActivity(
-            this, 0, Intent(this, MainActivity::class.java).apply {
-                putExtra(STOP_SERVICE_KEY, true)
+            this, 0, Intent(this, HomeActivity::class.java).apply {
+                putExtra(HomeActivity.STOP_SERVICE_KEY, true)
             },
             PendingIntent.FLAG_CANCEL_CURRENT
         )
@@ -79,7 +78,7 @@ class ForegroundService : Service() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val duration = Duration.between(jogStart, ZonedDateTimes.now)
+                val duration = Duration.between(jogStartZonedDateTime, ZonedDateTimes.now)
                 val time = getFormattedTime(duration.seconds)
                 startForeground(NOTIFICATION_ID, createNotification(time))
             }
@@ -92,21 +91,29 @@ class ForegroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        useCase.getJogEntriesById(id)
+        jogUseCase.getJogEntriesById(id)
+            .map { lisOfJogs ->
+                addJogSummary(
+                    lisOfJogs[0].dateTime,
+                    lisOfJogs.last().dateTime,
+                    id,
+                    getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
+                )
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { lisOfJogs ->
-                    addJogSummary(
-                        lisOfJogs[0].dateTime,
-                        lisOfJogs.last().dateTime,
-                        id,
-                        getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
-                    )
+                {
                     compositeDisposable.clear()
                     locationManager.removeUpdates(locationListener)
+                    super.onDestroy()
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) }
+                { error ->
+                    Log.e(TAG, error.localizedMessage, error)
+                    compositeDisposable.clear()
+                    locationManager.removeUpdates(locationListener)
+                    super.onDestroy()
+                }
             )
             .addTo(compositeDisposable)
     }
@@ -120,12 +127,12 @@ class ForegroundService : Service() {
     }
 
     private fun startTrackingJog() {
-        useCase.getNewRunID()
+        jogUseCase.getNewRunID()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { currentRunId -> jogListener(currentRunId) },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) },
+                { error -> Log.e(TAG, error.localizedMessage, error) },
                 { jogListener(1) }
             ).addTo(compositeDisposable)
     }
@@ -133,7 +140,7 @@ class ForegroundService : Service() {
     @SuppressLint("MissingPermission")
     private fun jogListener(id: Int) {
         if (!PermissionUtil.isGpsLocationGranted(applicationContext)) {
-            Log.e(FS_TAG, "Don't have permissions")
+            Log.e(TAG, "Don't have permissions")
             return
         }
         this.id = id
@@ -146,7 +153,7 @@ class ForegroundService : Service() {
     }
 
     private fun recordRunEvent(id: Int, location: Location) {
-        Log.i(FS_TAG, "Success getting location")
+        Log.i(TAG, "Success getting location")
         val modifiedJogDateInformation = ModifiedJogDateInformation(
             dateTime = ZonedDateTime.now(),
             latitudeLongitude = LatLng(location.latitude, location.longitude),
@@ -156,14 +163,14 @@ class ForegroundService : Service() {
     }
 
     private fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
-        useCase.addJog(modifiedJogDateInformation)
+        jogUseCase.addJog(modifiedJogDateInformation)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.i(FS_TAG, "Success")
+                    Log.i(TAG, "Success")
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 
@@ -173,14 +180,14 @@ class ForegroundService : Service() {
         jogId: Int,
         totalJogDistance: Double
     ) {
-        useCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
+        jogUseCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.i(FS_TAG, "Success")
+                    Log.i(TAG, "Success")
                 },
-                { error -> Log.e(FS_TAG, error.localizedMessage, error) })
+                { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
 
@@ -207,7 +214,7 @@ class ForegroundService : Service() {
             .setContentIntent(pendingIntent)
             .addAction(
                 android.R.drawable.checkbox_off_background,
-                getString(R.string.stop),
+                getString(R.string.stop_jog),
                 stopServicePendingIntent
             )
             .build()

@@ -4,7 +4,7 @@ import android.app.NotificationManager
 import androidx.annotation.StringRes
 import com.eljabali.joggingapplicationandroid.R
 
-enum class NotificationChannels(
+enum class NotificationChannel(
     val channelId: String,
     @StringRes val channelName: Int,
     @StringRes val channelDescription: Int,
