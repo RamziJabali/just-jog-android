@@ -29,4 +29,13 @@
     <!-- Notification -->
     <string name="notification_title">Actively Running</string>
     <string name="stop_jog">Stop Jog</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="Sun">Sun</string>
+    <string name="average_weekly">Average Weekly:</string>
+    <string name="forward_slash">/</string>
 </resources>
