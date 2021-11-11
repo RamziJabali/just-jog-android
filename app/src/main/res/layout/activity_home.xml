@@ -10,8 +10,8 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="0dp"
-        android:layout_height="500dp"
+        android:layout_width="411dp"
+        android:layout_height="675dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -22,11 +22,10 @@
     <FrameLayout
         android:id="@+id/recycler_view_frame_layout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="350dp"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         tools:context=".calendar.jogsummaries.JogSummariesFragment"/>
 
 

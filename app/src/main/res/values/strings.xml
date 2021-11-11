@@ -6,7 +6,8 @@
     <string name="today">Today</string>
     <string name="average_miles_per_week">Average Weekly</string>
     <string name="daily_record">Daily Record</string>
-    <string name="start_run">Start</string>
+    <string name="start_run">Start Run</string>
+    <string name="Stop_run">Stop Run</string>
     <string name="click_to_start_run">Click to Start Run</string>
     <string name="delete_all_entries">Delete All Entries</string>
     <string name="delete">Delete</string>
@@ -38,4 +39,5 @@
     <string name="Sun">Sun</string>
     <string name="average_weekly">Average Weekly:</string>
     <string name="forward_slash">/</string>
+    <string name="this_week">This Week:</string>
 </resources>
