@@ -139,14 +139,11 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun setClickListeners() {
-//        with(binding) {
-//            startRunButton.setOnClickListener {
-//                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
-//            }
-//            deleteAllRunsButton.setOnClickListener {
-//                statisticsViewModel.deleteAll()
-//            }
-//        }
+        with(binding) {
+            startStopFloatingActionButton.setOnClickListener {
+                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
+            }
+        }
     }
 
     private fun setNewViewState(statisticsViewState: StatisticsViewState) {
