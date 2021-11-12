@@ -116,6 +116,34 @@ class StatisticsFragment : Fragment() {
     }
 
 
+    private fun setClickListeners() {
+        with(binding) {
+            startStopFloatingActionButton.setOnClickListener {
+                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
+            }
+        }
+    }
+
+    private fun setNewViewState(statisticsViewState: StatisticsViewState) {
+        with(binding) {
+            todayRunTextView.text = statisticsViewState.todayLastJogDistance
+            todayTextView.text = statisticsViewState.dateToday
+            thisWeeksRunsTextView.text =
+                statisticsViewState.weeklyStats.weeklyTotalStats.totalRuns
+            thisWeeksMilesTextView.text =
+                statisticsViewState.weeklyStats.weeklyTotalStats.totalDistance
+            thisWeeksTimeTextView.text =
+                statisticsViewState.weeklyStats.weeklyTotalStats.totalTime
+            averageWeeklyRunTextView.text =
+                statisticsViewState.weeklyStats.weeklyAverageStats.averageRuns
+            averageWeeklyMilesTextView.text =
+                statisticsViewState.weeklyStats.weeklyAverageStats.averageDistance
+            averageWeeklyTimeTextView.text =
+                statisticsViewState.weeklyStats.weeklyAverageStats.averageTime
+        }
+        setDataForBarChart()
+    }
+
     private fun setDataForBarChart() {
         val entries = mutableListOf<BarEntry>()
         entries.add(BarEntry(0f, 30f))
@@ -136,23 +164,5 @@ class StatisticsFragment : Fragment() {
         binding.weeklyStatsBarChart.data = barData
         binding.weeklyStatsBarChart.setFitBars(true)
         binding.weeklyStatsBarChart.invalidate()
-    }
-
-    private fun setClickListeners() {
-        with(binding) {
-            startStopFloatingActionButton.setOnClickListener {
-                activity?.startService(Intent(requireContext(), ForegroundService::class.java))
-            }
-        }
-    }
-
-    private fun setNewViewState(statisticsViewState: StatisticsViewState) {
-        with(binding) {
-//            date.text = statisticsViewState.dateToday
-//            time.text = statisticsViewState.timeNow
-
-//            averageWeeklyMilage.text = statisticsViewState.weeklyAverageDistance
-//            jogEntry.text = statisticsViewState.todayLastJogDistance
-        }
     }
 }
