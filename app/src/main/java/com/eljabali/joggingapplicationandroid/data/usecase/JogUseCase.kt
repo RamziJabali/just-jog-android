@@ -51,6 +51,9 @@ class JogUseCase(
                 return@map workoutDate.id + 1
             }
 
+    fun getLastJogSummary(): Maybe<JogSummary> =
+        jogSummaryRepository.getLast()
+
 
     fun getRangeOfJogsBetweenStartAndEndDate(
         startDate: LocalDate,
@@ -134,11 +137,14 @@ class JogUseCase(
                 }
             }
 
-    fun getGetJogSummariesBetweenDates(startDate: LocalDate, endDate: LocalDate): Observable<List<ModifiedJogSummary>> =
+    fun getGetJogSummariesBetweenDates(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Observable<List<ModifiedJogSummary>> =
         jogSummaryRepository.getByRangeOfDates(
             startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
             endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
-        )  .subscribeOn(Schedulers.io())
+        ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->
                 return@map listOfJogSummaries.map { jogSummary ->
@@ -149,7 +155,7 @@ class JogUseCase(
                         totalDistance = jogSummary.totalJogDistance
                     )
                 }
-    }
+            }
 
     fun deleteAllEntries() {
         jogEntriesRepository.deleteAll()

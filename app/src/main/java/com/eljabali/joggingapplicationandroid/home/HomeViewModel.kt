@@ -8,10 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.calendar.jogsummaries.JogSummaryProperties
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
-import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.util.TAG
-import com.eljabali.joggingapplicationandroid.util.getFormattedTime
-import com.eljabali.joggingapplicationandroid.util.getMPH
+import com.eljabali.joggingapplicationandroid.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -19,12 +16,13 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import localdate.LocalDateUtil
 import zoneddatetime.extensions.print
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
 
 class HomeViewModel(
-        application: Application,
-        private val jogUseCase: JogUseCase
+    application: Application,
+    private val jogUseCase: JogUseCase
 ) : AndroidViewModel(application) {
 
     companion object {
@@ -39,35 +37,35 @@ class HomeViewModel(
 
     fun getAllDates() {
         jogUseCase.getAllJogSummaries()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { allJogSummaries ->
-                            viewState = viewState.copy(
-                                    listOfColoredDates = getColoredDatesFromJogSummary(listOfJogSummary = allJogSummaries)
-                            )
-                            invalidateView()
-                        },
-                        { error -> Log.e(TAG, error.localizedMessage, error) }
-                ).addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { allJogSummaries ->
+                    viewState = viewState.copy(
+                        listOfColoredDates = getColoredDatesFromJogSummary(listOfJogSummary = allJogSummaries)
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
+            ).addTo(compositeDisposable)
     }
 
     fun getAllJogSummariesAtSpecificDate(date: Date) {
         val localDateTimeSelected = LocalDateUtil.new(date)
         jogUseCase.getJogSummariesAtDate(localDateTimeSelected)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { listOfModifiedJogSummaries ->
-                            viewState = viewState.copy(
-                                    listOfSpecificDates = convertJogSummaryToRecyclerViewProperties(
-                                            listOfModifiedJogSummaries
-                                    )
-                            )
-                            invalidateView()
-                        },
-                        { error -> Log.e(TAG, error.localizedMessage, error) })
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfModifiedJogSummaries ->
+                    viewState = viewState.copy(
+                        listOfSpecificDates = convertJogSummaryToRecyclerViewProperties(
+                            listOfModifiedJogSummaries
+                        )
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
 
     }
 
@@ -76,17 +74,20 @@ class HomeViewModel(
         var jogNumber = 1
         listOfModifiedJogSummary.forEach { jogSummary ->
             listOfRecyclerViewProperties.add(
-                    JogSummaryProperties(
-                            jogSummaryId = jogSummary.jogId.toString(),
-                            totalDistance = "${jogSummary.totalDistance} Miles",
-                            totalTime = getFormattedTime(jogSummary.timeDurationInSeconds),
-                            jogEntryCountOfDay = jogNumber.toString(),
-                            milesPerHour = getMPH(
-                                    jogSummary.totalDistance,
-                                    jogSummary.timeDurationInSeconds
-                            ),
-                            date = jogSummary.date.print(DateFormat.YYYY_MM_DD.format)
-                    )
+                JogSummaryProperties(
+                    jogSummaryId = jogSummary.jogId.toString(),
+                    totalDistance = "${jogSummary.totalDistance} Miles",
+                    totalTime = getFormattedTime(
+                        jogSummary.timeDurationInSeconds,
+                        DurationFormat.HH_MM_SS
+                    ),
+                    jogEntryCountOfDay = jogNumber.toString(),
+                    milesPerHour = getMPH(
+                        jogSummary.totalDistance,
+                        jogSummary.timeDurationInSeconds
+                    ),
+                    date = jogSummary.date.print(DateFormat.YYYY_MM_DD.format)
+                )
             )
             jogNumber++
         }
@@ -103,30 +104,35 @@ class HomeViewModel(
         }
         var date = listOfJogSummary[0].date
         var index = 0
-        while (date < ZonedDateTime.now()) {
-            if (index < listOfJogSummary.size && listOfJogSummary[index].date == date) {
+        val timeNow = LocalDate.now()
+        while (date.toLocalDate() <= timeNow) {
+            if (index < listOfJogSummary.size && listOfJogSummary[index].date.toLocalDate() == date.toLocalDate()) {
                 listOfColoredDates.add(
-                        ColoredDates(
-                                date = convertZonedDateTimeToDate(date),
-                                hasWorkedOutColor
-                        )
+                    ColoredDates(
+                        date = convertZonedDateTimeToDate(date),
+                        hasWorkedOutColor
+                    )
                 )
-                index++
             } else {
                 listOfColoredDates.add(
-                        ColoredDates(
-                                date = convertZonedDateTimeToDate(date),
-                                hasNotWorkedOutColor
-                        )
+                    ColoredDates(
+                        date = convertZonedDateTimeToDate(date),
+                        hasNotWorkedOutColor
+                    )
                 )
             }
-            date = date.plusDays(1)
+            if (date.toLocalDate() <= listOfJogSummary[index].date.toLocalDate()){
+                date = date.plusDays(1)
+                index++
+            }else{
+                index++
+            }
         }
         return listOfColoredDates
     }
 
     private fun convertZonedDateTimeToDate(dateTime: ZonedDateTime): Date =
-            Date.from(dateTime.toInstant())
+        Date.from(dateTime.toInstant())
 
     private fun invalidateView() {
         viewStateObservable.onNext(viewState)

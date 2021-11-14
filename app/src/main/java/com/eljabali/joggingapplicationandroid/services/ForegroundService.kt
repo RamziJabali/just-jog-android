@@ -18,10 +18,7 @@ import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.services.NotificationChannel.ACTIVE_RUN
-import com.eljabali.joggingapplicationandroid.util.PermissionUtil
-import com.eljabali.joggingapplicationandroid.util.TAG
-import com.eljabali.joggingapplicationandroid.util.getFormattedTime
-import com.eljabali.joggingapplicationandroid.util.getTotalDistance
+import com.eljabali.joggingapplicationandroid.util.*
 import com.google.android.gms.maps.model.LatLng
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -79,7 +76,7 @@ class ForegroundService : Service() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val duration = Duration.between(jogStartZonedDateTime, ZonedDateTimes.now)
-                val time = getFormattedTime(duration.seconds)
+                val time = getFormattedTime(duration.seconds, DurationFormat.HH_MM_SS)
                 startForeground(NOTIFICATION_ID, createNotification(time))
             }
             .addTo(compositeDisposable)
