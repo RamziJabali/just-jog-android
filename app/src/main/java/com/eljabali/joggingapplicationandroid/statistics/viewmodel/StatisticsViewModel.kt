@@ -34,10 +34,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         const val YOU_RAN_TODAY_3 = " MPH!"
         const val MILES = "Miles"
         const val RUNS = "Runs"
-        const val YOU_RAN_TODAY = "You ran today!"
-        const val FOR = "For"
-        const val MINS_AT = "mins at"
-        const val MPH = "MPH!"
     }
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
