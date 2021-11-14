@@ -1,6 +1,7 @@
 package com.eljabali.joggingapplicationandroid.statistics.viewmodel
 
 import android.app.Application
+import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
@@ -8,6 +9,9 @@ import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.statistics.view.WeeklyStats
 import com.eljabali.joggingapplicationandroid.util.*
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,12 +29,11 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
 
     companion object {
         const val NOTHING_JOGGED_TODAY = "Be your own change!"
+        const val YOU_RAN_TODAY = "You ran today!\nFor "
+        const val YOU_RAN_TODAY_2 = " mins at "
+        const val YOU_RAN_TODAY_3 = " MPH!"
         const val MILES = "Miles"
         const val RUNS = "Runs"
-        const val YOU_RAN_TODAY = "You ran today!"
-        const val FOR = "For"
-        const val MINS_AT = "mins at"
-        const val MPH = "MPH!"
     }
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
@@ -43,12 +46,35 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     }
 
     fun onFragmentLaunch() {
-        setUpClock()
+        statisticsViewState =
+            statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
         getJogSummariesBetweenTwoDates(
             LocalDates.lastMonday,
             LocalDates.today
         )
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
+    }
+
+    private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
+        val entries = mutableListOf<BarEntry>()
+
+        for (dayOfTheWeek in 0..6) {
+            with(listOfJogs) {
+                if (dayOfTheWeek < size) {
+                    entries.add(BarEntry(dayOfTheWeek.toFloat(), get(dayOfTheWeek).totalDistance.toFloat()))
+                } else {
+                    entries.add(BarEntry(dayOfTheWeek.toFloat(), 0f))
+                }
+            }
+        }
+        val barDataSet = BarDataSet(entries, "Distance(Miles)").apply {
+            color = Color.WHITE
+        }
+        return BarData(barDataSet).apply {
+            setValueTextColor(Color.BLUE)
+            setValueTextSize(12f)
+            barWidth = 0.8f
+        }
     }
 
     private fun getJogSummariesAtDate(date: LocalDate) {
@@ -70,11 +96,13 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): String =
         if (listOfJogSummaries.isEmpty()) NOTHING_JOGGED_TODAY
         else {
-            with(listOfJogSummaries) {
-                val mph = getMPH(get(size - 1).totalDistance, get(size - 1).timeDurationInSeconds)
-                val totalTimeInMinutes = get(size - 1).timeDurationInSeconds / 60
-                "${YOU_RAN_TODAY}\n $FOR $totalTimeInMinutes $MINS_AT $mph $MPH"
-            }
+            val timeMinutes =
+                listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds / 60
+            val mph = getMPH(
+                listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance,
+                listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
+            )
+            "$YOU_RAN_TODAY${timeMinutes}$YOU_RAN_TODAY_2${mph}$YOU_RAN_TODAY_3"
         }
 
     private fun getJogSummariesBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
@@ -83,8 +111,11 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { listOfModifiedJogDateInformation ->
+                    val weeklyStats = getWeeklyStats(listOfModifiedJogDateInformation)
+                    val barData = getBarChartStats(listOfModifiedJogDateInformation)
                     statisticsViewState = statisticsViewState.copy(
-                        weeklyStats = getWeeklyStats(listOfModifiedJogDateInformation)
+                        weeklyStats = weeklyStats,
+                        barData = barData
                     )
                     invalidateView()
                 },

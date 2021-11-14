@@ -113,6 +113,9 @@ class HomeViewModel(
                         hasWorkedOutColor
                     )
                 )
+                do {
+                    index++
+                } while (index < listOfJogSummary.size && date.toLocalDate() == listOfJogSummary[index].date.toLocalDate())
             } else {
                 listOfColoredDates.add(
                     ColoredDates(
@@ -121,12 +124,7 @@ class HomeViewModel(
                     )
                 )
             }
-            if (date.toLocalDate() <= listOfJogSummary[index].date.toLocalDate()){
-                date = date.plusDays(1)
-                index++
-            }else{
-                index++
-            }
+            date = date.plusDays(1)
         }
         return listOfColoredDates
     }
