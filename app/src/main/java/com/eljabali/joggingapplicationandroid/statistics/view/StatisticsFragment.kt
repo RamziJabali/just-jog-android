@@ -14,9 +14,6 @@ import com.eljabali.joggingapplicationandroid.services.ForegroundService
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -35,7 +32,6 @@ class StatisticsFragment : Fragment() {
                 putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
             }
         }
-
         private const val MAX_X_VALUE = 7
         private const val MAX_Y_VALUE = 30
         private const val MIN_Y_VALUE = 5
@@ -66,7 +62,6 @@ class StatisticsFragment : Fragment() {
         Log.i(TAG, "onResume()")
         statisticsViewModel.onFragmentLaunch()
         configureBarChartAppearance()
-        setDataForBarChart()
         monitorStatisticsViewState()
         setClickListeners()
         if (shouldStopService) {
@@ -111,7 +106,7 @@ class StatisticsFragment : Fragment() {
                 }
             }
             weeklyStatsBarChart.axisLeft.textColor = Color.WHITE
-            weeklyStatsBarChart.axisRight.textColor = Color.WHITE
+            weeklyStatsBarChart.axisRight.isEnabled = false
         }
     }
 
@@ -140,29 +135,9 @@ class StatisticsFragment : Fragment() {
                 statisticsViewState.weeklyStats.weeklyAverageStats.averageDistance
             averageWeeklyTimeTextView.text =
                 statisticsViewState.weeklyStats.weeklyAverageStats.averageTime
+            weeklyStatsBarChart.data = statisticsViewState.barData
+            weeklyStatsBarChart.setFitBars(true)
+            weeklyStatsBarChart.invalidate()
         }
-        setDataForBarChart()
-    }
-
-    private fun setDataForBarChart() {
-        val entries = mutableListOf<BarEntry>()
-        entries.add(BarEntry(0f, 30f))
-        entries.add(BarEntry(1f, 80f))
-        entries.add(BarEntry(2f, 60f))
-        entries.add(BarEntry(3f, 50f))
-        entries.add(BarEntry(4f, 70f))
-        entries.add(BarEntry(5f, 60f))
-        entries.add(BarEntry(6f, 60f))
-        val barDataSet = BarDataSet(entries, "Distance(Miles)").apply {
-            color = Color.WHITE
-        }
-        val barData = BarData(barDataSet).apply {
-            setValueTextColor(Color.BLUE)
-            setValueTextSize(12f)
-            barWidth = 0.8f
-        }
-        binding.weeklyStatsBarChart.data = barData
-        binding.weeklyStatsBarChart.setFitBars(true)
-        binding.weeklyStatsBarChart.invalidate()
     }
 }

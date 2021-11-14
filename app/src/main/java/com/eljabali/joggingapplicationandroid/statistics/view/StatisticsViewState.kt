@@ -1,9 +1,12 @@
 package com.eljabali.joggingapplicationandroid.statistics.view
 
+import com.github.mikephil.charting.data.BarData
+
 data class StatisticsViewState(
     val timeNow: String = "",
     val dateToday: String = "",
     val weeklyStats: WeeklyStats = WeeklyStats(),
+    val barData: BarData = BarData(),
     val todayLastJogDistance: String = "",
     val isUserJogging: Boolean = false
 )
