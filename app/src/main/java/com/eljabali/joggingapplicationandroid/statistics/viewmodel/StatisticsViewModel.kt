@@ -7,10 +7,7 @@ import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.statistics.view.WeeklyStats
-import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.util.DurationFormat
-import com.eljabali.joggingapplicationandroid.util.TAG
-import com.eljabali.joggingapplicationandroid.util.getFormattedTime
+import com.eljabali.joggingapplicationandroid.util.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,9 +24,13 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     AndroidViewModel(application) {
 
     companion object {
-        const val NOTHING_JOGGED_TODAY = "- No Runs!"
+        const val NOTHING_JOGGED_TODAY = "Be your own change!"
         const val MILES = "Miles"
         const val RUNS = "Runs"
+        const val YOU_RAN_TODAY = "You ran today!"
+        const val FOR = "For"
+        const val MINS_AT = "mins at"
+        const val MPH = "MPH!"
     }
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
@@ -68,7 +69,13 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
 
     private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): String =
         if (listOfJogSummaries.isEmpty()) NOTHING_JOGGED_TODAY
-        else "${listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance} $MILES"
+        else {
+            with(listOfJogSummaries) {
+                val mph = getMPH(get(size - 1).totalDistance, get(size - 1).timeDurationInSeconds)
+                val totalTimeInMinutes = get(size - 1).timeDurationInSeconds / 60
+                "${YOU_RAN_TODAY}\n $FOR $totalTimeInMinutes $MINS_AT $mph $MPH"
+            }
+        }
 
     private fun getJogSummariesBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
         jogUseCase.getGetJogSummariesBetweenDates(startDate, endDate)
