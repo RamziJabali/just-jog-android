@@ -18,7 +18,7 @@ fun getFormattedTime(totalTimeInSeconds: Long, format: DurationFormat): String {
     if(format == DurationFormat.HH_MM_SS){
         return String.format("%02d:%02d:%02d", totalHours,totalMinutes,totalSeconds)
     }
-    return String.format("%02dh %02dm %02ds", totalHours,totalMinutes,totalSeconds)
+    return String.format("%01dh %01dm %01ds", totalHours,totalMinutes,totalSeconds)
 }
 
 
