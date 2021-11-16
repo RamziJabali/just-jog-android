@@ -137,13 +137,13 @@ class JogUseCase(
                 }
             }
 
-    fun getGetJogSummariesBetweenDates(
-        startDate: LocalDate,
-        endDate: LocalDate
+    fun getJogSummariesBetweenDates(
+        startDate: ZonedDateTime,
+        endDate: ZonedDateTime
     ): Observable<List<ModifiedJogSummary>> =
         jogSummaryRepository.getByRangeOfDates(
-            startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
-            endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
+            startDate = startDate,
+            endDate = endDate
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->

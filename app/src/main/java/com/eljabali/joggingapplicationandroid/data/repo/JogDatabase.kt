@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryDAO
-import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
-import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesDAO
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
+import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesDAO
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryDAO
 
 @Database(entities = [JogEntries::class, JogSummary::class], version = 2, exportSchema = false)
 abstract class JogDatabase : RoomDatabase() {

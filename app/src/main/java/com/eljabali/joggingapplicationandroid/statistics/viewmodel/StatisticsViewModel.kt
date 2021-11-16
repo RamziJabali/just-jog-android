@@ -14,17 +14,16 @@ import com.eljabali.joggingapplicationandroid.util.*
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import localdate.LocalDates
 import zoneddatetime.ZonedDateTimes
+import zoneddatetime.extensions.isEqualDay
 import zoneddatetime.extensions.print
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
+import java.time.ZonedDateTime
 
 class StatisticsViewModel(application: Application, private val jogUseCase: JogUseCase) :
         AndroidViewModel(application) {
@@ -42,19 +41,27 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         statisticsViewState =
                 statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
         getJogSummariesBetweenTwoDates(
-                LocalDates.lastMonday,
-                LocalDates.today
+                ZonedDateTimes.lastMonday.minusDays(7),
+                ZonedDateTimes.today
         )
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
     }
 
     private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
         val entries = mutableListOf<BarEntry>()
-
+        val weeksSummaries = mutableListOf<Double>()
+        var totalDistancePerDay = 0.0
+        for (index in listOfJogs.indices) {
+            if (index > 1 && !listOfJogs[index].date.isEqualDay(listOfJogs[index - 1].date)) {
+                weeksSummaries.add(totalDistancePerDay)
+                totalDistancePerDay = 0.0
+            }
+            weeksSummaries += listOfJogs[index].totalDistance
+        }
         for (dayOfTheWeek in 0..6) {
-            with(listOfJogs) {
+            with(weeksSummaries) {
                 if (dayOfTheWeek < size) {
-                    entries.add(BarEntry(dayOfTheWeek.toFloat(), get(dayOfTheWeek).totalDistance.toFloat()))
+                    entries.add(BarEntry(dayOfTheWeek.toFloat(), get(dayOfTheWeek).toFloat()))
                 } else {
                     entries.add(BarEntry(dayOfTheWeek.toFloat(), 0f))
                 }
@@ -99,8 +106,8 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${application.getString(R.string.mins_at)} $mph ${application.getString(R.string.mph)}"
             }
 
-    private fun getJogSummariesBetweenTwoDates(startDate: LocalDate, endDate: LocalDate) {
-        jogUseCase.getGetJogSummariesBetweenDates(startDate, endDate)
+    private fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
+        jogUseCase.getJogSummariesBetweenDates(startDate, endDate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -116,21 +123,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                         { error -> Log.e(TAG, error.localizedMessage, error) })
                 .addTo(compositeDisposable)
 
-    }
-
-    private fun setUpClock() {
-        Observable.interval(1, TimeUnit.SECONDS)
-                .timeInterval()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    val now = ZonedDateTimes.now
-                    statisticsViewState = statisticsViewState.copy(
-                            timeNow = now.print(DateFormat.HH_MM_SS.format),
-                            dateToday = now.print(DateFormat.EEE_MMM_D_YYYY.format)
-                    )
-                    invalidateView()
-                }
-                .addTo(compositeDisposable)
     }
 
     private fun getWeeklyStats(listOfModifiedJogSummaries: List<ModifiedJogSummary>): WeeklyStats {
