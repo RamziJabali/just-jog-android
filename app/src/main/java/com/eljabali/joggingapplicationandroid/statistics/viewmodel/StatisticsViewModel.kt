@@ -41,7 +41,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         statisticsViewState =
                 statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
         getJogSummariesBetweenTwoDates(
-                ZonedDateTimes.lastMonday.minusDays(7),
+                ZonedDateTimes.lastMonday,
                 ZonedDateTimes.today
         )
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
@@ -50,22 +50,28 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
         val entries = mutableListOf<BarEntry>()
         val weeksSummaries = mutableListOf<Double>()
+        var tempDate = ZonedDateTimes.lastMonday
+        val endDate = tempDate.plusDays(7)
+        var index = 0
         var totalDistancePerDay = 0.0
-        for (index in listOfJogs.indices) {
-            if (index > 1 && !listOfJogs[index].date.isEqualDay(listOfJogs[index - 1].date)) {
-                weeksSummaries.add(totalDistancePerDay)
-                totalDistancePerDay = 0.0
+        while (!tempDate.isEqual(endDate)) {
+            if (index < listOfJogs.size && tempDate.isEqualDay(listOfJogs[index].date)) {
+                if (index + 1 < listOfJogs.size && !listOfJogs[index].date.isEqualDay(listOfJogs[index + 1].date) || index + 1 >= listOfJogs.size) {
+                    totalDistancePerDay += listOfJogs[index].totalDistance
+                    weeksSummaries.add(totalDistancePerDay)
+                    tempDate = tempDate.plusDays(1)
+                    totalDistancePerDay = 0.0
+                } else {
+                    totalDistancePerDay += listOfJogs[index].totalDistance
+                }
+                index++
+            } else {
+                tempDate = tempDate.plusDays(1)
+                weeksSummaries.add(0.0)
             }
-            weeksSummaries += listOfJogs[index].totalDistance
         }
         for (dayOfTheWeek in 0..6) {
-            with(weeksSummaries) {
-                if (dayOfTheWeek < size) {
-                    entries.add(BarEntry(dayOfTheWeek.toFloat(), get(dayOfTheWeek).toFloat()))
-                } else {
-                    entries.add(BarEntry(dayOfTheWeek.toFloat(), 0f))
-                }
-            }
+            entries.add(BarEntry(dayOfTheWeek.toFloat(), weeksSummaries[dayOfTheWeek].toFloat()))
         }
         val barDataSet = BarDataSet(entries, "Distance(Miles)").apply {
             color = Color.WHITE
