@@ -141,15 +141,15 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             totalWeeklyRuns++
         }
         val application = getApplication<JoggingApplication>()
-        val averageDistance = String.format("%.2f", totalWeeklyMiles / 7.0) + application.getString(R.string.miles)
+        val averageDistance = String.format("%.2f", totalWeeklyMiles / 7.0)+ " " + application.getString(R.string.miles)
         val averageRuns = "${totalWeeklyRuns / 7} ${application.getString(R.string.runs)}"
         val averageTime: String = getFormattedTime(totalWeeklyJogTime / 7, DurationFormat.H_M_S)
         return WeeklyStats(
                 WeeklyStats.WeeklyAverageStats(averageDistance, averageRuns, averageTime),
                 WeeklyStats.WeeklyTotalStats(
-                        "- " + String.format("%.2f", totalWeeklyMiles) + " ${application.getString(R.string.miles)}",
-                        "- $totalWeeklyRuns ${application.getString(R.string.runs)}",
-                        "- " + getFormattedTime(totalWeeklyJogTime, DurationFormat.H_M_S)
+                        String.format("%.2f", totalWeeklyMiles) + " ${application.getString(R.string.miles)}",
+                        "$totalWeeklyRuns ${application.getString(R.string.runs)}",
+                        getFormattedTime(totalWeeklyJogTime, DurationFormat.H_M_S)
                 )
         )
     }

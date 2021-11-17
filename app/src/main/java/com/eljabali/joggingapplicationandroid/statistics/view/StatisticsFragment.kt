@@ -32,10 +32,6 @@ class StatisticsFragment : Fragment() {
                 putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
             }
         }
-        private const val MAX_X_VALUE = 7
-        private const val MAX_Y_VALUE = 30
-        private const val MIN_Y_VALUE = 5
-        private const val SET_LABEL = "Distance (Miles)"
         private val DAYS = arrayOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
     }
 
@@ -94,6 +90,8 @@ class StatisticsFragment : Fragment() {
                 textSize = 12f
                 textColor = Color.WHITE
             }
+            weeklyStatsBarChart.isDoubleTapToZoomEnabled = false
+            weeklyStatsBarChart.animateXY(1000, 1000)
             weeklyStatsBarChart.xAxis.apply {
                 setAvoidFirstLastClipping(true)
                 position = XAxis.XAxisPosition.BOTTOM
