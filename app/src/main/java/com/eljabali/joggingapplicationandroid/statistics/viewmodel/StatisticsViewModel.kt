@@ -26,7 +26,7 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 
 class StatisticsViewModel(application: Application, private val jogUseCase: JogUseCase) :
-        AndroidViewModel(application) {
+    AndroidViewModel(application) {
 
     val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
     private var statisticsViewState = StatisticsViewState()
@@ -38,13 +38,14 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     }
 
     fun onFragmentLaunch() {
-        statisticsViewState =
-                statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
-        getJogSummariesBetweenTwoDates(
-                ZonedDateTimes.lastMonday,
-                ZonedDateTimes.today
-        )
+        getRandomMotivationalQuotes()
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
+        statisticsViewState =
+            statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
+        getJogSummariesBetweenTwoDates(
+            ZonedDateTimes.lastMonday,
+            ZonedDateTimes.today
+        )
     }
 
     private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
@@ -85,49 +86,71 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
 
     private fun getJogSummariesAtDate(date: LocalDate) {
         jogUseCase.getJogSummariesAtDate(date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { listOfJogSummaries ->
-                            statisticsViewState = statisticsViewState.copy(
-                                    todayLastJogDistance = getLastJog(listOfJogSummaries)
-                            )
-                            invalidateView()
-                        },
-                        { error -> Log.e(TAG, error.localizedMessage, error) },
-                )
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfJogSummaries ->
+                    val text = getLastJog(listOfJogSummaries)
+                    if (text.isNotEmpty())
+                        statisticsViewState = statisticsViewState.copy(
+                            todayLastJogDistance = text
+                        )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) },
+            )
+            .addTo(compositeDisposable)
     }
 
     private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): String =
-            if (listOfJogSummaries.isEmpty()) getApplication<JoggingApplication>().getString(R.string.be_your_own_change)
-            else {
-                val timeMinutes =
-                        listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds / 60
-                val mph = getMPH(
-                        listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance,
-                        listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
+        if (listOfJogSummaries.isEmpty()) ""
+        else {
+            val timeMinutes =
+                listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds / 60
+            val mph = getMPH(
+                listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance,
+                listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
+            )
+            val application = getApplication<JoggingApplication>()
+            "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${
+                application.getString(
+                    R.string.mins_at
                 )
-                val application = getApplication<JoggingApplication>()
-                "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${application.getString(R.string.mins_at)} $mph ${application.getString(R.string.mph)}"
-            }
+            } $mph ${application.getString(R.string.mph)}"
+        }
+
+    private fun getRandomMotivationalQuotes() {
+        jogUseCase.getMotivationalQuotes()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfQuotes ->
+                    statisticsViewState = statisticsViewState.copy(
+                        todayLastJogDistance =
+                        listOfQuotes[(listOfQuotes.indices).random()].quote
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
+            ).addTo(compositeDisposable)
+    }
 
     private fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
         jogUseCase.getJogSummariesBetweenDates(startDate, endDate)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { listOfModifiedJogDateInformation ->
-                            val weeklyStats = getWeeklyStats(listOfModifiedJogDateInformation)
-                            val barData = getBarChartStats(listOfModifiedJogDateInformation)
-                            statisticsViewState = statisticsViewState.copy(
-                                    weeklyStats = weeklyStats,
-                                    barData = barData
-                            )
-                            invalidateView()
-                        },
-                        { error -> Log.e(TAG, error.localizedMessage, error) })
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { listOfModifiedJogDateInformation ->
+                    val weeklyStats = getWeeklyStats(listOfModifiedJogDateInformation)
+                    val barData = getBarChartStats(listOfModifiedJogDateInformation)
+                    statisticsViewState = statisticsViewState.copy(
+                        weeklyStats = weeklyStats,
+                        barData = barData
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
 
     }
 
@@ -141,16 +164,22 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             totalWeeklyRuns++
         }
         val application = getApplication<JoggingApplication>()
-        val averageDistance = String.format("%.2f", totalWeeklyMiles / 7.0)+ " " + application.getString(R.string.miles)
+        val averageDistance = String.format(
+            "%.2f",
+            totalWeeklyMiles / 7.0
+        ) + " " + application.getString(R.string.miles)
         val averageRuns = "${totalWeeklyRuns / 7} ${application.getString(R.string.runs)}"
         val averageTime: String = getFormattedTime(totalWeeklyJogTime / 7, DurationFormat.H_M_S)
         return WeeklyStats(
-                WeeklyStats.WeeklyAverageStats(averageDistance, averageRuns, averageTime),
-                WeeklyStats.WeeklyTotalStats(
-                        String.format("%.2f", totalWeeklyMiles) + " ${application.getString(R.string.miles)}",
-                        "$totalWeeklyRuns ${application.getString(R.string.runs)}",
-                        getFormattedTime(totalWeeklyJogTime, DurationFormat.H_M_S)
-                )
+            WeeklyStats.WeeklyAverageStats(averageDistance, averageRuns, averageTime),
+            WeeklyStats.WeeklyTotalStats(
+                String.format(
+                    "%.2f",
+                    totalWeeklyMiles
+                ) + " ${application.getString(R.string.miles)}",
+                "$totalWeeklyRuns ${application.getString(R.string.runs)}",
+                getFormattedTime(totalWeeklyJogTime, DurationFormat.H_M_S)
+            )
         )
     }
 

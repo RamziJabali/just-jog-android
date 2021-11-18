@@ -127,8 +127,6 @@ class StatisticsFragment : Fragment() {
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalDistance
             thisWeeksTimeTextView.text =
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalTime
-            averageWeeklyRunTextView.text =
-                statisticsViewState.weeklyStats.weeklyAverageStats.averageRuns
             averageWeeklyMilesTextView.text =
                 statisticsViewState.weeklyStats.weeklyAverageStats.averageDistance
             averageWeeklyTimeTextView.text =

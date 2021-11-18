@@ -5,6 +5,8 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotes
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
@@ -24,7 +26,8 @@ import java.time.ZonedDateTime
 
 class JogUseCase(
     private val jogEntriesRepository: JogEntriesRepository,
-    private val jogSummaryRepository: JogSummaryRepository
+    private val jogSummaryRepository: JogSummaryRepository,
+    private val motivationalQuotesRepository: MotivationalQuotesRepository
 ) {
 
     private val compositeDisposable = CompositeDisposable()
@@ -157,6 +160,10 @@ class JogUseCase(
                 }
             }
 
+    fun getMotivationalQuotes(): Observable<List<MotivationalQuotes>> =
+        motivationalQuotesRepository.getAllMotivationalQuotes()
+
+
     fun deleteAllEntries() {
         jogEntriesRepository.deleteAll()
             .subscribeOn(Schedulers.io())
@@ -175,6 +182,7 @@ class JogUseCase(
                 { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
     }
+
 
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogEntries =
         JogEntries(
