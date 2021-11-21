@@ -25,6 +25,7 @@ import zoneddatetime.extensions.print
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
+
 class StatisticsViewModel(application: Application, private val jogUseCase: JogUseCase) :
     AndroidViewModel(application) {
 
@@ -38,7 +39,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     }
 
     fun onFragmentLaunch() {
-        getRandomMotivationalQuotes()
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
         statisticsViewState =
             statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
@@ -91,15 +91,33 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             .subscribe(
                 { listOfJogSummaries ->
                     val text = getLastJog(listOfJogSummaries)
-                    if (text.isNotEmpty())
+                    if (text.isNotEmpty()) {
                         statisticsViewState = statisticsViewState.copy(
                             todayLastJogDistance = text
                         )
+                    } else {
+                        getRandomQuote()
+                    }
                     invalidateView()
                 },
                 { error -> Log.e(TAG, error.localizedMessage, error) },
             )
             .addTo(compositeDisposable)
+    }
+
+    private fun getRandomQuote() {
+        jogUseCase.getRandomMotivationalQuote()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { quote ->
+                    statisticsViewState = statisticsViewState.copy(
+                        todayLastJogDistance = quote.quote
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) },
+            ).addTo(compositeDisposable)
     }
 
     private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): String =
@@ -118,22 +136,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 )
             } $mph ${application.getString(R.string.mph)}"
         }
-
-    private fun getRandomMotivationalQuotes() {
-        jogUseCase.getMotivationalQuotes()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { listOfQuotes ->
-                    statisticsViewState = statisticsViewState.copy(
-                        todayLastJogDistance =
-                        listOfQuotes[(listOfQuotes.indices).random()].quote
-                    )
-                    invalidateView()
-                },
-                { error -> Log.e(TAG, error.localizedMessage, error) }
-            ).addTo(compositeDisposable)
-    }
 
     private fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
         jogUseCase.getJogSummariesBetweenDates(startDate, endDate)

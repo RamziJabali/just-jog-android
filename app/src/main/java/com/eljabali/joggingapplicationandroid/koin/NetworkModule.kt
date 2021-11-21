@@ -8,7 +8,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-const val BASE_URL = "https://type.fit/api/"
+const val BASE_URL = "https://api.quotable.io/"
 
 val networkModule = module {
     single<MotivationalQuotesAPI> { get<Retrofit>().create(MotivationalQuotesAPI::class.java) }

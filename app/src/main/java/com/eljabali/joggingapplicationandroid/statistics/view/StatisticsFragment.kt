@@ -56,8 +56,8 @@ class StatisticsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "onResume()")
-        statisticsViewModel.onFragmentLaunch()
         configureBarChartAppearance()
+        statisticsViewModel.onFragmentLaunch()
         monitorStatisticsViewState()
         setClickListeners()
         if (shouldStopService) {

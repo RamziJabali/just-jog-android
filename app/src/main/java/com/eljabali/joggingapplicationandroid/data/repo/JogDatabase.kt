@@ -9,7 +9,11 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesDAO
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryDAO
 
-@Database(entities = [JogEntries::class, JogSummary::class], version = 2, exportSchema = false)
+@Database(
+    entities = [JogEntries::class, JogSummary::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class JogDatabase : RoomDatabase() {
 
     abstract fun jogDAO(): JogEntriesDAO

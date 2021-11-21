@@ -6,7 +6,7 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRep
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.home.HomeViewModel
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
-import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesRepository
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesAPIRepository
 import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -18,7 +18,7 @@ val calendarModule = module {
         JogUseCase(
             get<JogEntriesRepository>(),
             get<JogSummaryRepository>(),
-            get<MotivationalQuotesRepository>()
+            get<MotivationalQuotesAPIRepository>(),
         )
     }
     single { JogEntriesRepository(get<JogDatabase>().jogDAO()) }

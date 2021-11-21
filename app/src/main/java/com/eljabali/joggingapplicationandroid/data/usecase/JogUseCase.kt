@@ -6,7 +6,7 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRep
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
 import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotes
-import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesRepository
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesAPIRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
@@ -27,7 +27,7 @@ import java.time.ZonedDateTime
 class JogUseCase(
     private val jogEntriesRepository: JogEntriesRepository,
     private val jogSummaryRepository: JogSummaryRepository,
-    private val motivationalQuotesRepository: MotivationalQuotesRepository
+    private val motivationalQuotesAPIRepository: MotivationalQuotesAPIRepository,
 ) {
 
     private val compositeDisposable = CompositeDisposable()
@@ -160,9 +160,9 @@ class JogUseCase(
                 }
             }
 
-    fun getMotivationalQuotes(): Observable<List<MotivationalQuotes>> =
-        motivationalQuotesRepository.getAllMotivationalQuotes()
-
+    fun getRandomMotivationalQuote(): Observable<MotivationalQuotes> =
+        motivationalQuotesAPIRepository
+            .getMotivationalQuote()
 
     fun deleteAllEntries() {
         jogEntriesRepository.deleteAll()
@@ -183,7 +183,6 @@ class JogUseCase(
             .addTo(compositeDisposable)
     }
 
-
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogEntries =
         JogEntries(
             dateTime = modifiedJogDateInformation.dateTime.print(DateFormat.YYYY_MM_DD_T_TIME.format),
@@ -199,3 +198,4 @@ class JogUseCase(
             latitudeLongitude = LatLng(jogEntries.latitude, jogEntries.longitude),
         )
 }
+
