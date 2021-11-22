@@ -42,6 +42,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
         statisticsViewState =
             statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
+
         getJogSummariesBetweenTwoDates(
             ZonedDateTimes.lastMonday,
             ZonedDateTimes.today
@@ -111,15 +112,16 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { quote ->
-                    statisticsViewState = if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
-                        statisticsViewState.copy(
-                            todayLastJogDistance = quote.quote + "."
-                        )
-                    } else {
-                        statisticsViewState.copy(
-                            todayLastJogDistance = quote.quote
-                        )
-                    }
+                    statisticsViewState =
+                        if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
+                            statisticsViewState.copy(
+                                todayLastJogDistance = quote.quote + "."
+                            )
+                        } else {
+                            statisticsViewState.copy(
+                                todayLastJogDistance = quote.quote
+                            )
+                        }
                     invalidateView()
                 },
                 { error -> Log.e(TAG, error.localizedMessage, error) },
