@@ -2,7 +2,6 @@
     <string name="app_name">Just Jog</string>
     <string name="statistics">Statistics</string>
     <string name="calendar">Calendar</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="today">Just Jog!</string>
     <string name="average_miles_per_week">Average Weekly</string>
     <string name="daily_record">Daily Record</string>
@@ -11,8 +10,6 @@
     <string name="click_to_start_run">Click to Start Run</string>
     <string name="delete_all_entries">Delete All Entries</string>
     <string name="delete">Delete</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="total_distance">Distance:</string>
     <string name="total_time">Duration:</string>
     <string name="number_of_runs">Number Of Runs:</string>
@@ -22,7 +19,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="date">Date:</string>
     <string name="jog_id">Jog ID:</string>
-    <string name="be_your_own_change">Be your own change!</string>
     <string name="you_ran_today">You ran today!</string>
     <string name="for_1">For</string>
     <string name="mins_at">mins at</string>

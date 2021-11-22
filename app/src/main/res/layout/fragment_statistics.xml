@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary_background_color"
-    android:paddingBottom="@dimen/m_vertical_spacing"
-    android:paddingEnd="@dimen/l_horizontal_spacing"
-    android:paddingStart="@dimen/m_horizontal_spacing"
     android:paddingTop="@dimen/m_vertical_spacing"
+    android:paddingBottom="@dimen/m_vertical_spacing"
+    android:paddingEnd="@dimen/m_horizontal_spacing"
+    android:paddingStart="@dimen/m_horizontal_spacing"
     tools:context=".statistics.view.StatisticsFragment">
 
     <androidx.cardview.widget.CardView

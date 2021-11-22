@@ -1,16 +1,14 @@
 package com.eljabali.joggingapplicationandroid.home
 
 import android.app.AlertDialog
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.jogsummaries.JogSummariesFragment
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsFragment
+import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
@@ -38,8 +36,16 @@ class HomeActivity : AppCompatActivity() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
     private val statisticsFragment: StatisticsFragment by lazy {
-        checkForPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION, "Fine Location", FINE_LOCATION_RQ)
-        checkForPermissions(android.Manifest.permission.ACCESS_COARSE_LOCATION, "Coarse Location", COARSE_LOCATION_RQ)
+        checkForPermissions(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            "Fine Location",
+            FINE_LOCATION_RQ
+        )
+        checkForPermissions(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            "Coarse Location",
+            COARSE_LOCATION_RQ
+        )
         StatisticsFragment.newInstance(shouldStopService)
     }
     private val jogSummariesFragment: JogSummariesFragment by lazy { JogSummariesFragment.newInstance() }
@@ -66,15 +72,15 @@ class HomeActivity : AppCompatActivity() {
 
     private fun monitorCalendarViewState() {
         homeViewModel.viewStateObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { viewState ->
-                            this.homeViewState = viewState
-                            setNewViewState(viewState)
-                        },
-                        { error -> Log.e(HomeViewModel.TAG, error.localizedMessage, error) })
-                .addTo(compositeDisposable)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { viewState ->
+                    this.homeViewState = viewState
+                    setNewViewState(viewState)
+                },
+                { error -> Log.e(HomeViewModel.TAG, error.localizedMessage, error) })
+            .addTo(compositeDisposable)
     }
 
     private fun setNewViewState(homeViewState: HomeViewState) {
@@ -87,16 +93,16 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupFragments() {
         supportFragmentManager.beginTransaction()
-                .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
-                .hide(caldroidFragment)
-                .commit()
+            .add(R.id.frameLayout, caldroidFragment, CAL_TAG)
+            .hide(caldroidFragment)
+            .commit()
         supportFragmentManager.beginTransaction()
-                .add(R.id.recycler_view_frame_layout, jogSummariesFragment, JogSummariesFragment.TAG)
-                .hide(jogSummariesFragment)
-                .commit()
+            .add(R.id.recycler_view_frame_layout, jogSummariesFragment, JogSummariesFragment.TAG)
+            .hide(jogSummariesFragment)
+            .commit()
         supportFragmentManager.beginTransaction()
-                .add(R.id.frameLayout, statisticsFragment, StatisticsFragment.TAG)
-                .commit()
+            .add(R.id.frameLayout, statisticsFragment, StatisticsFragment.TAG)
+            .commit()
     }
 
     private fun setupBottomNavigation() {
@@ -105,18 +111,18 @@ class HomeActivity : AppCompatActivity() {
                 R.id.statistics_page -> {
                     statisticsFragment.refreshPage()
                     supportFragmentManager.beginTransaction()
-                            .hide(caldroidFragment)
-                            .hide(jogSummariesFragment)
-                            .show(statisticsFragment)
-                            .commit()
+                        .hide(caldroidFragment)
+                        .hide(jogSummariesFragment)
+                        .show(statisticsFragment)
+                        .commit()
                     true
                 }
                 R.id.calendar_page -> {
                     homeViewModel.getAllDates()
                     supportFragmentManager.beginTransaction()
-                            .hide(statisticsFragment)
-                            .show(caldroidFragment)
-                            .commit()
+                        .hide(statisticsFragment)
+                        .show(caldroidFragment)
+                        .commit()
                     true
                 }
                 else -> false
@@ -128,8 +134,8 @@ class HomeActivity : AppCompatActivity() {
         caldroidFragment.caldroidListener = object : CaldroidListener() {
             override fun onSelectDate(date: Date, view: View?) {
                 supportFragmentManager.beginTransaction()
-                        .show(jogSummariesFragment)
-                        .commit()
+                    .show(jogSummariesFragment)
+                    .commit()
                 homeViewModel.getAllJogSummariesAtSpecificDate(date)
             }
         }
@@ -137,33 +143,24 @@ class HomeActivity : AppCompatActivity() {
 
     private fun checkForPermissions(permission: String, name: String, requestCode: Int) {
         when {
-            ContextCompat.checkSelfPermission(
-                    applicationContext,
-                    permission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i(CAL_TAG, "Permission $name Granted")
-            }
+            PermissionUtil.isGranted(this, permission) -> Log.i(CAL_TAG, "Permission $name Granted")
             shouldShowRequestPermissionRationale(permission) -> showDialog(
-                    permission,
-                    name,
-                    requestCode
+                permission,
+                name,
+                requestCode
             )
-            else -> ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+            else -> PermissionUtil.request(this, arrayOf(permission), requestCode)
         }
     }
 
     private fun showDialog(permission: String, name: String, requestCode: Int) {
         val dialog = AlertDialog.Builder(this)
-                .setMessage("Permission to access your $name is required to use this app")
-                .setTitle("Permission Required")
-                .setPositiveButton("OK") { dialog, which ->
-                    ActivityCompat.requestPermissions(
-                            this@HomeActivity,
-                            arrayOf(permission),
-                            requestCode
-                    )
-                }
-                .create()
+            .setMessage("Permission to access your $name is required to use this app")
+            .setTitle("Permission Required")
+            .setPositiveButton("OK") { dialog, which ->
+                PermissionUtil.request(this, arrayOf(permission), requestCode)
+            }
+            .create()
         dialog.show()
     }
 }

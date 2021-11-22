@@ -35,6 +35,7 @@ class ForegroundService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1
+        private const val LOCATION_REQUEST_INTERVAL_MS = 2000L
     }
 
     private var id: Int = 0
@@ -143,7 +144,7 @@ class ForegroundService : Service() {
         this.id = id
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
-            2000,
+            LOCATION_REQUEST_INTERVAL_MS,
             0F,
             locationListener
         )
