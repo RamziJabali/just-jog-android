@@ -5,6 +5,8 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotes
+import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesAPIRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.model.LatLng
@@ -24,7 +26,8 @@ import java.time.ZonedDateTime
 
 class JogUseCase(
     private val jogEntriesRepository: JogEntriesRepository,
-    private val jogSummaryRepository: JogSummaryRepository
+    private val jogSummaryRepository: JogSummaryRepository,
+    private val motivationalQuotesAPIRepository: MotivationalQuotesAPIRepository,
 ) {
 
     private val compositeDisposable = CompositeDisposable()
@@ -137,13 +140,13 @@ class JogUseCase(
                 }
             }
 
-    fun getGetJogSummariesBetweenDates(
-        startDate: LocalDate,
-        endDate: LocalDate
+    fun getJogSummariesBetweenDates(
+        startDate: ZonedDateTime,
+        endDate: ZonedDateTime
     ): Observable<List<ModifiedJogSummary>> =
         jogSummaryRepository.getByRangeOfDates(
-            startDate = startDate.print(DateFormat.YYYY_MM_DD.format),
-            endDate = endDate.print(DateFormat.YYYY_MM_DD.format)
+            startDate = startDate,
+            endDate = endDate
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map { listOfJogSummaries ->
@@ -156,6 +159,10 @@ class JogUseCase(
                     )
                 }
             }
+
+    fun getRandomMotivationalQuote(): Observable<MotivationalQuotes> =
+        motivationalQuotesAPIRepository
+            .getMotivationalQuote()
 
     fun deleteAllEntries() {
         jogEntriesRepository.deleteAll()
@@ -191,3 +198,4 @@ class JogUseCase(
             latitudeLongitude = LatLng(jogEntries.latitude, jogEntries.longitude),
         )
 }
+

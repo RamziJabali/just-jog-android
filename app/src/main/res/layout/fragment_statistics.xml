@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary_background_color"
+    android:paddingBottom="@dimen/m_vertical_spacing"
+    android:paddingEnd="@dimen/l_horizontal_spacing"
     android:paddingStart="@dimen/m_horizontal_spacing"
     android:paddingTop="@dimen/m_vertical_spacing"
-    android:paddingEnd="@dimen/l_horizontal_spacing"
-    android:paddingBottom="@dimen/m_vertical_spacing"
     tools:context=".statistics.view.StatisticsFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/today_run"
-        android:layout_width="170dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginEnd="@dimen/s_horizontal_spacing"
         app:cardCornerRadius="@dimen/xl_corner_radius"
@@ -23,10 +23,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="@dimen/s_horizontal_spacing"
-            android:paddingTop="@dimen/s_vertical_spacing"
+            android:paddingBottom="@dimen/s_vertical_spacing"
             android:paddingEnd="@dimen/s_horizontal_spacing"
-            android:paddingBottom="@dimen/s_vertical_spacing">
+            android:paddingStart="@dimen/s_horizontal_spacing"
+            android:paddingTop="@dimen/s_vertical_spacing">
 
             <TextView
                 android:id="@+id/today_text_view"
@@ -58,150 +58,81 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/weekly_stats"
-        android:layout_width="170dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="@dimen/s_horizontal_spacing"
-        android:layout_marginEnd="@dimen/s_horizontal_spacing"
-        app:cardCornerRadius="@dimen/xl_corner_radius"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="@dimen/s_horizontal_spacing"
-            android:paddingTop="@dimen/s_vertical_spacing"
-            android:paddingEnd="@dimen/s_horizontal_spacing"
-            android:paddingBottom="@dimen/s_vertical_spacing">
-
-            <TextView
-                android:id="@+id/this_weeks_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/s_vertical_spacing"
-                android:text="@string/this_week"
-                android:textSize="@dimen/m_text_size"
-                android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.115"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/this_weeks_runs_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xs_vertical_spacing"
-                android:textColor="@color/primary_text_color"
-                android:textSize="@dimen/m_text_size"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.115"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/this_weeks_text_view"
-                tools:text="- 3 Runs" />
-
-            <TextView
-                android:id="@+id/this_weeks_miles_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xs_vertical_spacing"
-                android:textColor="@color/primary_text_color"
-                android:textSize="@dimen/m_text_size"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.115"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/this_weeks_runs_text_view"
-                tools:text="- 6 Miles" />
-
-            <TextView
-                android:id="@+id/this_weeks_time_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xs_vertical_spacing"
-                android:textColor="@color/primary_text_color"
-                android:textSize="@dimen/m_text_size"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.115"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/this_weeks_miles_text_view"
-                tools:text="- 100h 50m 15s" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
         android:id="@+id/weekly_average_card_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/s_vertical_spacing"
-        android:layout_marginEnd="@dimen/s_horizontal_spacing"
         android:layout_marginBottom="@dimen/m_vertical_spacing"
+        android:layout_marginEnd="@dimen/s_horizontal_spacing"
+        android:layout_marginTop="@dimen/s_vertical_spacing"
         app:cardCornerRadius="@dimen/xl_corner_radius"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/weekly_stats"
+        app:layout_constraintTop_toBottomOf="@id/today_run"
         tools:layout_editor_absoluteX="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="@dimen/s_horizontal_spacing"
-            android:paddingTop="@dimen/s_vertical_spacing"
+            android:paddingBottom="@dimen/s_vertical_spacing"
             android:paddingEnd="@dimen/s_horizontal_spacing"
-            android:paddingBottom="@dimen/s_vertical_spacing">
-
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/weekly_stats_bar_chart"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            android:paddingStart="@dimen/s_horizontal_spacing"
+            android:paddingTop="@dimen/s_vertical_spacing">
 
             <TextView
-                android:id="@+id/average_weekly_run_text_view"
+                android:id="@+id/this_weeks_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
+                android:text="@string/this_week"
+                android:textColor="@color/primary_text_color"
                 android:textSize="@dimen/m_text_size"
+                android:textStyle="italic"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/average_weekly_text_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/this_weeks_runs_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/s_horizontal_spacing"
+                android:layout_marginTop="@dimen/s_vertical_spacing"
+                android:textSize="@dimen/m_text_size"
+                app:layout_constraintStart_toStartOf="@id/this_weeks_text_view"
+                app:layout_constraintTop_toBottomOf="@id/this_weeks_text_view"
                 tools:text="3 Runs" />
 
             <TextView
-                android:id="@+id/forward_slash"
+                android:id="@+id/this_weeks_miles_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/s_horizontal_spacing"
+                android:layout_marginEnd="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
-                android:text="@string/forward_slash"
                 android:textSize="@dimen/m_text_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/average_weekly_run_text_view"
-                app:layout_constraintTop_toBottomOf="@id/average_weekly_text_view" />
+                app:layout_constraintStart_toStartOf="@id/this_weeks_runs_text_view"
+                app:layout_constraintTop_toBottomOf="@id/this_weeks_runs_text_view"
+                tools:text="6 Miles" />
 
             <TextView
-                android:id="@+id/forward_slash2"
+                android:id="@+id/this_weeks_time_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/s_horizontal_spacing"
+                android:layout_marginEnd="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
-                android:text="@string/forward_slash"
                 android:textSize="@dimen/m_text_size"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/average_weekly_miles_text_view"
-                app:layout_constraintTop_toBottomOf="@id/average_weekly_text_view" />
+                app:layout_constraintStart_toStartOf="@id/this_weeks_miles_text_view"
+                app:layout_constraintTop_toBottomOf="@id/this_weeks_miles_text_view"
+                tools:text="100h 50m 15s" />
 
             <TextView
                 android:id="@+id/average_weekly_miles_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
                 android:textSize="@dimen/m_text_size"
-                app:layout_constraintStart_toEndOf="@id/forward_slash"
+                app:layout_constraintStart_toStartOf="@+id/average_weekly_text_view"
                 app:layout_constraintTop_toBottomOf="@id/average_weekly_text_view"
                 tools:text="6.32 Miles" />
 
@@ -209,24 +140,30 @@
                 android:id="@+id/average_weekly_time_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
                 android:textSize="@dimen/m_text_size"
-                app:layout_constraintStart_toEndOf="@id/forward_slash2"
-                app:layout_constraintTop_toBottomOf="@id/average_weekly_text_view"
+                app:layout_constraintStart_toStartOf="@+id/average_weekly_text_view"
+                app:layout_constraintTop_toBottomOf="@id/average_weekly_miles_text_view"
                 tools:text="4h 50m 32s" />
 
             <TextView
                 android:id="@+id/average_weekly_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/s_horizontal_spacing"
                 android:layout_marginTop="@dimen/s_vertical_spacing"
-                android:text="@string/average_weekly"
+                android:layout_marginEnd="@dimen/s_horizontal_spacing"
+                android:text="@string/average_per_run"
+                android:textColor="@color/primary_text_color"
                 android:textSize="@dimen/m_text_size"
                 android:textStyle="italic"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/weekly_stats_bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="340dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -236,9 +173,8 @@
         android:id="@+id/start_stop_floating_action_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/primary_background_color"
         android:contentDescription="@string/start_run"
-        android:elevation="1dp"
+        android:elevation="10dp"
         android:src="@drawable/ic_action_play_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

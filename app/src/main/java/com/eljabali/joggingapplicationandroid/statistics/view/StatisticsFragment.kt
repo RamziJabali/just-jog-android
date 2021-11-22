@@ -32,10 +32,6 @@ class StatisticsFragment : Fragment() {
                 putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
             }
         }
-        private const val MAX_X_VALUE = 7
-        private const val MAX_Y_VALUE = 30
-        private const val MIN_Y_VALUE = 5
-        private const val SET_LABEL = "Distance (Miles)"
         private val DAYS = arrayOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
     }
 
@@ -60,8 +56,8 @@ class StatisticsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.i(TAG, "onResume()")
-        statisticsViewModel.onFragmentLaunch()
         configureBarChartAppearance()
+        statisticsViewModel.onFragmentLaunch()
         monitorStatisticsViewState()
         setClickListeners()
         if (shouldStopService) {
@@ -94,6 +90,8 @@ class StatisticsFragment : Fragment() {
                 textSize = 12f
                 textColor = Color.WHITE
             }
+            weeklyStatsBarChart.isDoubleTapToZoomEnabled = false
+            weeklyStatsBarChart.animateXY(1000, 1000)
             weeklyStatsBarChart.xAxis.apply {
                 setAvoidFirstLastClipping(true)
                 position = XAxis.XAxisPosition.BOTTOM
@@ -129,8 +127,6 @@ class StatisticsFragment : Fragment() {
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalDistance
             thisWeeksTimeTextView.text =
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalTime
-            averageWeeklyRunTextView.text =
-                statisticsViewState.weeklyStats.weeklyAverageStats.averageRuns
             averageWeeklyMilesTextView.text =
                 statisticsViewState.weeklyStats.weeklyAverageStats.averageDistance
             averageWeeklyTimeTextView.text =

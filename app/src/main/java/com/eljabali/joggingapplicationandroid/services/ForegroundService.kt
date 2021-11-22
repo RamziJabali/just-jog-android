@@ -216,5 +216,3 @@ class ForegroundService : Service() {
             )
             .build()
 }
-
-

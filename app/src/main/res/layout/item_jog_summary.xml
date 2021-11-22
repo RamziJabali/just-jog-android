@@ -109,6 +109,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/jog_summary_id_text"
             android:layout_width="101dp"
             android:layout_height="wrap_content"
@@ -119,6 +120,7 @@
             android:textSize="14sp" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/jog_summary_id"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
