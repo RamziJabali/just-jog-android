@@ -10,7 +10,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class JoggingApplication : Application() {
+class JustJogApplication : Application() {
     private val modules = listOf(
         calendarModule,
         statisticsModule,
@@ -23,7 +23,7 @@ class JoggingApplication : Application() {
         super.onCreate()
         startKoin {
             androidLogger()
-            androidContext(this@JoggingApplication)
+            androidContext(this@JustJogApplication)
             modules(modules)
         }
     }

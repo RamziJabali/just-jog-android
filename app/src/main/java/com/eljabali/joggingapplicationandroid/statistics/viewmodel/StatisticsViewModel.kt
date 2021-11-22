@@ -4,7 +4,7 @@ import android.app.Application
 import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.eljabali.joggingapplicationandroid.JoggingApplication
+import com.eljabali.joggingapplicationandroid.JustJogApplication
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
@@ -137,7 +137,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance,
                 listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
             )
-            val application = getApplication<JoggingApplication>()
+            val application = getApplication<JustJogApplication>()
             "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${
                 application.getString(
                     R.string.mins_at
@@ -173,7 +173,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             totalWeeklyJogTime += jogSummary.timeDurationInSeconds
             totalWeeklyRuns++
         }
-        val application = getApplication<JoggingApplication>()
+        val application = getApplication<JustJogApplication>()
         val averageDistance = String.format(
             "%.2f",
             totalWeeklyMiles / 7.0

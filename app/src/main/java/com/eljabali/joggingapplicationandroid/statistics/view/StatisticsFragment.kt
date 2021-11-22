@@ -56,6 +56,10 @@ class StatisticsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        refreshPage()
+    }
+
+    fun refreshPage() {
         Log.i(TAG, "onResume()")
         configureBarChartAppearance()
         statisticsViewModel.onFragmentLaunch()
