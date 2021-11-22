@@ -91,7 +91,7 @@ class StatisticsFragment : Fragment() {
                 textColor = Color.WHITE
             }
             weeklyStatsBarChart.isDoubleTapToZoomEnabled = false
-            weeklyStatsBarChart.animateXY(1000, 1000)
+            weeklyStatsBarChart.animateXY(1000, 1000) //TODO: have this get triggered each time the page is clicked
             weeklyStatsBarChart.xAxis.apply {
                 setAvoidFirstLastClipping(true)
                 position = XAxis.XAxisPosition.BOTTOM

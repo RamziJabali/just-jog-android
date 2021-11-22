@@ -103,6 +103,7 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigationBarView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.statistics_page -> {
+                    statisticsFragment.onResume()
                     supportFragmentManager.beginTransaction()
                             .hide(caldroidFragment)
                             .hide(jogSummariesFragment)

@@ -11,10 +11,10 @@ import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.statistics.view.WeeklyStats
 import com.eljabali.joggingapplicationandroid.util.*
-import io.reactivex.android.schedulers.AndroidSchedulers
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
@@ -111,9 +111,15 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { quote ->
-                    statisticsViewState = statisticsViewState.copy(
-                        todayLastJogDistance = quote.quote
-                    )
+                    statisticsViewState = if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
+                        statisticsViewState.copy(
+                            todayLastJogDistance = quote.quote + "."
+                        )
+                    } else {
+                        statisticsViewState.copy(
+                            todayLastJogDistance = quote.quote
+                        )
+                    }
                     invalidateView()
                 },
                 { error -> Log.e(TAG, error.localizedMessage, error) },

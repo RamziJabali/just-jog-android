@@ -21,7 +21,7 @@ fun getTotalDistance(listOfPoints: List<LatLng>): Double {
 }
 
 fun getMPH(totalDistance: Double, totalTimeInSeconds: Long):String {
-    return String.format("%.3f",  totalDistance/ secondsToHoursDouble(totalTimeInSeconds))
+    return String.format("%.2f",  totalDistance/ secondsToHoursDouble(totalTimeInSeconds))
 }
 
 
