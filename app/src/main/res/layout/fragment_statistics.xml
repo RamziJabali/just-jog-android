@@ -5,10 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/secondary_background_color"
-    android:paddingTop="@dimen/m_vertical_spacing"
-    android:paddingBottom="@dimen/m_vertical_spacing"
-    android:paddingEnd="@dimen/m_horizontal_spacing"
-    android:paddingStart="@dimen/m_horizontal_spacing"
+    android:padding="@dimen/m_padding"
     tools:context=".statistics.view.StatisticsFragment">
 
     <androidx.cardview.widget.CardView
@@ -172,8 +169,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="332dp"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
