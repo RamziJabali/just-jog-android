@@ -32,6 +32,7 @@ class StatisticsFragment : Fragment() {
                 putBoolean(SHOULD_STOP_SERVICE_KEY, shouldStopService)
             }
         }
+
         private val DAYS = arrayOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
     }
 
@@ -55,6 +56,10 @@ class StatisticsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        refreshPage()
+    }
+
+    fun refreshPage() {
         Log.i(TAG, "onResume()")
         configureBarChartAppearance()
         statisticsViewModel.onFragmentLaunch()
@@ -91,7 +96,6 @@ class StatisticsFragment : Fragment() {
                 textColor = Color.WHITE
             }
             weeklyStatsBarChart.isDoubleTapToZoomEnabled = false
-            weeklyStatsBarChart.animateXY(1000, 1000)
             weeklyStatsBarChart.xAxis.apply {
                 setAvoidFirstLastClipping(true)
                 position = XAxis.XAxisPosition.BOTTOM
@@ -105,6 +109,7 @@ class StatisticsFragment : Fragment() {
             }
             weeklyStatsBarChart.axisLeft.textColor = Color.WHITE
             weeklyStatsBarChart.axisRight.isEnabled = false
+            weeklyStatsBarChart.animateXY(1000, 1000)
         }
     }
 
@@ -120,7 +125,7 @@ class StatisticsFragment : Fragment() {
     private fun setNewViewState(statisticsViewState: StatisticsViewState) {
         with(binding) {
             todayRunTextView.text = statisticsViewState.todayLastJogDistance
-            todayTextView.text = statisticsViewState.dateToday
+//            todayTextView.text = statisticsViewState.dateToday
             thisWeeksRunsTextView.text =
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalRuns
             thisWeeksMilesTextView.text =

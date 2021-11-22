@@ -79,14 +79,15 @@ class HomeViewModel(
                     totalDistance = "${jogSummary.totalDistance} Miles",
                     totalTime = getFormattedTime(
                         jogSummary.timeDurationInSeconds,
-                        DurationFormat.HH_MM_SS
+                        DurationFormat.H_M_S
                     ),
                     jogEntryCountOfDay = jogNumber.toString(),
                     milesPerHour = getMPH(
                         jogSummary.totalDistance,
                         jogSummary.timeDurationInSeconds
                     ),
-                    date = jogSummary.date.print(DateFormat.YYYY_MM_DD.format)
+                    date = jogSummary.date.print(DateFormat.YYYY_MM_DD.format),
+                    startTime = jogSummary.date.print(DateFormat.HH_MM_SS.format)
                 )
             )
             jogNumber++

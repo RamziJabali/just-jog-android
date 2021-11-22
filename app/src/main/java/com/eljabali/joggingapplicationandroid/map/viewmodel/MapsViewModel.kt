@@ -34,7 +34,6 @@ class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
                     val pointsOfRun = getJogLatLngPoints(runID, listOfSpecificDates)
                     mapsViewState = mapsViewState.copy(
                         listOfLatLng = pointsOfRun,
-                        midpoint = pointsOfRun[pointsOfRun.size / 2]
                     )
                     invalidateView()
                 },

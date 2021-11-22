@@ -4,17 +4,17 @@ import android.app.Application
 import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.eljabali.joggingapplicationandroid.JoggingApplication
+import com.eljabali.joggingapplicationandroid.JustJogApplication
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsViewState
 import com.eljabali.joggingapplicationandroid.statistics.view.WeeklyStats
 import com.eljabali.joggingapplicationandroid.util.*
-import io.reactivex.android.schedulers.AndroidSchedulers
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
@@ -42,6 +42,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
         statisticsViewState =
             statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
+
         getJogSummariesBetweenTwoDates(
             ZonedDateTimes.lastMonday,
             ZonedDateTimes.today
@@ -111,9 +112,16 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { quote ->
-                    statisticsViewState = statisticsViewState.copy(
-                        todayLastJogDistance = quote.quote
-                    )
+                    statisticsViewState =
+                        if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
+                            statisticsViewState.copy(
+                                todayLastJogDistance = quote.quote + "."
+                            )
+                        } else {
+                            statisticsViewState.copy(
+                                todayLastJogDistance = quote.quote
+                            )
+                        }
                     invalidateView()
                 },
                 { error -> Log.e(TAG, error.localizedMessage, error) },
@@ -129,7 +137,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 listOfJogSummaries[listOfJogSummaries.size - 1].totalDistance,
                 listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
             )
-            val application = getApplication<JoggingApplication>()
+            val application = getApplication<JustJogApplication>()
             "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${
                 application.getString(
                     R.string.mins_at
@@ -165,7 +173,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             totalWeeklyJogTime += jogSummary.timeDurationInSeconds
             totalWeeklyRuns++
         }
-        val application = getApplication<JoggingApplication>()
+        val application = getApplication<JustJogApplication>()
         val averageDistance = String.format(
             "%.2f",
             totalWeeklyMiles / 7.0

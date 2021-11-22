@@ -14,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,8 +28,8 @@ import java.time.LocalDate
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val ZOOM_LEVEL = 13f
-        private const val RUN_ID = "com.eljabali.joggingapplicationandroid.map.mapsview"
-        private const val DATE_ID = "GOOGLYMOOGLY"
+        private const val RUN_ID = "RUN_ID"
+        private const val DATE_ID = "DATE_ID"
 
         fun newInstance(context: Context, localDate: LocalDate, runID: Int): Intent =
             Intent(context, MapsActivity::class.java).apply {
@@ -67,13 +68,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setMapsViewState(mapsViewState: MapsViewState) {
-        map.addPolyline(
-            PolylineOptions()
-                .clickable(false)
-                .color(R.color.light_blue)
-                .addAll(mapsViewState.listOfLatLng)
-        )
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(mapsViewState.midpoint, ZOOM_LEVEL))
+        map.apply {
+            addPolyline(
+                PolylineOptions()
+                    .clickable(false)
+                    .color(R.color.light_blue)
+                    .addAll(mapsViewState.listOfLatLng)
+            )
+            addMarker(
+                MarkerOptions()
+                    .position(mapsViewState.listOfLatLng[0])
+                    .title(getString(R.string.start))
+            )
+            addMarker(
+                MarkerOptions()
+                    .position(mapsViewState.listOfLatLng[mapsViewState.listOfLatLng.lastIndex])
+                    .title(getString(R.string.end))
+            )
+            animateCamera(
+                CameraUpdateFactory.newLatLngZoom(mapsViewState.listOfLatLng[0], ZOOM_LEVEL)
+            )
+        }
     }
 
     private fun monitorMapsViewState() {
