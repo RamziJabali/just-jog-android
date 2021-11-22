@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingStart="10dp"
-    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:paddingEnd="10dp"
-    android:paddingBottom="10dp">
+    android:paddingStart="10dp"
+    android:paddingTop="10dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/average"
@@ -18,6 +18,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <Button
+            android:id="@+id/map_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="70dp"
+            android:backgroundTint="@color/primary_button_color"
+            android:text="@string/map"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/jog_number"
@@ -34,7 +44,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/total_distance"
-            android:textAlignment="center"
             android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />
 
@@ -53,7 +62,7 @@
             android:layout_width="99dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="45dp"
             android:text="@string/total_time"
             android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />
@@ -63,7 +72,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="45dp"
             android:textAlignment="center"
             android:textColor="@color/primary_text_color"
             android:textSize="14sp" />
@@ -73,7 +82,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="70dp"
             android:text="@string/miles_per_hour"
             android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />
@@ -83,7 +92,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="70dp"
             android:textAlignment="center"
             android:textColor="@color/primary_text_color"
             android:textSize="14sp" />
@@ -93,7 +102,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="95dp"
             android:text="@string/date"
             android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />
@@ -103,13 +112,12 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="110dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="95dp"
             android:textAlignment="center"
             android:textColor="@color/primary_text_color"
             android:textSize="14sp" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/jog_summary_id_text"
             android:layout_width="101dp"
             android:layout_height="wrap_content"
@@ -117,10 +125,10 @@
             android:layout_marginTop="100dp"
             android:text="@string/jog_id"
             android:textColor="@color/secondary_text_color"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/jog_summary_id"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
@@ -128,17 +136,28 @@
             android:layout_marginTop="100dp"
             android:textAlignment="center"
             android:textColor="@color/primary_text_color"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="120dp"
+            android:text="@string/start_time"
+            android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/map_button"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/start_time_value"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="45dp"
-            android:backgroundTint="@color/primary_button_color"
-            android:text="@string/map"
-            android:textColor="@color/black" />
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="120dp"
+            android:textAlignment="center"
+            android:textColor="@color/primary_text_color"
+            android:textSize="14sp" />
 
     </com.google.android.material.card.MaterialCardView>
 

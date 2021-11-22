@@ -6,5 +6,6 @@ data class JogSummaryProperties(
     val totalTime: String = "",
     val jogEntryCountOfDay: String = "",
     val milesPerHour: String = "",
-    val date: String = ""
+    val date: String = "",
+    val startTime: String = ""
 )

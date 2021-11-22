@@ -51,6 +51,7 @@
             </ScrollView>
 
             <TextView
+                android:gravity="center"
                 android:id="@+id/today_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +60,6 @@
                 android:textSize="@dimen/m_text_size"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.115"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
