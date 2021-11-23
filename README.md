@@ -2,6 +2,7 @@
 <p align="center">Jog tracking application that motivates you to keep jogging.</p>
 
 ## Features
+- Jog Tracking
 - Statistics
 - Calendar
 - Map
