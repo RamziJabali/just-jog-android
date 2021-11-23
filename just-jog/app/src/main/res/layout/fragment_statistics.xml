@@ -167,7 +167,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/weekly_stats_bar_chart"
                 android:layout_width="match_parent"
-                android:layout_height="332dp"
+                android:layout_height="318dp"
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

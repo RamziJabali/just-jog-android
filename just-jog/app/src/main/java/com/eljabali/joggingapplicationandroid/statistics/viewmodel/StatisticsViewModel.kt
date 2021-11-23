@@ -20,8 +20,11 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import zoneddatetime.ZonedDateTimes
+import zoneddatetime.extensions.getLast
+import zoneddatetime.extensions.getNext
 import zoneddatetime.extensions.isEqualDay
 import zoneddatetime.extensions.print
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -44,16 +47,16 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
 
         getJogSummariesBetweenTwoDates(
-            ZonedDateTimes.lastMonday,
-            ZonedDateTimes.today
+            ZonedDateTimes.today.getLast(DayOfWeek.MONDAY, countingInThisDay = true),
+            ZonedDateTimes.today.getNext(DayOfWeek.SUNDAY, countingInThisDay = true)
         )
     }
 
     private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
         val entries = mutableListOf<BarEntry>()
         val weeksSummaries = mutableListOf<Double>()
-        var tempDate = ZonedDateTimes.lastMonday
-        val endDate = tempDate.plusDays(7)
+        var tempDate = ZonedDateTimes.today.getLast(DayOfWeek.MONDAY, countingInThisDay = true)
+        val endDate = ZonedDateTimes.today.getNext(DayOfWeek.MONDAY, countingInThisDay = false)
         var index = 0
         var totalDistancePerDay = 0.0
         while (!tempDate.isEqual(endDate)) {
