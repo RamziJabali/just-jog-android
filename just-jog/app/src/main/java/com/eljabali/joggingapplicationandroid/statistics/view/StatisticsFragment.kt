@@ -126,6 +126,7 @@ class StatisticsFragment : Fragment() {
         with(binding) {
             todayRunTextView.text = statisticsViewState.todayLastJogDistance
 //            todayTextView.text = statisticsViewState.dateToday
+            todayTextView.text = statisticsViewState.youRanToday
             thisWeeksRunsTextView.text =
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalRuns
             thisWeeksMilesTextView.text =

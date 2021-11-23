@@ -52,14 +52,17 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         )
     }
 
-    private fun getBarChartStats(listOfJogs: List<ModifiedJogSummary>): BarData {
+    private fun getBarChartStats(
+        listOfJogs: List<ModifiedJogSummary>,
+        startDate: ZonedDateTime,
+        endDate: ZonedDateTime
+    ): BarData {
         val entries = mutableListOf<BarEntry>()
         val weeksSummaries = mutableListOf<Double>()
-        var tempDate = ZonedDateTimes.today.getLast(DayOfWeek.MONDAY, countingInThisDay = true)
-        val endDate = ZonedDateTimes.today.getNext(DayOfWeek.MONDAY, countingInThisDay = false)
+        var tempDate = startDate
         var index = 0
         var totalDistancePerDay = 0.0
-        while (!tempDate.isEqual(endDate)) {
+        while (!tempDate.isEqualDay(endDate)) {
             if (index < listOfJogs.size && tempDate.isEqualDay(listOfJogs[index].date)) {
                 if (index + 1 < listOfJogs.size && !listOfJogs[index].date.isEqualDay(listOfJogs[index + 1].date) || index + 1 >= listOfJogs.size) {
                     totalDistancePerDay += listOfJogs[index].totalDistance
@@ -97,7 +100,8 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                     val text = getLastJog(listOfJogSummaries)
                     if (text.isNotEmpty()) {
                         statisticsViewState = statisticsViewState.copy(
-                            todayLastJogDistance = text
+                            youRanToday = text[0],
+                            todayLastJogDistance = text[1]
                         )
                     } else {
                         getRandomQuote()
@@ -118,10 +122,12 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                     statisticsViewState =
                         if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
                             statisticsViewState.copy(
+                                youRanToday = getApplication<JustJogApplication>().getString(R.string.you_ran_today),
                                 todayLastJogDistance = quote.quote + "."
                             )
                         } else {
                             statisticsViewState.copy(
+                                youRanToday = getApplication<JustJogApplication>().getString(R.string.you_ran_today),
                                 todayLastJogDistance = quote.quote
                             )
                         }
@@ -131,9 +137,12 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             ).addTo(compositeDisposable)
     }
 
-    private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): String =
-        if (listOfJogSummaries.isEmpty()) ""
-        else {
+    private fun
+            getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): List<String> =
+        if (listOfJogSummaries.isEmpty()) {
+            val emptyList = mutableListOf<String>()
+            emptyList
+        } else {
             val timeMinutes =
                 listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds / 60
             val mph = getMPH(
@@ -141,21 +150,32 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 listOfJogSummaries[listOfJogSummaries.size - 1].timeDurationInSeconds
             )
             val application = getApplication<JustJogApplication>()
-            "${application.getString(R.string.you_ran_today)}\n${application.getString(R.string.for_1)} $timeMinutes ${
-                application.getString(
-                    R.string.mins_at
-                )
-            } $mph ${application.getString(R.string.mph)}"
+            val stringList = mutableListOf<String>()
+            stringList.add(application.getString(R.string.you_ran_today))
+
+            stringList.add(
+                "${application.getString(R.string.your_ran_for)} $timeMinutes ${
+                    application.getString(
+                        R.string.mins_at
+                    )
+                } $mph ${application.getString(R.string.mph)}"
+            )
+            stringList
         }
 
-    private fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
+    fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
         jogUseCase.getJogSummariesBetweenDates(startDate, endDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { listOfModifiedJogDateInformation ->
                     val weeklyStats = getWeeklyStats(listOfModifiedJogDateInformation)
-                    val barData = getBarChartStats(listOfModifiedJogDateInformation)
+                    val barData =
+                        getBarChartStats(
+                            listOfModifiedJogDateInformation,
+                            startDate,
+                            endDate.plusDays(1)
+                        )
                     statisticsViewState = statisticsViewState.copy(
                         weeklyStats = weeklyStats,
                         barData = barData

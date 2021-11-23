@@ -7,6 +7,7 @@ data class StatisticsViewState(
     val dateToday: String = "",
     val weeklyStats: WeeklyStats = WeeklyStats(),
     val barData: BarData = BarData(),
+    val youRanToday: String = "",
     val todayLastJogDistance: String = "",
     val isUserJogging: Boolean = false
 )
