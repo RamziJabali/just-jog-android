@@ -1,4 +1,4 @@
-package com.eljabali.joggingapplicationandroid.map.viewmodel
+package com.eljabali.joggingapplicationandroid.map.view
 
 import com.google.android.gms.maps.model.LatLng
 

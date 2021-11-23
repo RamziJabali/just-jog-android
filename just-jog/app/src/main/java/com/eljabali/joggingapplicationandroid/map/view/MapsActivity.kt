@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
-import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewState
 import com.eljabali.joggingapplicationandroid.util.DateFormat
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.CameraUpdateFactory
