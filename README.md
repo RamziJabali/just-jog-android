@@ -12,6 +12,8 @@
 <img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/maps-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
 </p></br>
 
+<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/summary.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
+
 ## Architecture
 - MVVM
 
