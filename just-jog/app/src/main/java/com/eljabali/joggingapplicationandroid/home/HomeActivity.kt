@@ -19,6 +19,8 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import zoneddatetime.ZonedDateTimes
+import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.*
 
 class HomeActivity : AppCompatActivity() {
@@ -118,7 +120,7 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.calendar_page -> {
-                    homeViewModel.getAllDates()
+                    homeViewModel.getAllDates(ZonedDateTime.now())
                     supportFragmentManager.beginTransaction()
                         .hide(statisticsFragment)
                         .show(caldroidFragment)
@@ -138,7 +140,13 @@ class HomeActivity : AppCompatActivity() {
                     .commit()
                 homeViewModel.getAllJogSummariesAtSpecificDate(date)
             }
+
+            override fun onChangeMonth(month: Int, year: Int) {
+                homeViewModel.getAllDates(year, month)
+            }
         }
+
+
     }
 
     private fun checkForPermissions(permission: String, name: String, requestCode: Int) {

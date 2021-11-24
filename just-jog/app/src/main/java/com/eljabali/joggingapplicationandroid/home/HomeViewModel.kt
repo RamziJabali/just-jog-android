@@ -15,8 +15,10 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import localdate.LocalDateUtil
+import zoneddatetime.extensions.getDaysInMonth
 import zoneddatetime.extensions.print
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -35,8 +37,46 @@ class HomeViewModel(
     private val compositeDisposable = CompositeDisposable()
     private var viewState = HomeViewState()
 
-    fun getAllDates() {
-        jogUseCase.getAllJogSummaries()
+    fun getAllDates(startDate: ZonedDateTime) {
+        val officialStartDate =
+            ZonedDateTime.of(startDate.year, startDate.monthValue, 1, 0, 0, 0, 0, startDate.zone)
+        val officialEndDate = ZonedDateTime.of(
+            startDate.year,
+            startDate.monthValue,
+            startDate.getDaysInMonth(),
+            0,
+            0,
+            0,
+            0,
+            startDate.zone
+        )
+        jogUseCase.getJogSummariesBetweenDates(officialStartDate, officialEndDate)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { allJogSummaries ->
+                    viewState = viewState.copy(
+                        listOfColoredDates = getColoredDatesFromJogSummary(listOfJogSummary = allJogSummaries)
+                    )
+                    invalidateView()
+                },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
+            ).addTo(compositeDisposable)
+    }
+
+    fun getAllDates(year: Int, month: Int) {
+        val officialStartDate = ZonedDateTime.of(year, month, 1, 0, 0, 0, 0, ZoneId.systemDefault())
+        val officialEndDate = ZonedDateTime.of(
+            year,
+            month,
+            officialStartDate.getDaysInMonth(),
+            0,
+            0,
+            0,
+            0,
+            ZoneId.systemDefault()
+        )
+        jogUseCase.getJogSummariesBetweenDates(officialStartDate, officialEndDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
