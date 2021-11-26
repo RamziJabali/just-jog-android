@@ -81,7 +81,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
         for (dayOfTheWeek in 0..6) {
             entries.add(BarEntry(dayOfTheWeek.toFloat(), weeksSummaries[dayOfTheWeek].toFloat()))
         }
-        val barDataSet = BarDataSet(entries, "Distance(Miles)").apply {
+        val barDataSet = BarDataSet(entries, "Distance (Miles)").apply {
             color = Color.WHITE
         }
         return BarData(barDataSet).apply {
@@ -122,12 +122,12 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                     statisticsViewState =
                         if (quote.quote[quote.quote.length - 1].isLetterOrDigit()) {
                             statisticsViewState.copy(
-                                youRanToday = getApplication<JustJogApplication>().getString(R.string.you_ran_today),
+                                youRanToday = getApplication<JustJogApplication>().getString(R.string.today),
                                 todayLastJogDistance = quote.quote + "."
                             )
                         } else {
                             statisticsViewState.copy(
-                                youRanToday = getApplication<JustJogApplication>().getString(R.string.you_ran_today),
+                                youRanToday = getApplication<JustJogApplication>().getString(R.string.today),
                                 todayLastJogDistance = quote.quote
                             )
                         }

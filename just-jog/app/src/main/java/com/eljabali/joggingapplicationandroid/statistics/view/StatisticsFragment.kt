@@ -97,7 +97,6 @@ class StatisticsFragment : Fragment() {
             }
             weeklyStatsBarChart.isDoubleTapToZoomEnabled = false
             weeklyStatsBarChart.xAxis.apply {
-                setAvoidFirstLastClipping(true)
                 position = XAxis.XAxisPosition.BOTTOM
                 textColor = Color.WHITE
                 textSize = 12f
@@ -125,7 +124,6 @@ class StatisticsFragment : Fragment() {
     private fun setNewViewState(statisticsViewState: StatisticsViewState) {
         with(binding) {
             todayRunTextView.text = statisticsViewState.todayLastJogDistance
-//            todayTextView.text = statisticsViewState.dateToday
             todayTextView.text = statisticsViewState.youRanToday
             thisWeeksRunsTextView.text =
                 statisticsViewState.weeklyStats.weeklyTotalStats.totalRuns
