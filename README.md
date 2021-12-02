@@ -7,7 +7,7 @@
 - Calendar
 - Map
 <p align="center">
-<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/stats-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/stats_page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
 <img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/calendar-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
 <img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/maps-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
 </p></br>
