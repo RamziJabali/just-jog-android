@@ -16,6 +16,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import localdate.LocalDateUtil
 import zoneddatetime.extensions.getDaysInMonth
+import zoneddatetime.extensions.isBeforeEqualDay
 import zoneddatetime.extensions.print
 import java.time.LocalDate
 import java.time.ZoneId
@@ -137,9 +138,26 @@ class HomeViewModel(
 
     private fun getColoredDatesFromJogSummary(listOfJogSummary: List<ModifiedJogSummary>): List<ColoredDates> {
         val listOfColoredDates: MutableList<ColoredDates> = mutableListOf()
-        if (listOfJogSummary.isEmpty()) {
-            viewState.listOfColoredDates.forEach { coloredDates ->
-                listOfColoredDates.add(ColoredDates(coloredDates.date, noJogRecorded))
+        if (listOfJogSummary.isEmpty() && viewState.listOfColoredDates.isEmpty()) {
+                var officialStartDate =
+                    ZonedDateTime.of(
+                        ZonedDateTime.now().year,
+                        ZonedDateTime.now().monthValue,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        ZonedDateTime.now().zone
+                    )
+                while (officialStartDate.isBeforeEqualDay(ZonedDateTime.now())) {
+                    listOfColoredDates.add(
+                        ColoredDates(
+                            date = convertZonedDateTimeToDate(officialStartDate),
+                            hasNotWorkedOutColor
+                        )
+                    )
+                    officialStartDate = officialStartDate.plusDays(1)
             }
             return listOfColoredDates
         }
