@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.jogsummaries.JogSummariesFragment
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsFragment
@@ -19,7 +20,6 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import zoneddatetime.ZonedDateTimes
-import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -69,20 +69,10 @@ class HomeActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupFragments()
         setupCalendarListener()
-        monitorCalendarViewState()
-    }
-
-    private fun monitorCalendarViewState() {
-        homeViewModel.viewStateObservable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { viewState ->
-                    this.homeViewState = viewState
-                    setNewViewState(viewState)
-                },
-                { error -> Log.e(HomeViewModel.TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
+        val viewStateObserver = Observer<HomeViewState> { homeViewState ->
+            setNewViewState(homeViewState)
+        }
+        homeViewModel.viewStateLiveData.observe(this, viewStateObserver)
     }
 
     private fun setNewViewState(homeViewState: HomeViewState) {

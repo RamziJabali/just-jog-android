@@ -1,6 +1,7 @@
 package com.eljabali.joggingapplicationandroid.map.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
@@ -11,13 +12,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
-import java.time.LocalDate
 
 class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
 
-    val mapsViewStateObservable = BehaviorSubject.create<MapsViewState>()
-
+    val mapsLiveData: MutableLiveData<MapsViewState> by lazy {
+        MutableLiveData<MapsViewState>()
+    }
     private var mapsViewState = MapsViewState()
     private val compositeDisposable = CompositeDisposable()
 
@@ -26,13 +26,13 @@ class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
         compositeDisposable.clear()
     }
 
-    fun getAllJogsAtSpecificDate(localDate: LocalDate, runID: Int) {
-        jogUseCase.getAllJogsAtSpecificDate(localDate)
+    fun getAllJogsAtSpecificID(runID: Int) {
+        jogUseCase.getJogEntriesById(runID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { listOfSpecificDates ->
-                    val pointsOfRun = getJogLatLngPoints(runID, listOfSpecificDates)
+                    val pointsOfRun = getJogLatLngPoints(listOfSpecificDates)
                     mapsViewState = mapsViewState.copy(
                         listOfLatLng = pointsOfRun,
                     )
@@ -44,20 +44,17 @@ class MapsViewModel(private val jogUseCase: JogUseCase) : ViewModel() {
     }
 
     private fun getJogLatLngPoints(
-        jogID: Int,
         specificDate: List<ModifiedJogDateInformation>
     ): List<LatLng> {
         val listOfLatLng = mutableListOf<LatLng>()
         specificDate.forEach { date ->
-            if (date.runNumber == jogID) {
-                listOfLatLng.add(date.latitudeLongitude)
-            }
+            listOfLatLng.add(date.latitudeLongitude)
         }
         return listOfLatLng
     }
 
     private fun invalidateView() {
-        mapsViewStateObservable.onNext(mapsViewState)
+        mapsLiveData.value = mapsViewState
     }
 
 }

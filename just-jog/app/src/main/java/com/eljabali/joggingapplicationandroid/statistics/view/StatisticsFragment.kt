@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.eljabali.joggingapplicationandroid.databinding.FragmentStatisticsBinding
 import com.eljabali.joggingapplicationandroid.home.HomeActivity
 import com.eljabali.joggingapplicationandroid.services.ForegroundService
@@ -15,10 +16,7 @@ import com.eljabali.joggingapplicationandroid.statistics.viewmodel.StatisticsVie
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.formatter.ValueFormatter
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -44,6 +42,11 @@ class StatisticsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         shouldStopService = arguments?.getBoolean(SHOULD_STOP_SERVICE_KEY) ?: false
+
+        val statisticsViewStateObserver = Observer<StatisticsViewState> { statisticsViewState ->
+            setNewViewState(statisticsViewState)
+        }
+        statisticsViewModel.statisticsLiveData.observe(this, statisticsViewStateObserver)
     }
 
     override fun onCreateView(
@@ -63,7 +66,6 @@ class StatisticsFragment : Fragment() {
         Log.i(TAG, "onResume()")
         configureBarChartAppearance()
         statisticsViewModel.onFragmentLaunch()
-        monitorStatisticsViewState()
         setClickListeners()
         if (shouldStopService) {
             val homeActivity = activity as HomeActivity
@@ -74,17 +76,6 @@ class StatisticsFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
-    }
-
-    private fun monitorStatisticsViewState() {
-        statisticsViewModel.observableStatisticsViewState
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { statisticsViewState -> setNewViewState(statisticsViewState) },
-                { error -> Log.e(TAG, error.localizedMessage, error) }
-            )
-            .addTo(compositeDisposable)
     }
 
     private fun configureBarChartAppearance() {

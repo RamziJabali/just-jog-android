@@ -3,22 +3,19 @@ package com.eljabali.joggingapplicationandroid.map.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
 import com.eljabali.joggingapplicationandroid.util.DateFormat
-import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
 import localdate.extensions.parseLocalDate
 import localdate.extensions.print
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,7 +36,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private val mapsViewModel: MapsViewModel by viewModel()
-    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,23 +43,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    private fun setupObserver() {
         setupViewModel()
-        monitorMapsViewState()
+        val mapsViewStateObserver = Observer<MapsViewState> { mapsViewState ->
+            setMapsViewState(mapsViewState)
+        }
+        mapsViewModel.mapsLiveData.observe(this, mapsViewStateObserver)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-    }
-
-    override fun onStop() {
-        super.onStop()
-        compositeDisposable.clear()
+        setupViewModel()
+        setupObserver()
     }
 
     private fun setupViewModel() {
         val runID = intent.getIntExtra(RUN_ID, -1)
         val localDate = intent.getStringExtra(DATE_ID)?.parseLocalDate() ?: throw RuntimeException()
-        mapsViewModel.getAllJogsAtSpecificDate(runID = runID, localDate = localDate)
+        mapsViewModel.getAllJogsAtSpecificID(runID = runID)
     }
 
     private fun setMapsViewState(mapsViewState: MapsViewState) {
@@ -88,17 +87,5 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 CameraUpdateFactory.newLatLngZoom(mapsViewState.listOfLatLng[0], ZOOM_LEVEL)
             )
         }
-    }
-
-    private fun monitorMapsViewState() {
-        mapsViewModel.mapsViewStateObservable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { viewState ->
-                    setMapsViewState(viewState)
-                },
-                { error -> Log.e(TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
     }
 }

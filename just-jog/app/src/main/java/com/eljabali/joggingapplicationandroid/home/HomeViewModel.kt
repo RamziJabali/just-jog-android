@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.eljabali.joggingapplicationandroid.calendar.jogsummaries.JogSummaryProperties
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogSummary
@@ -34,7 +35,9 @@ class HomeViewModel(
         val noJogRecorded: ColorDrawable = ColorDrawable(Color.WHITE)
     }
 
-    val viewStateObservable = BehaviorSubject.create<HomeViewState>()
+    val viewStateLiveData: MutableLiveData<HomeViewState> by lazy {
+        MutableLiveData<HomeViewState>()
+    }
     private val compositeDisposable = CompositeDisposable()
     private var viewState = HomeViewState()
 
@@ -138,29 +141,30 @@ class HomeViewModel(
 
     private fun getColoredDatesFromJogSummary(listOfJogSummary: List<ModifiedJogSummary>): List<ColoredDates> {
         val listOfColoredDates: MutableList<ColoredDates> = mutableListOf()
-        if (listOfJogSummary.isEmpty() && viewState.listOfColoredDates.isEmpty()) {
-                var officialStartDate =
-                    ZonedDateTime.of(
-                        ZonedDateTime.now().year,
-                        ZonedDateTime.now().monthValue,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        ZonedDateTime.now().zone
+        if (listOfJogSummary.isEmpty()) {
+            var officialStartDate =
+                ZonedDateTime.of(
+                    ZonedDateTime.now().year,
+                    ZonedDateTime.now().monthValue,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    ZonedDateTime.now().zone
+                )
+            while (officialStartDate.isBeforeEqualDay(ZonedDateTime.now())) {
+                listOfColoredDates.add(
+                    ColoredDates(
+                        date = convertZonedDateTimeToDate(officialStartDate),
+                        hasNotWorkedOutColor
                     )
-                while (officialStartDate.isBeforeEqualDay(ZonedDateTime.now())) {
-                    listOfColoredDates.add(
-                        ColoredDates(
-                            date = convertZonedDateTimeToDate(officialStartDate),
-                            hasNotWorkedOutColor
-                        )
-                    )
-                    officialStartDate = officialStartDate.plusDays(1)
+                )
+                officialStartDate = officialStartDate.plusDays(1)
             }
             return listOfColoredDates
         }
+
         var date = listOfJogSummary[0].date
         var index = 0
         val timeNow = LocalDate.now()
@@ -192,6 +196,6 @@ class HomeViewModel(
         Date.from(dateTime.toInstant())
 
     private fun invalidateView() {
-        viewStateObservable.onNext(viewState)
+        viewStateLiveData.value = viewState
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.eljabali.joggingapplicationandroid.JustJogApplication
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
@@ -32,7 +33,9 @@ import java.time.ZonedDateTime
 class StatisticsViewModel(application: Application, private val jogUseCase: JogUseCase) :
     AndroidViewModel(application) {
 
-    val observableStatisticsViewState = BehaviorSubject.create<StatisticsViewState>()
+    val statisticsLiveData: MutableLiveData<StatisticsViewState> by lazy {
+        MutableLiveData<StatisticsViewState>()
+    }
     private var statisticsViewState = StatisticsViewState()
     private val compositeDisposable = CompositeDisposable()
 
@@ -43,9 +46,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
 
     fun onFragmentLaunch() {
         getJogSummariesAtDate(ZonedDateTimes.today.toLocalDate())
-        statisticsViewState =
-            statisticsViewState.copy(dateToday = ZonedDateTimes.now.print(DateFormat.EEE_MMM_D_YYYY.format))
-
         getJogSummariesBetweenTwoDates(
             ZonedDateTimes.today.getLast(DayOfWeek.MONDAY, countingInThisDay = true),
             ZonedDateTimes.today.getNext(DayOfWeek.SUNDAY, countingInThisDay = true)
@@ -137,8 +137,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             ).addTo(compositeDisposable)
     }
 
-    private fun
-            getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): List<String> =
+    private fun getLastJog(listOfJogSummaries: List<ModifiedJogSummary>): List<String> =
         if (listOfJogSummaries.isEmpty()) {
             val emptyList = mutableListOf<String>()
             emptyList
@@ -163,7 +162,7 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
             stringList
         }
 
-    fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
+    private fun getJogSummariesBetweenTwoDates(startDate: ZonedDateTime, endDate: ZonedDateTime) {
         jogUseCase.getJogSummariesBetweenDates(startDate, endDate)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -184,7 +183,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
                 },
                 { error -> Log.e(TAG, error.localizedMessage, error) })
             .addTo(compositeDisposable)
-
     }
 
     private fun getWeeklyStats(listOfModifiedJogSummaries: List<ModifiedJogSummary>): WeeklyStats {
@@ -217,7 +215,6 @@ class StatisticsViewModel(application: Application, private val jogUseCase: JogU
     }
 
     private fun invalidateView() {
-        observableStatisticsViewState.onNext(statisticsViewState)
+        statisticsLiveData.value = statisticsViewState
     }
-
 }
