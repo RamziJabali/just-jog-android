@@ -3,6 +3,7 @@ package com.eljabali.joggingapplicationandroid.koin
 import com.eljabali.joggingapplicationandroid.data.repo.JogDatabase
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummarytemp.JogSummaryTempRepository
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.home.HomeViewModel
 import com.eljabali.joggingapplicationandroid.map.viewmodel.MapsViewModel
@@ -18,11 +19,13 @@ val calendarModule = module {
         JogUseCase(
             get<JogEntriesRepository>(),
             get<JogSummaryRepository>(),
+            get<JogSummaryTempRepository>(),
             get<MotivationalQuotesAPIRepository>(),
         )
     }
     single { JogEntriesRepository(get<JogDatabase>().jogDAO()) }
-    single { JogSummaryRepository(get<JogDatabase>().calendarDAO()) }
+    single { JogSummaryRepository(get<JogDatabase>().jogSummaryDAO()) }
+    single { JogSummaryTempRepository(get<JogDatabase>().jogSummaryTempDAO()) }
     single { JogDatabase.getInstance(androidApplication().applicationContext) }
 }
 val statisticsModule = module {

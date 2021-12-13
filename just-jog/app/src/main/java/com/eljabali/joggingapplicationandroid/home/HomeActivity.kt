@@ -8,16 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.eljabali.joggingapplicationandroid.R
 import com.eljabali.joggingapplicationandroid.calendar.jogsummaries.JogSummariesFragment
+import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.statistics.view.StatisticsFragment
 import com.eljabali.joggingapplicationandroid.util.PermissionUtil
 import com.eljabali.joggingapplicationandroid.util.TAG
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.roomorama.caldroid.CaldroidFragment
 import com.roomorama.caldroid.CaldroidListener
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import zoneddatetime.ZonedDateTimes
 import java.time.ZonedDateTime
@@ -33,9 +31,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private var shouldStopService = false
-    private var homeViewState: HomeViewState = HomeViewState()
     private val homeViewModel: HomeViewModel by viewModel()
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val bottomNavigationBarView: BottomNavigationView by lazy { findViewById(R.id.bottom_navigation) }
     private val statisticsFragment: StatisticsFragment by lazy {
         checkForPermissions(

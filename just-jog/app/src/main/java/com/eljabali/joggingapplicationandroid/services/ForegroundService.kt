@@ -8,12 +8,16 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.eljabali.joggingapplicationandroid.R
+import com.eljabali.joggingapplicationandroid.RecordSummaryWorker
 import com.eljabali.joggingapplicationandroid.data.usecase.JogUseCase
 import com.eljabali.joggingapplicationandroid.data.usecase.ModifiedJogDateInformation
 import com.eljabali.joggingapplicationandroid.home.HomeActivity
@@ -27,6 +31,7 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import zoneddatetime.ZonedDateTimes
+import zoneddatetime.extensions.print
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
@@ -67,9 +72,7 @@ class ForegroundService : Service() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
-        }
+        createNotificationChannel(notificationManager)
 
         Observable.interval(1, TimeUnit.SECONDS)
             .timeInterval()
@@ -89,39 +92,16 @@ class ForegroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
-        jogUseCase.getJogEntriesById(id)
-            .map { lisOfJogs ->
-                addJogSummary(
-                    lisOfJogs[0].dateTime,
-                    lisOfJogs.last().dateTime,
-                    id,
-                    getTotalDistance(getListOfLatLngFromModifiedJogEntry(lisOfJogs))
-                )
-            }
+        jogUseCase.deleteAllJogSummariesTemp()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                {
-                    compositeDisposable.clear()
-                    locationManager.removeUpdates(locationListener)
-                    super.onDestroy()
-                },
-                { error ->
-                    Log.e(TAG, error.localizedMessage, error)
-                    compositeDisposable.clear()
-                    locationManager.removeUpdates(locationListener)
-                    super.onDestroy()
-                }
-            )
-            .addTo(compositeDisposable)
-    }
-
-    private fun getListOfLatLngFromModifiedJogEntry(lisOfJogs: List<ModifiedJogDateInformation>): List<LatLng> {
-        val listOfLatLng = mutableListOf<LatLng>()
-        lisOfJogs.forEach{ jog ->
-            listOfLatLng.add(jog.latitudeLongitude)
-        }
-        return listOfLatLng
+                { Log.i(TAG, "deleted") },
+                { error -> Log.e(TAG, error.localizedMessage, error) }
+            ).addTo(compositeDisposable)
+        locationManager.removeUpdates(locationListener)
+        compositeDisposable.clear()
+        super.onDestroy()
     }
 
     private fun startTrackingJog() {
@@ -152,41 +132,19 @@ class ForegroundService : Service() {
 
     private fun recordRunEvent(id: Int, location: Location) {
         Log.i(TAG, "Success getting location")
-        val modifiedJogDateInformation = ModifiedJogDateInformation(
-            dateTime = ZonedDateTime.now(),
-            latitudeLongitude = LatLng(location.latitude, location.longitude),
-            runNumber = id
-        )
-        addJog(modifiedJogDateInformation)
-    }
+        val data = Data.Builder().apply {
+            putDouble("KEY_LONGITUDE", location.longitude)
+            putDouble("KEY_LATITUDE", location.latitude)
+            putString("DATE_TIME", ZonedDateTime.now().print(DateFormat.YYYY_MM_DD_T_TIME.format))
+            putInt("ID", id)
+        }.build()
 
-    private fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation) {
-        jogUseCase.addJog(modifiedJogDateInformation)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    Log.i(TAG, "Success")
-                },
-                { error -> Log.e(TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
-    }
+        val recordSummaryWorker =
+            OneTimeWorkRequest.Builder(RecordSummaryWorker::class.java).apply {
+                setInputData(data)
+            }
 
-    private fun addJogSummary(
-        startDateTime: ZonedDateTime,
-        endDateTime: ZonedDateTime,
-        jogId: Int,
-        totalJogDistance: Double
-    ) {
-        jogUseCase.addJogSummary(startDateTime, jogId, endDateTime, totalJogDistance)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    Log.i(TAG, "Success")
-                },
-                { error -> Log.e(TAG, error.localizedMessage, error) })
-            .addTo(compositeDisposable)
+        WorkManager.getInstance(applicationContext).enqueue(recordSummaryWorker.build())
     }
 
     private fun createNotificationChannel(notificationManager: NotificationManager) {

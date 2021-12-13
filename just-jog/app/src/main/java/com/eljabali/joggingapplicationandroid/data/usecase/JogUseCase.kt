@@ -1,10 +1,11 @@
 package com.eljabali.joggingapplicationandroid.data.usecase
 
-import android.util.Log
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesRepository
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryRepository
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummarytemp.JogSummaryTemp
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummarytemp.JogSummaryTempRepository
 import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotes
 import com.eljabali.joggingapplicationandroid.motivationalquotes.MotivationalQuotesAPIRepository
 import com.eljabali.joggingapplicationandroid.util.DateFormat
@@ -23,12 +24,13 @@ import java.time.ZonedDateTime
 class JogUseCase(
     private val jogEntriesRepository: JogEntriesRepository,
     private val jogSummaryRepository: JogSummaryRepository,
-    private val motivationalQuotesAPIRepository: MotivationalQuotesAPIRepository,
+    private val tempJogSummaryRepository: JogSummaryTempRepository,
+    private val motivationalQuotesAPIRepository: MotivationalQuotesAPIRepository
 ) {
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun addJog(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
+    fun addJogEntry(modifiedJogDateInformation: ModifiedJogDateInformation): Completable =
         jogEntriesRepository.add(
             convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation)
         )
@@ -96,8 +98,8 @@ class JogUseCase(
 
     fun addJogSummary(
         startDate: ZonedDateTime,
-        jogId: Int,
         endDate: ZonedDateTime,
+        jogId: Int,
         totalJogDistance: Double
     ): Completable =
         jogSummaryRepository.add(
@@ -108,6 +110,51 @@ class JogUseCase(
                 totalJogDistance
             )
         )
+
+    fun addJogSummary(
+        startDate: ZonedDateTime,
+        duration: Duration,
+        jogId: Int,
+        totalJogDistance: Double
+    ): Completable =
+        jogSummaryRepository.add(
+            JogSummary(
+                jogId,
+                startDate.print(DateFormat.YYYY_MM_DD_T_TIME.format),
+                duration.seconds,
+                totalJogDistance
+            )
+        )
+
+    fun addTempJogSummary(
+        currentDateTime: ZonedDateTime,
+        jogId: Int,
+        totalJogDistance: Double,
+        duration: Duration,
+        latLng: LatLng
+    ): Completable =
+        tempJogSummaryRepository.add(
+            JogSummaryTemp(
+                jogId,
+                currentDateTime.print(DateFormat.YYYY_MM_DD_T_TIME.format),
+                duration.seconds,
+                totalJogDistance,
+                latitude = latLng.latitude,
+                longitude = latLng.longitude
+            )
+        )
+
+    fun getTempJogSummary(id:Int): Maybe<ModifiedTempJogSummary> =
+        tempJogSummaryRepository.getByID(id).map { tempJogSummary ->
+            ModifiedTempJogSummary(
+                tempJogSummary.id,
+                tempJogSummary.currentDateTime.parseZonedDateTime()!!,
+                tempJogSummary.totalJogDistance,
+                tempJogSummary.totalJogDuration,
+                LatLng(tempJogSummary.latitude, tempJogSummary.longitude)
+            )
+        }
+
 
     fun getJogSummariesAtDate(localDate: LocalDate): Maybe<List<ModifiedJogSummary>> =
         jogSummaryRepository.getByDate(
@@ -148,7 +195,10 @@ class JogUseCase(
             .getMotivationalQuote()
 
     fun deleteAllJogEntries() = jogEntriesRepository.deleteAll()
+
     fun deleteAllJogSummaries() = jogSummaryRepository.deleteAll()
+
+    fun deleteAllJogSummariesTemp() = tempJogSummaryRepository.deleteAll()
 
     private fun convertModifiedJogDateInformationToWorkOutDate(modifiedJogDateInformation: ModifiedJogDateInformation): JogEntries =
         JogEntries(

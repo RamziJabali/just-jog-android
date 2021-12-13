@@ -8,16 +8,19 @@ import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntries
 import com.eljabali.joggingapplicationandroid.data.repo.jogentries.JogEntriesDAO
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummary
 import com.eljabali.joggingapplicationandroid.data.repo.jogsummary.JogSummaryDAO
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummarytemp.JogSummaryTemp
+import com.eljabali.joggingapplicationandroid.data.repo.jogsummarytemp.JogSummaryTempDAO
 
 @Database(
-    entities = [JogEntries::class, JogSummary::class],
-    version = 2,
+    entities = [JogEntries::class, JogSummary::class, JogSummaryTemp::class],
+    version = 1,
     exportSchema = false
 )
 abstract class JogDatabase : RoomDatabase() {
 
     abstract fun jogDAO(): JogEntriesDAO
-    abstract fun calendarDAO(): JogSummaryDAO
+    abstract fun jogSummaryDAO(): JogSummaryDAO
+    abstract fun jogSummaryTempDAO(): JogSummaryTempDAO
 
     companion object {
         @Volatile
