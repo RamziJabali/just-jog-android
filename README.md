@@ -23,11 +23,11 @@
 - [Google Map](https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap)
 - [Gson](https://github.com/google/gson)
 - [Koin](https://insert-koin.io/)
+- [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
 - [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
 - [OkHttp](https://square.github.io/okhttp/)
 - [Retrofit](https://square.github.io/retrofit/)
-- [Room](https://developer.android.com/jetpack/androidx/releases/room)
-- [RxJava](https://github.com/ReactiveX/RxJava)
+- [WorkManager](https://developer.android.com/reference/androidx/work/WorkManager?hl=en)
 
 ## API
 - [Quotable](https://github.com/lukePeavey/quotable#get-random-quote)
