@@ -19,6 +19,7 @@ import localdate.LocalDateUtil
 import zoneddatetime.extensions.getDaysInMonth
 import zoneddatetime.extensions.isBeforeEqualDay
 import zoneddatetime.extensions.print
+import java.lang.StringBuilder
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -117,10 +118,11 @@ class HomeViewModel(
         val listOfRecyclerViewProperties = mutableListOf<JogSummaryProperties>()
         var jogNumber = 1
         listOfModifiedJogSummary.forEach { jogSummary ->
+            val totalDistance = String.format("%.2f",jogSummary.totalDistance)
             listOfRecyclerViewProperties.add(
                 JogSummaryProperties(
                     jogSummaryId = jogSummary.jogId.toString(),
-                    totalDistance = "${jogSummary.totalDistance} Miles",
+                    totalDistance = "$totalDistance Miles",
                     totalTime = getFormattedTime(
                         jogSummary.timeDurationInSeconds,
                         DurationFormat.H_M_S

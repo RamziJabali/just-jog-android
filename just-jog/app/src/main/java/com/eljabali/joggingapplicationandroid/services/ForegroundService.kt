@@ -96,12 +96,19 @@ class ForegroundService : Service() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { Log.i(TAG, "deleted") },
-                { error -> Log.e(TAG, error.localizedMessage, error) }
+                {
+                    Log.i(TAG, "deleted All Temp Entries")
+                    locationManager.removeUpdates(locationListener)
+                    compositeDisposable.clear()
+                    super.onDestroy()
+                },
+                { error ->
+                    Log.e(TAG, error.localizedMessage, error)
+                    locationManager.removeUpdates(locationListener)
+                    compositeDisposable.clear()
+                    super.onDestroy()
+                }
             ).addTo(compositeDisposable)
-        locationManager.removeUpdates(locationListener)
-        compositeDisposable.clear()
-        super.onDestroy()
     }
 
     private fun startTrackingJog() {
