@@ -25,11 +25,11 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class RecordSummaryWorker(context: Context, workerParameters: WorkerParameters) :
-    RxWorker(context, workerParameters), KoinComponent {
+    Worker(context, workerParameters), KoinComponent {
     private val jogUseCase: JogUseCase by inject()
     private val compositeDisposable = CompositeDisposable()
 
-    override fun createWork(): Single<Result> {
+    override fun doWork(): Result {
         val currentLatLng = LatLng(
             inputData.getDouble("KEY_LATITUDE", 0.0),
             inputData.getDouble("KEY_LONGITUDE", 0.0)
@@ -106,7 +106,7 @@ class RecordSummaryWorker(context: Context, workerParameters: WorkerParameters) 
                         .subscribe()
                 }
             ).addTo(compositeDisposable)
-        return Single.just(Result.success())
+        return Result.success()
     }
 
     override fun onStopped() {
