@@ -28,7 +28,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 org-jetbrains-ktx = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 org-jetbrains-core-ktx = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-com-github-jaikeerthick = { group = "com.github.jaikeerthick", name = "Composable-Graphs", version.ref = "coroutines" }
+com-github-jaikeerthick = { group = "com.github.jaikeerthick", name = "Composable-Graphs", version.ref = "composableGraphs" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
