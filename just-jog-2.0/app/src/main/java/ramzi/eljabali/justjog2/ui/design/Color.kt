@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog2.ui.theme
+package ramzi.eljabali.justjog2.ui.design
 
 import androidx.compose.ui.graphics.Color
 
