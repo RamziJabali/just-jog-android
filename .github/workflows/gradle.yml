@@ -35,5 +35,5 @@ jobs:
       run: chmod +x just-jog-2.0/gradlew 
     - run: echo "Building Debug APK."  
     - name: Build with Gradle
-      run: .just-jog-2.0/gradlew build
+      run: just-jog-2.0/gradlew build
     - run: echo "Build status report=${{ job.status }}."
