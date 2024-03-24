@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog2.ui.theme
+package ramzi.eljabali.justjog2.ui.design
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

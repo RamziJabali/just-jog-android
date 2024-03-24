@@ -1,6 +1,5 @@
-package ramzi.eljabali.justjog2.ui.theme
+package ramzi.eljabali.justjog2.ui.design
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
