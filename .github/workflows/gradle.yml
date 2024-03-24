@@ -21,8 +21,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-        - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
-        - run: echo "This job is running on a ${{ runner.os }} server hosted by GitHub!"
     - uses: actions/checkout@v3
     - run: echo "The ${{ github.repository }} repository has been cloned."
     - run: echo "Setting up JDK" 
