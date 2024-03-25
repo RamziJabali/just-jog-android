@@ -13,27 +13,21 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
-
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - run: echo "The ${{ github.repository }} repository has been cloned."
-    - run: echo "Setting up JDK" 
-    - name: set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
-    - run: echo "The workflow is now ready to test your code."
-    - name: Grant execute permission for gradlew
-      run: chmod +x /gradlew 
-    - run: echo "Building Debug APK."  
-    - name: Build with Gradle
-      run: ./gradlew build
-    - run: echo "Build status report=${{ job.status }}."
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Set JDK environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build
+        run: ./gradlew build
