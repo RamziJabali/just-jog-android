@@ -8,13 +8,61 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+
+//private val DarkColorScheme = darkColorScheme(
+//    primary = primaryDarkHighContrast,
+//    onPrimary = onPrimaryDarkHighContrast,
+//    primaryContainer = primaryContainerDarkHighContrast,
+//    onPrimaryContainer = onPrimaryContainerDarkHighContrast,
+//    inversePrimary = inversePrimaryDarkHighContrast,
+//    secondary = secondaryDarkHighContrast,
+//    onSecondary = onSecondaryDarkHighContrast,
+//    secondaryContainer = secondaryContainerDarkHighContrast,
+//    onSecondaryContainer = onSecondaryContainerDarkHighContrast,
+//    tertiary = tertiaryDarkHighContrast,
+//    onTertiary = onTertiaryDarkHighContrast,
+//    tertiaryContainer = tertiaryContainerDarkHighContrast,
+//    onTertiaryContainer = onTertiaryContainerDarkHighContrast,
+//    background = backgroundDarkHighContrast,
+//    onBackground = onBackgroundDarkHighContrast,
+//    surface = surfaceDarkHighContrast,
+//    onSurface = onSurfaceDarkHighContrast,
+//    surfaceVariant = surfaceVariantDarkHighContrast,
+//    onSurfaceVariant = onSurfaceVariantDarkHighContrast,
+//    inverseSurface = inverseSurfaceDarkHighContrast,
+//    inverseOnSurface = inverseOnSurfaceDarkHighContrast,
+//    error = errorDarkHighContrast,
+//    onError = onErrorDarkHighContrast,
+//    errorContainer = errorContainerDarkHighContrast,
+//    onErrorContainer = onErrorContainerDarkHighContrast,
+//    outline = outlineDarkHighContrast,
+//    outlineVariant = outlineVariantDarkHighContrast,
+//    scrim = scrimDarkHighContrast,
+//    surfaceBright = surfaceBrightDarkHighContrast,
+//    surfaceContainer = surfaceContainerDarkHighContrast,
+//    surfaceContainerHigh = surfaceContainerHighDarkHighContrast,
+//    surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
+//    surfaceContainerLow = surfaceContainerLowDarkHighContrast,
+//    surfaceContainerLowest = surfaceContainerLowestDarkHighContrast,
+//    surfaceDim = surfaceDimDarkHighContrast
+//
+//)
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = primaryDarkHighContrast,
+    onPrimary = onPrimaryDarkHighContrast,
+    secondary = secondaryDarkHighContrast,
+    onSecondary = onSecondaryDarkHighContrast,
+    tertiary = tertiaryDarkHighContrast,
+    onTertiary = Color.White,
+    surface = surfaceDarkHighContrast,
+    onSurface = onSurfaceDarkHighContrast,
+    background = backgroundDarkHighContrast,
+    onBackground = onBackgroundDarkHighContrast
 )
+
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
@@ -22,12 +70,8 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40
 
     /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
+
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
 )
@@ -35,16 +79,9 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun JustJogTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

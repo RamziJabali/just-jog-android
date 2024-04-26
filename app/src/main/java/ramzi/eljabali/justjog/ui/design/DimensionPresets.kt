@@ -1,5 +1,7 @@
 package ramzi.eljabali.justjog.ui.design
 
+import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ramzi.eljabali.justjog.ui.design.Spacings.cubic_spacing
@@ -62,6 +64,18 @@ object Spacing {
         val xxxl = octic_spacing
         val xl4 = nonic_spacing
     }
+}
+
+object CardSize {
+    val xs = 25.dp
+    val s = 35.dp
+    val m = 50.dp
+    val l = 100.dp
+    val xl = 150.dp
+    val xxl = 200.dp
+    val xxxl = 250.dp
+    val xl4 = 300.dp
+    val xl5 = 350.dp
 }
 
 object TextSize {
@@ -171,4 +185,8 @@ object Transparency {
     const val l = 0.10
     const val xl = 0.05
     const val xxl = 0.03
+}
+
+object CardElevation {
+    val default = 6.dp
 }

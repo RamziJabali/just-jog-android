@@ -11,37 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
+import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JustJogTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            JustJogTheme(true) {
+                val data = listOf(LineData(x = "Sun", y = 200), LineData(x = "Mon", y = 40))
+                StatisticsPage("Try your best until you succeed - RJ!", data)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    JustJogTheme {
-        Greeting("Android")
     }
 }
