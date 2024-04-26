@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -61,7 +60,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.org.jetbrains.ktx)
     implementation(libs.org.jetbrains.core.ktx)
-//    implementation(libs.github.jaikeerthick)
+    implementation(libs.composable.graphs)
+    implementation(libs.com.himanshoe)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
