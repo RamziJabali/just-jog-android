@@ -4,15 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
+import ramzi.eljabali.justjog.ui.views.CalendarPage
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +24,8 @@ class MainActivity : ComponentActivity() {
                     LineData(x = "Sat", y = 60),
                     LineData(x = "Sun", y = 150),
                 )
-                StatisticsPage("Try your best until you succeed - RJ!", data)
+//                StatisticsPage("Try your best until you succeed - RJ!", data)
+                CalendarPage()
             }
         }
     }
