@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -83,51 +84,15 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
         }
         ElevatedCard(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxWidth(),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = CardElevation.default
             )
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(all = Spacing.Surrounding.s),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = stringResource(R.string.this_week))
-                Text(text = stringResource(R.string.average_per_run))
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(all = Spacing.Surrounding.s),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "6 Runs")
-                Text(text = "3.54 Miles")
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(all = Spacing.Surrounding.s),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "24.81 Miles")
-                Text(text = "3m 50s")
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(all = Spacing.Surrounding.s),
-                horizontalArrangement = Arrangement.Absolute.Left
-            ) {
-                Text(text = "26m 55s")
-            }
-
             LineGraph(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.s),
+                    .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
                 data = data,
                 style = LineGraphStyle(
                     visibility = LineGraphVisibility(
@@ -148,6 +113,83 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     // do something with value
                 },
             )
+        }
+
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = Spacing.Vertical.s),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = .5f)
+                    .padding(end = Spacing.Horizontal.xs),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = CardElevation.default
+                ),
+            ) {
+                Text(
+                    text = stringResource(R.string.this_week),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "6 Runs",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "24.81 Miles",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "26m 55s",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = Spacing.Horizontal.xs),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = CardElevation.default
+                )
+            ) {
+                Text(text = stringResource(R.string.average_per_run),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center)
+                Text(text = "3.54 Miles",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center)
+                Text(text = "3:00 Min/Mil",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center)
+                Text(
+                    text = "3m 50s",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
