@@ -30,8 +30,8 @@ import ramzi.eljabali.justjog.ui.design.CardSize
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.design.Spacing
 import ramzi.eljabali.justjog.ui.design.Typography
-import ramzi.eljabali.justjog.ui.design.errorContainerDarkHighContrast
-import ramzi.eljabali.justjog.ui.design.primaryContainerDarkHighContrast
+import ramzi.eljabali.justjog.ui.design.errorDark
+import ramzi.eljabali.justjog.ui.design.primaryDark
 import ramzi.eljabali.justjog.ui.design.primaryTextColor
 import ramzi.eljabali.justjog.ui.design.secondaryTextColor
 
@@ -98,16 +98,16 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     visibility = LineGraphVisibility(
                         isYAxisLabelVisible = true,
                         isGridVisible = true,
-                        isCrossHairVisible = true
+                        isCrossHairVisible = true,
+                        isXAxisLabelVisible = true
                     ),
                     yAxisLabelPosition = LabelPosition.LEFT,
                     colors = LineGraphColors(
-                        lineColor = primaryContainerDarkHighContrast,
-                        pointColor = errorContainerDarkHighContrast,
+                        lineColor = primaryDark,
+                        pointColor = errorDark,
                         xAxisTextColor = primaryTextColor,
                         yAxisTextColor = primaryTextColor
                     )
-
                 ),
                 onPointClick = { value: LineData ->
                     // do something with value
