@@ -184,6 +184,6 @@ fun JogView() {
 @Preview(showBackground = true, backgroundColor = 1)
 @Composable
 fun PreviewCalendarPage() {
-//    CalendarPage()
-    JogView()
+    CalendarPage()
+//    JogView()
 }
