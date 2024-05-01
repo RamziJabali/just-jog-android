@@ -33,11 +33,11 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = { JoggingFAB() },
                     floatingActionButtonPosition = FabPosition.EndOverlay,
                 ) { it
-//                    StatisticsPage(
-//                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-//                        data = data
-//                    )
-                    CalendarPage()
+                    StatisticsPage(
+                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+                        data = data
+                    )
+//                    CalendarPage()
                 }
             }
         }
