@@ -20,6 +20,8 @@ val secondaryTextColor = Color(0xFF9B9B9B)
 val primaryButtonColor = Color(0xFFBB86FC)
 val lightBlue = Color(0xFF00C2FF)
 
+val fabButtonBlue = Color(0xFF202c2c)
+
 val primaryDark = Color(0xFF6FD7E7)
 val onPrimaryDark = Color(0xFF00363D)
 val primaryContainerDark = Color(0xFF004F58)

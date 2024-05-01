@@ -1,5 +1,6 @@
 package ramzi.eljabali.justjog.ui.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,12 +8,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +32,8 @@ import com.jaikeerthick.composable_graphs.style.LabelPosition
 import ramzi.eljabali.justjog.R
 import ramzi.eljabali.justjog.ui.design.CardElevation
 import ramzi.eljabali.justjog.ui.design.CardSize
+import ramzi.eljabali.justjog.ui.design.FabElevation
+import ramzi.eljabali.justjog.ui.design.FloatingActionButton
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.design.Spacing
 import ramzi.eljabali.justjog.ui.design.Typography
@@ -45,7 +54,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
         modifier =
         Modifier
             .fillMaxSize()
-            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
+            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.s),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -165,21 +174,27 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     defaultElevation = CardElevation.default
                 )
             ) {
-                Text(text = stringResource(R.string.average_per_run),
+                Text(
+                    text = stringResource(R.string.average_per_run),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
-                    textAlign = TextAlign.Center)
-                Text(text = "3.54 Miles",
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "3.54 Miles",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
-                    textAlign = TextAlign.Center)
-                Text(text = "3:00 Min/Mil",
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "3:00 Min/Mil",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center
+                )
                 Text(
                     text = "3m 50s",
                     modifier = Modifier
@@ -187,11 +202,23 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                         .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
+
             }
         }
     }
 }
 
+@Composable
+fun JoggingFAB(){
+    FloatingActionButton(
+        onClick = { Log.i("fab", "Floating Action Button Pressed") },
+        modifier = Modifier.size(FloatingActionButton.default),
+        shape = CircleShape,
+        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = FabElevation.default)
+    ) {
+        Icon(painterResource(id = R.mipmap.just_jog_icon_foreground), "Floating action button.")
+    }
+}
 
 @Preview(showBackground = true, backgroundColor = 0)
 @Composable

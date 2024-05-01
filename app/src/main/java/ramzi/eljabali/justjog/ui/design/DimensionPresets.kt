@@ -187,6 +187,13 @@ object Transparency {
     const val xxl = 0.03
 }
 
+object FloatingActionButton {
+    val default = 56.dp
+}
+
 object CardElevation {
+    val default = 6.dp
+}
+object FabElevation {
     val default = 6.dp
 }
