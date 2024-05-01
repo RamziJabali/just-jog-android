@@ -4,25 +4,41 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
+import ramzi.eljabali.justjog.ui.views.CalendarPage
+import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
+        val data = listOf(
+            LineData(x = "Mon", y = 40),
+            LineData(x = "Tues", y = 60),
+            LineData(x = "Wed", y = 70),
+            LineData(x = "Thurs", y = 120),
+            LineData(x = "Fri", y = 80),
+            LineData(x = "Sat", y = 60),
+            LineData(x = "Sun", y = 150),
+        )
         setContent {
             JustJogTheme(true) {
-                val data = listOf(LineData(x = "Sun", y = 200), LineData(x = "Mon", y = 40))
-                StatisticsPage("Try your best until you succeed - RJ!", data)
+                Scaffold(
+//                bottomBar = bottomBar,
+//                snackbarHost = snackbarHost,
+                    floatingActionButton = { JoggingFAB() },
+                    floatingActionButtonPosition = FabPosition.EndOverlay,
+                ) { it
+//                    StatisticsPage(
+//                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+//                        data = data
+//                    )
+                    CalendarPage()
+                }
             }
         }
     }
