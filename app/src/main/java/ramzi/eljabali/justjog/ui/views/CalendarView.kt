@@ -65,7 +65,7 @@ fun CalendarPage() {
         modifier =
         Modifier
             .fillMaxSize()
-            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
+            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.s),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

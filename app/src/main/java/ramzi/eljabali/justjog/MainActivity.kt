@@ -8,6 +8,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
+import ramzi.eljabali.justjog.ui.views.CalendarPage
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
@@ -32,10 +33,11 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = { JoggingFAB() },
                     floatingActionButtonPosition = FabPosition.EndOverlay,
                 ) { it
-                    StatisticsPage(
-                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-                        data = data
-                    )
+//                    StatisticsPage(
+//                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+//                        data = data
+//                    )
+                    CalendarPage()
                 }
             }
         }
