@@ -105,7 +105,8 @@ fun MonthHeader(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = {
-                Log.i("Button Click", "Back Button clicked in month header") }
+                Log.i("Button Click", "Back Button clicked in month header")
+            }
             ) {
                 Icon(
                     painter = painterResource(R.mipmap.back_arrrow_foreground),
@@ -159,8 +160,30 @@ fun Day(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
     }
 }
 
+/*
+TODO:
+    - Add parameters
+    - Fix View - make it able to be populated
+    - Should be clickable
+    - Show showcase another view
+*/
+@Composable
+fun JogView() {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Spacing.Vertical.s),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = CardElevation.default
+        )
+    ) {
+
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 1)
 @Composable
 fun PreviewCalendarPage() {
-    CalendarPage()
+//    CalendarPage()
+    JogView()
 }

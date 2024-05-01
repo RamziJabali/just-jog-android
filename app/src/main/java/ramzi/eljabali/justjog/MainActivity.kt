@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
-import ramzi.eljabali.justjog.ui.views.CalendarPage
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
 class MainActivity : ComponentActivity() {
@@ -24,8 +23,8 @@ class MainActivity : ComponentActivity() {
                     LineData(x = "Sat", y = 60),
                     LineData(x = "Sun", y = 150),
                 )
-//                StatisticsPage("Try your best until you succeed - RJ!", data)
-                CalendarPage()
+                StatisticsPage("The aspect gains emptiness which is not magical!", data)
+//                CalendarPage()
             }
         }
     }
