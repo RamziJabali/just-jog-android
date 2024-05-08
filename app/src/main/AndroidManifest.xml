@@ -2,7 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Requesting user permission for location   -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
+        android:name=".notification.NotificationUtil"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,6 +18,13 @@
         android:roundIcon="@mipmap/just_jog_icon"
         android:supportsRtl="true"
         tools:targetApi="31">
+
+        <service
+            android:foregroundServiceType="location"
+            android:exported="false"
+            android:name=".loactionservice.ForegroundService">
+        </service>
+
         <activity
             android:name="ramzi.eljabali.justjog.MainActivity"
             android:exported="true"

@@ -209,9 +209,12 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
 }
 
 @Composable
-fun JoggingFAB(){
+fun JoggingFAB(onClick: () -> Unit) {
     FloatingActionButton(
-        onClick = { Log.i("fab", "Floating Action Button Pressed") },
+        onClick = {
+            Log.i("fab", "Floating Action Button Pressed")
+            onClick()
+        },
         modifier = Modifier.size(FloatingActionButton.default),
         shape = CircleShape,
         elevation = FloatingActionButtonDefaults.elevation(defaultElevation = FabElevation.default)
