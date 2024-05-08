@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import ramzi.eljabali.justjog.MainActivity
 import ramzi.eljabali.justjog.R
 import ramzi.eljabali.justjog.notification.permissions
+import java.time.ZonedDateTime
 
 class ForegroundService : Service() {
     companion object {
@@ -33,12 +34,25 @@ class ForegroundService : Service() {
     private val locationListener: LocationListener by lazy {
         LocationListener { location ->
             Log.d(
-                "Log.d",
-                "Time:${location.time}\nLatitude: ${location.latitude}, Longitude:${location.longitude}"
+                "ForegroundService::Class",
+                "Time:${ZonedDateTime.now()}\nLatitude: ${location.latitude}, Longitude:${location.longitude}"
             )
         }
     }
 
+    private val pendingIntent: PendingIntent by lazy {
+        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    private val stopServicePendingIntent: PendingIntent by lazy {
+        PendingIntent.getService(
+            this, 0, Intent(this, ForegroundService::class.java).apply {
+                action = Actions.STOP.name
+            },
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -50,16 +64,19 @@ class ForegroundService : Service() {
                 Log.i("ForegroundService::Class", "Starting service")
                 start()
             }
-
             Actions.STOP.toString() -> {
                 Log.i("ForegroundService::Class", "Stopping service")
-                stopSelf()
+                stop()
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    // When onStartCommand intent confirms user request to start the service
+    private fun stop() {
+        locationManager.removeUpdates(locationListener)
+        stopSelf()
+    }
+
     private fun start() {
         Log.i("ForegroundService::Class", "Checking permissions")
         for (permission in permissions.list) {
@@ -105,43 +122,21 @@ class ForegroundService : Service() {
 
     // ~~~ Notification Handler ~~~
     private fun getNotification(): Notification {
-        // Intent is created to move the user to the MainActivity when they click on the notification
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        //Pending Intent created using the Intent previously created in order to move
-        // the user to the MainActivity when they click on the notification
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
 
-        val stopServicePendingIntent by lazy {
-            PendingIntent.getActivity(
-                this, 0, Intent(this, MainActivity::class.java).apply {
-//                putExtra(HomeActivity.STOP_SERVICE_KEY, true)
-                },
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        }
-
-//        Intent(applicationContext, ForegroundService::class.java).also {
-//            it.action = Actions.STOP.toString()
-//            startService(it)
-//        }
-
-        return NotificationCompat.Builder(this, CHANNEL_ID_1)
+        return NotificationCompat.Builder(applicationContext, CHANNEL_ID_1)
             .setSmallIcon(R.mipmap.just_jog_icon_foreground)
-            .setContentTitle(ContextCompat.getString(baseContext, R.string.just_jog))
-            .setContentText(ContextCompat.getString(baseContext, R.string.notification_text))
+            .setContentTitle(ContextCompat.getString(applicationContext, R.string.just_jog))
+            .setContentText(ContextCompat.getString(applicationContext, R.string.notification_text))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
+            .setStyle(NotificationCompat.BigTextStyle())
             // Set the intent that fires when the user taps the notification.
             .setContentIntent(pendingIntent)
             .addAction(
-                R.mipmap.cross_foreground,
+                R.mipmap.cross_monochrome,
                 getString(R.string.stop_jog),
                 stopServicePendingIntent
             )

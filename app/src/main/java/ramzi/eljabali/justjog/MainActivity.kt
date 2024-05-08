@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                             floatingActionButton = {
                                 JoggingFAB {
                                     Intent(applicationContext, ForegroundService::class.java).also {
-                                        it.action = ForegroundService.Actions.START.toString()
+                                        it.action = ForegroundService.Actions.START.name
                                         startService(it)
                                     }
                                 }
