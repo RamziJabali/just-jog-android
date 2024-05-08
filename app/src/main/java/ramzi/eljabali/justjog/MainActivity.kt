@@ -2,6 +2,7 @@ package ramzi.eljabali.justjog
 
 import android.Manifest
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,43 +13,34 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import ramzi.eljabali.justjog.loactionservice.ForegroundService
+import ramzi.eljabali.justjog.notification.NotificationUtil
+import ramzi.eljabali.justjog.notification.permissions
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
+import ramzi.eljabali.justjog.ui.views.CalendarPage
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
+import ramzi.eljabali.justjog.viewmodels.MockVM
+import ramzi.eljabali.justjog.viewmodels.UserState
 
 class MainActivity : ComponentActivity() {
-    private val permissionList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-        listOf(
-            Manifest.permission.POST_NOTIFICATIONS,
-            Manifest.permission.FOREGROUND_SERVICE,
-            Manifest.permission.FOREGROUND_SERVICE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION        )
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        listOf(
-            Manifest.permission.POST_NOTIFICATIONS,
-            Manifest.permission.FOREGROUND_SERVICE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    } else {
-        listOf(
-            Manifest.permission.FOREGROUND_SERVICE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    }
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-        checkPermissionStatus(permissionList)
+
+        val vm by viewModels<MockVM>()
+
+
+        // TODO: Remove later dummy data
         val data = listOf(
             LineData(x = "Mon", y = 40),
             LineData(x = "Tues", y = 60),
@@ -58,28 +50,41 @@ class MainActivity : ComponentActivity() {
             LineData(x = "Sat", y = 60),
             LineData(x = "Sun", y = 150),
         )
-        setContent {
-            JustJogTheme(true) {
-                Scaffold(
-//                bottomBar = bottomBar,
-//                snackbarHost = snackbarHost,
-                    floatingActionButton = { JoggingFAB() },
-                    floatingActionButtonPosition = FabPosition.EndOverlay,
-                ) {
-                    it
-                    StatisticsPage(
-                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-                        data = data
-                    )
-//                    CalendarPage()
+        checkPermissionStatus()
+        lifecycleScope.launch {
+            vm.userStateFlow.collectLatest { state: UserState ->
+                setContent {
+                    JustJogTheme(true) {
+                        Scaffold(
+                            floatingActionButton = {
+                                JoggingFAB {
+                                    Intent(applicationContext, ForegroundService::class.java).also {
+                                        it.action = ForegroundService.Actions.START.toString()
+                                        startService(it)
+                                    }
+                                }
+                            },
+                            floatingActionButtonPosition = FabPosition.EndOverlay,
+                        ) {
+                            it
+                            StatisticsPage(
+                                motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+                                data = data,
+                            )
+//                            CalendarPage()
+                        }
+                    }
                 }
             }
         }
     }
+
+
+    // ~~~ PERMISSION Handler ~~~
     //Best way to check which permission status you are on
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkPermissionStatus(permissions: List<String>) {
-        for (permission in permissions){
+    fun checkPermissionStatus() {
+        for (permission in permissions.list) {
             when {
                 ContextCompat.checkSelfPermission(
                     this,
@@ -88,7 +93,7 @@ class MainActivity : ComponentActivity() {
                     Log.d("Log.d", "$permission Permission Already Granted")
                 }
 
-                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                shouldShowRequestPermissionRationale(permission) -> {
                     Log.d("Log.d", "Showing Request Rationale for $permission")
                 }
 
