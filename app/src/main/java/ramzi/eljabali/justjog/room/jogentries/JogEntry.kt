@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class JogEntry(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
     val id: Int,
-    @ColumnInfo("jog_id")
-    val jogId: Int,
+    @ColumnInfo("jog_summary_id")
+    val jogSummaryId: Int,
     @ColumnInfo("date_time")
     val dateTime: String,
     @ColumnInfo("latitude")
