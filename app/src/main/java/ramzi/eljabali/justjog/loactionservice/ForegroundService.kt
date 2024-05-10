@@ -1,7 +1,6 @@
 package ramzi.eljabali.justjog.loactionservice
 
 import android.app.ForegroundServiceStartNotAllowedException
-import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
@@ -41,8 +40,10 @@ class ForegroundService : Service() {
     }
 
     private val pendingIntent: PendingIntent by lazy {
-        PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE)
+        PendingIntent.getActivity(
+            this, 0, Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private val stopServicePendingIntent: PendingIntent by lazy {
@@ -60,11 +61,12 @@ class ForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            Actions.START.toString() -> {
+            Actions.START.name -> {
                 Log.i("ForegroundService::Class", "Starting service")
                 start()
             }
-            Actions.STOP.toString() -> {
+
+            Actions.STOP.name -> {
                 Log.i("ForegroundService::Class", "Stopping service")
                 stop()
             }
@@ -90,11 +92,10 @@ class ForegroundService : Service() {
         }
 
         try {
-            val notification = getNotification()
             ServiceCompat.startForeground(
                 this,
                 NOTIFICATION_ID, // Cannot be 0
-                notification,
+                getNotification(),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
                 } else {
@@ -120,11 +121,9 @@ class ForegroundService : Service() {
     }
 
 
-    // ~~~ Notification Handler ~~~
-    private fun getNotification(): Notification {
-
-
-        return NotificationCompat.Builder(applicationContext, CHANNEL_ID_1)
+    // ~~~ Notification Builder ~~~
+    private fun getNotification() =
+        NotificationCompat.Builder(applicationContext, CHANNEL_ID_1)
             .setSmallIcon(R.mipmap.just_jog_icon_foreground)
             .setContentTitle(ContextCompat.getString(applicationContext, R.string.just_jog))
             .setContentText(ContextCompat.getString(applicationContext, R.string.notification_text))
@@ -141,7 +140,7 @@ class ForegroundService : Service() {
                 stopServicePendingIntent
             )
             .build()
-    }
+
 
     // Actions
     enum class Actions {

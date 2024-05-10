@@ -1,8 +1,6 @@
 package ramzi.eljabali.justjog
 
-import android.Manifest
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -23,10 +21,8 @@ import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.notification.NotificationUtil
 import ramzi.eljabali.justjog.notification.permissions
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
-import ramzi.eljabali.justjog.ui.views.CalendarPage
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 import ramzi.eljabali.justjog.viewmodels.MockVM
