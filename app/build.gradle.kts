@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("androidx.room") version "2.6.1" apply false
 }
 
 android {
@@ -64,6 +65,9 @@ dependencies {
     implementation(libs.org.jetbrains.core.ktx)
     implementation(libs.org.jetbrains.datetime)
     implementation(libs.composable.graphs)
+    implementation(libs.androidx.room)
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.kotlin.ext)
     implementation(libs.com.kizitonwose.calendar.compose.calendar)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
