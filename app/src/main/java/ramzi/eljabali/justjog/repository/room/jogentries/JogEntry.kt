@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog.room.jogentries
+package ramzi.eljabali.justjog.repository.room.jogentries
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
