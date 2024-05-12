@@ -14,6 +14,7 @@ composableGraphs = "v1.2.3"
 calendar = "2.5.1"
 dateTime = "0.6.0-RC.2"
 roomVersion = "2.6.1"
+kspVersion = "1.9.23-1.0.19"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0-alpha05" }
@@ -44,4 +45,5 @@ androidx-room-kotlin-ext = { group = "androidx.room", name = "room-ktx" , versio
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-room-plugin = { id = "androidx.room", version.ref = "roomVersion" }
+google-devtools-ksp = {id = "com.google.devtools.ksp", version.ref = "kspVersion"}
 

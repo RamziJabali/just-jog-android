@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("androidx.room") version "2.6.1" apply false
-    id("com.google.devtools.ksp") version "1.9.23-1.0.19"
+    id(libs.plugins.google.devtools.ksp.get().pluginId) version libs.versions.kspVersion
 }
 
 android {
