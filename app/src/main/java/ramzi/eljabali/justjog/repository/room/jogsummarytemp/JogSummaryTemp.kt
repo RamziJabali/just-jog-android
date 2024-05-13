@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog.room.jogsummarytemp
+package ramzi.eljabali.justjog.repository.room.jogsummarytemp
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

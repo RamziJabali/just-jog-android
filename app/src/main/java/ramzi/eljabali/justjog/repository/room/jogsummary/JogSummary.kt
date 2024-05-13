@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog.room.jogsummary
+package ramzi.eljabali.justjog.repository.room.jogsummary
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
