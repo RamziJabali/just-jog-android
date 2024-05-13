@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntryDAO
+import kotlin.coroutines.cancellation.CancellationException
 
 
 class MockVM(private val dao: JogEntryDAO) : ViewModel() {
@@ -30,14 +31,31 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
 
     fun addJog(jogEntry: JogEntry) {
         val deferred = CompletableDeferred<Unit>()
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                delay(3000)
-                dao.addUpdateWorkout(jogEntry).also {
-                    deferred.complete(Unit)
+
+        val job = viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    dao.addUpdateWorkout(jogEntry).also {
+                        deferred.complete(Unit)
+                    }
                 }
+            } catch (e: Exception) {
+                Log.d("MockVM::Class.java", "Exception: ${e.message}")
+                // Handle cancellation if needed
             }
-            Log.d("MockVM::Class.java", "added Jog: $deferred")
+        }
+
+        deferred.invokeOnCompletion { cause ->
+            if (cause != null) {
+                if (cause is CancellationException) {
+                    Log.d("MockVM::Class.java", "addJog: Coroutine canceled: ${cause.message}")
+                } else {
+                    Log.e("MockVM::Class.java", "addJog: Coroutine failed with: $cause")
+                }
+                job.cancel() // Cancel the job explicitly
+            } else {
+                Log.d("MockVM::Class.java", "addJog: ${deferred.isCompleted}")
+            }
         }
     }
 

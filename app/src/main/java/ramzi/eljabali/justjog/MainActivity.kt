@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                 id = 0, jogSummaryId = 0, dateTime = "", latitude = 0.0, longitude = 0.0
             )
         )
-
         vm.getAllJogs()
 
 
@@ -135,7 +134,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //Making an open detailed settings request
-    private fun Activity.openSettings() {
+    private fun Activity.penSettings() {
         Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)
