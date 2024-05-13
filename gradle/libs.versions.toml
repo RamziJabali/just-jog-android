@@ -15,6 +15,7 @@ calendar = "2.5.1"
 dateTime = "0.6.0-RC.2"
 roomVersion = "2.6.1"
 kspVersion = "1.9.23-1.0.19"
+javaTimeFunVerison = "3.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0-alpha05" }
@@ -40,6 +41,7 @@ com-kizitonwose-calendar-compose-calendar = {group = "com.kizitonwose.calendar",
 androidx-room = { group = "androidx.room", name = "room-runtime" , version.ref = "roomVersion"}
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler" , version.ref = "roomVersion"}
 androidx-room-kotlin-ext = { group = "androidx.room", name = "room-ktx" , version.ref = "roomVersion"}
+sami-java-timefun = {group = "org.eljabali.sami.javatimefun", name ="javatimefun", version.ref = "javaTimeFunVerison"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.room)
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.sami.java.timefun)
     implementation(libs.androidx.room.kotlin.ext)
     implementation(libs.com.kizitonwose.calendar.compose.calendar)
     testImplementation(libs.junit)
