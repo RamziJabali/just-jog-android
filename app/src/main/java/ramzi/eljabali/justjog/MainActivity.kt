@@ -11,7 +11,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -24,12 +23,11 @@ import kotlinx.coroutines.launch
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
 import ramzi.eljabali.justjog.notification.permissions
 import ramzi.eljabali.justjog.repository.room.database.JustJogDataBase
-import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
-import ramzi.eljabali.justjog.viewmodels.MockVM
-import ramzi.eljabali.justjog.viewmodels.MockVM.UserState
+import ramzi.eljabali.justjog.intent.MockVM
+import ramzi.eljabali.justjog.model.state.UserState
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

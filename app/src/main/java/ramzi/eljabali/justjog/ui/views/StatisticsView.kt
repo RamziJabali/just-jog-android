@@ -118,6 +118,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 ),
                 onPointClick = { value: LineData ->
                     // do something with value
+                    Log.i("lineGraph", "Point clicked: $value")
                 },
             )
         }
