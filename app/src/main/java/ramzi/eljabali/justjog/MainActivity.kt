@@ -17,23 +17,37 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
 import ramzi.eljabali.justjog.notification.permissions
+import ramzi.eljabali.justjog.repository.room.database.JustJogDataBase
+import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 import ramzi.eljabali.justjog.viewmodels.MockVM
-import ramzi.eljabali.justjog.viewmodels.UserState
+import ramzi.eljabali.justjog.viewmodels.MockVM.UserState
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vm by viewModels<MockVM>()
+        val db = Room.databaseBuilder(
+            applicationContext,
+            JustJogDataBase::class.java, "just-jog-database"
+        )
+            .build()
+        val vm = MockVM(db.jogEntryDao())
+//        vm.addJog(
+//            JogEntry(
+//                id = 0, jogSummaryId = 0, dateTime = "", latitude = 0.0, longitude = 0.0
+//            )
+//        )
+        vm.getAllJogs()
 
 
         // TODO: Remove later dummy data
@@ -120,7 +134,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //Making an open detailed settings request
-    private fun Activity.openSettings() {
+    private fun Activity.penSettings() {
         Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)

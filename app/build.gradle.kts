@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("androidx.room") version "2.6.1" apply false
+    id(libs.plugins.google.devtools.ksp.get().pluginId) version libs.versions.kspVersion
 }
 
 android {
@@ -41,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
     packaging {
         resources {
@@ -64,6 +66,11 @@ dependencies {
     implementation(libs.org.jetbrains.core.ktx)
     implementation(libs.org.jetbrains.datetime)
     implementation(libs.composable.graphs)
+    implementation(libs.androidx.room)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.sami.java.timefun)
+    implementation(libs.androidx.room.kotlin.ext)
     implementation(libs.com.kizitonwose.calendar.compose.calendar)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
