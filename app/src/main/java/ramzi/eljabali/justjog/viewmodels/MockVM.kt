@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntryDAO
 import kotlin.coroutines.cancellation.CancellationException
@@ -57,10 +56,29 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
     }
 
     fun getAllJogs() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val list = viewModelScope.async { dao.getAll() }.await()
-            list.collect {
-                Log.d("MockVM::Class.java", "getAllJogs: $it")
+        val completableDeferred = CompletableDeferred<Unit>()
+        val job = viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val list = viewModelScope.async { dao.getAll() }.await().also {
+                    completableDeferred.complete(Unit)
+                }
+                list.collect {
+                    Log.d("MockVM::Class.java", "getAllJogs: $it")
+                }
+            } catch(e:Exception) {
+                Log.d("MockVM::Class.java", "getAllJogs: ${e.message}")
+            }
+        }
+        completableDeferred.invokeOnCompletion { cause ->
+        if (cause != null) {
+                if (cause is CancellationException) {
+                    Log.d("MockVM::Class.java", "getAllJogs: Coroutine canceled: ${cause.message}")
+                } else {
+                    Log.e("MockVM::Class.java", "getAllJogs: Coroutine failed with: $cause")
+                }
+                job.cancel() // Cancel the job explicitly
+            } else {
+            Log.d("MockVM::Class.java", "getAllJogs: ${completableDeferred.isCompleted}")
             }
         }
     }

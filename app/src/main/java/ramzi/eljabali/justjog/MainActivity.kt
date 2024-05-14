@@ -42,11 +42,11 @@ class MainActivity : ComponentActivity() {
         )
             .build()
         val vm = MockVM(db.jogEntryDao())
-        vm.addJog(
-            JogEntry(
-                id = 0, jogSummaryId = 0, dateTime = "", latitude = 0.0, longitude = 0.0
-            )
-        )
+//        vm.addJog(
+//            JogEntry(
+//                id = 0, jogSummaryId = 0, dateTime = "", latitude = 0.0, longitude = 0.0
+//            )
+//        )
         vm.getAllJogs()
 
 
