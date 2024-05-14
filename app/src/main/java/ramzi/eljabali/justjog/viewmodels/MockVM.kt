@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -32,12 +31,10 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
     fun addJog(jogEntry: JogEntry) {
         val deferred = CompletableDeferred<Unit>()
 
-        val job = viewModelScope.launch {
+        val job = viewModelScope.launch(Dispatchers.IO) {
             try {
-                withContext(Dispatchers.IO) {
-                    dao.addUpdateWorkout(jogEntry).also {
-                        deferred.complete(Unit)
-                    }
+                dao.addUpdateWorkout(jogEntry).also {
+                    deferred.complete(Unit)
                 }
             } catch (e: Exception) {
                 Log.d("MockVM::Class.java", "Exception: ${e.message}")
@@ -60,12 +57,10 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
     }
 
     fun getAllJogs() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val list = viewModelScope.async { dao.getAll() }.await()
-                list.collect {
-                    Log.d("MockVM::Class.java", "getAllJogs: $it")
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            val list = viewModelScope.async { dao.getAll() }.await()
+            list.collect {
+                Log.d("MockVM::Class.java", "getAllJogs: $it")
             }
         }
     }

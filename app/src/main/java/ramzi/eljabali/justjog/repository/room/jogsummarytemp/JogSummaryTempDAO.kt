@@ -8,7 +8,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface JogSummaryDAO {
+interface JogSummaryTempDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addJogDate(jogSummaryTemp: JogSummaryTemp)
 
