@@ -28,5 +28,5 @@ interface JogSummaryTempDAO {
     fun getLast(): Flow<JogSummaryTemp?>
 
     @Delete
-    fun delete(jogSummaryTemp: JogSummaryTemp): Flow<Int>
+    fun delete(jogSummaryTemp: JogSummaryTemp): Int
 }
