@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import ramzi.eljabali.justjog.R
 
 enum class BottomNavigationItems(title: String, @DrawableRes val icon: Int) {
-    STATISTICS("statistics", R.drawable.front_arrow),
-    CALENDAR("calendar", R.drawable.back_arrow),
-
+    HOME("home", R.drawable.home),
+    CALENDAR("calendar", R.drawable.calendar),
 }

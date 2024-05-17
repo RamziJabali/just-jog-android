@@ -7,6 +7,6 @@ import androidx.compose.runtime.Composable
 @Composable
 fun BottomNavigationView() {
     NavigationBar {
-        NavigationBarItem(selected = , onClick = { /*TODO*/ }, icon = { /*TODO*/ })
+        NavigationBarItem(selected =  , onClick = { /*TODO*/ }, icon = { /*TODO*/ })
     }
 }
