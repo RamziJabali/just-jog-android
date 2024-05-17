@@ -40,13 +40,6 @@ class MainActivity : ComponentActivity() {
         )
             .build()
         val vm = MockVM(db.jogEntryDao())
-//        vm.addJog(
-//            JogEntry(
-//                id = 0, jogSummaryId = 0, dateTime = "", latitude = 0.0, longitude = 0.0
-//            )
-//        )
-        vm.getAllJogs()
-
 
         // TODO: Remove later dummy data
         val data = listOf(
@@ -59,34 +52,31 @@ class MainActivity : ComponentActivity() {
             LineData(x = "Sun", y = 150),
         )
         checkPermissionStatus()
-        lifecycleScope.launch {
-            vm.userStateFlow.collectLatest { state: UserState ->
-                setContent {
-                    JustJogTheme(true) {
-                        Scaffold(
-                            floatingActionButton = {
-                                JoggingFAB {
-                                    Intent(applicationContext, ForegroundService::class.java).also {
-                                        it.action = ForegroundService.Actions.START.name
-                                        startService(it)
-                                    }
-                                }
-                            },
-                            floatingActionButtonPosition = FabPosition.EndOverlay,
-                        ) {
-                            it
-                            StatisticsPage(
-                                motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-                                data = data,
-                            )
-//                            CalendarPage()
+        setContent {
+            JustJogTheme(true) {
+                Scaffold(
+                    bottomBar = {
+
+                    },
+                    floatingActionButton = {
+                        JoggingFAB {
+                            Intent(applicationContext, ForegroundService::class.java).also {
+                                it.action = ForegroundService.Actions.START.name
+                                startService(it)
+                            }
                         }
-                    }
+                    },
+                    floatingActionButtonPosition = FabPosition.EndOverlay,
+                ) {
+                    it
+                    StatisticsPage(
+                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+                        data = data,
+                    )
                 }
             }
         }
     }
-
 
     // ~~~ PERMISSION Handler ~~~
     //Best way to check which permission status you are on

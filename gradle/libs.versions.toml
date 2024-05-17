@@ -16,6 +16,8 @@ dateTime = "0.6.0-RC.2"
 roomVersion = "2.6.1"
 kspVersion = "1.9.23-1.0.19"
 javaTimeFunVerison = "3.0.0"
+composeNavigation = "2.8.0-alpha08"
+serialization = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0-alpha05" }
@@ -42,10 +44,13 @@ androidx-room = { group = "androidx.room", name = "room-runtime" , version.ref =
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler" , version.ref = "roomVersion"}
 androidx-room-kotlin-ext = { group = "androidx.room", name = "room-ktx" , version.ref = "roomVersion"}
 sami-java-timefun = {group = "org.eljabali.sami.javatimefun", name ="javatimefun", version.ref = "javaTimeFunVerison"}
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidx-room-plugin = { id = "androidx.room", version.ref = "roomVersion" }
 google-devtools-ksp = {id = "com.google.devtools.ksp", version.ref = "kspVersion"}
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
