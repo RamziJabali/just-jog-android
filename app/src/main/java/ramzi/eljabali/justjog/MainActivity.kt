@@ -15,11 +15,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
 import ramzi.eljabali.justjog.notification.permissions
 import ramzi.eljabali.justjog.repository.room.database.JustJogDataBase
@@ -27,7 +24,7 @@ import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 import ramzi.eljabali.justjog.intent.MockVM
-import ramzi.eljabali.justjog.model.state.UserState
+import ramzi.eljabali.justjog.ui.views.BottomNavigationView
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -55,9 +52,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             JustJogTheme(true) {
                 Scaffold(
-                    bottomBar = {
-
-                    },
+                    bottomBar = { BottomNavigationView() },
                     floatingActionButton = {
                         JoggingFAB {
                             Intent(applicationContext, ForegroundService::class.java).also {

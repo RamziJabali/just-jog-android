@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.com.kizitonwose.calendar.compose.calendar)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.material3.icons)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
