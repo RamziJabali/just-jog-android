@@ -12,13 +12,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ramzi.eljabali.justjog.ui.design.BottomNavigationItems
-import ramzi.eljabali.justjog.ui.design.BottomNavigationItems.STATISTICS
-import ramzi.eljabali.justjog.ui.design.BottomNavigationItems.CALENDAR
+import androidx.navigation.NavController
+import ramzi.eljabali.justjog.ui.util.BottomNavigationItems
+import ramzi.eljabali.justjog.ui.util.CalendarScreen
+import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 
 
 @Composable
-fun BottomNavigationView() {
+fun BottomNavigationView(navController: NavController) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     NavigationBar(
         modifier = Modifier.fillMaxWidth()
@@ -28,10 +29,16 @@ fun BottomNavigationView() {
                 selected = selectedItemIndex == index,
                 onClick = {
                     selectedItemIndex = index
-//                    navController.navigate(item.title)
+                    if (selectedItemIndex == 0) {
+                        navController.navigate(
+                            StatisticsScreen
+                        )
+                    } else {
+                        navController.navigate(CalendarScreen)
+                    }
                 },
+                label = { Text(text = item.title) },
                 alwaysShowLabel = true,
-                label = { Text(text = item.title)},
                 icon = {
                     Icon(
                         imageVector = if (selectedItemIndex == index) {
@@ -50,5 +57,5 @@ fun BottomNavigationView() {
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
 @Composable
 fun BottomNavigationViewPreview() {
-    BottomNavigationView()
+//    BottomNavigationView()
 }

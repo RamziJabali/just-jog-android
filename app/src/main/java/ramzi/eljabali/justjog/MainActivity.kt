@@ -15,6 +15,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
@@ -24,7 +27,10 @@ import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 import ramzi.eljabali.justjog.intent.MockVM
+import ramzi.eljabali.justjog.ui.util.CalendarScreen
+import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
+import ramzi.eljabali.justjog.ui.views.CalendarPage
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -49,10 +55,12 @@ class MainActivity : ComponentActivity() {
             LineData(x = "Sun", y = 150),
         )
         checkPermissionStatus()
+
         setContent {
+            val navController = rememberNavController()
             JustJogTheme(true) {
                 Scaffold(
-                    bottomBar = { BottomNavigationView() },
+                    bottomBar = { BottomNavigationView(navController) },
                     floatingActionButton = {
                         JoggingFAB {
                             Intent(applicationContext, ForegroundService::class.java).also {
@@ -64,10 +72,17 @@ class MainActivity : ComponentActivity() {
                     floatingActionButtonPosition = FabPosition.EndOverlay,
                 ) {
                     it
-                    StatisticsPage(
-                        motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-                        data = data,
-                    )
+                    NavHost(navController = navController, startDestination = StatisticsScreen) {
+                        composable<StatisticsScreen> {
+                            StatisticsPage(
+                                motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
+                                data = data,
+                            )
+                        }
+                        composable<CalendarScreen> {
+                            CalendarPage()
+                        }
+                    }
                 }
             }
         }
