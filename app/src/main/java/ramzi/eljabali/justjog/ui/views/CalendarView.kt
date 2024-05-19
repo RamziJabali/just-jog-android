@@ -50,22 +50,11 @@ import kotlin.math.log
 
 @Composable
 fun CalendarPage() {
-    val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { currentMonth.minusMonths(0) } // Adjust as needed
-    val endMonth = remember { currentMonth.plusMonths(0) } // Adjust as needed
-    val daysOfWeek = remember { daysOfWeek() }
-
-    val state = rememberCalendarState(
-        startMonth = startMonth,
-        endMonth = endMonth,
-        firstVisibleMonth = currentMonth,
-        firstDayOfWeek = daysOfWeek.first()
-    )
     Column(
         modifier =
         Modifier
             .fillMaxSize()
-            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.s),
+            .padding(horizontal = Spacing.Surrounding.s),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -77,18 +66,7 @@ fun CalendarPage() {
                 defaultElevation = CardElevation.default
             )
         ) {
-            HorizontalCalendar(
-                state = state,
-                dayContent = {
-                    Day(it) { day ->
-                        Log.i("Date Clicked", "Date {${day.date}} has been clicked")
-                    }
-                },
-                monthHeader = { month ->
-                    val daysOfWeek = month.weekDays.first().map { it.date.dayOfWeek }
-                    MonthHeader(daysOfWeek = daysOfWeek, month, state)
-                }
-            )
+            Text(text = "Calendar View")
         }
     }
 }

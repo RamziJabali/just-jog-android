@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("androidx.room") version "2.6.1" apply false
-    id(libs.plugins.google.devtools.ksp.get().pluginId) version libs.versions.kspVersion
+    alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -72,6 +73,10 @@ dependencies {
     implementation(libs.sami.java.timefun)
     implementation(libs.androidx.room.kotlin.ext)
     implementation(libs.com.kizitonwose.calendar.compose.calendar)
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.material3.icons)
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

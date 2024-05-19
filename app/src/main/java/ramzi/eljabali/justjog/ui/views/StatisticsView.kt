@@ -54,7 +54,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
         modifier =
         Modifier
             .fillMaxSize()
-            .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.s),
+            .padding(horizontal = Spacing.Surrounding.s),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

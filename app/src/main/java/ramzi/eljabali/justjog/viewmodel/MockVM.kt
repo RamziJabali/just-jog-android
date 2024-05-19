@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog.intent
+package ramzi.eljabali.justjog.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
