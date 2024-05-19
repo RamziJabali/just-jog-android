@@ -91,6 +91,7 @@ object TextSize {
 }
 
 object ButtonSize {
+    val xs = 20.dp
     val s = 25.dp
     val m = 50.dp
     val l = 100.dp

@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
-import ramzi.eljabali.justjog.ui.views.CalendarPage
+import ramzi.eljabali.justjog.ui.views.JustJogCalendarView
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
 
 @Composable
@@ -29,7 +29,7 @@ fun JustJogNavigation(
             )
         }
         composable<CalendarScreen> {
-            CalendarPage()
+            JustJogCalendarView()
         }
     }
 }
