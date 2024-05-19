@@ -40,7 +40,7 @@ fun JustJogCalendarView() {
         mutableStateOf("${date.month.name} ${date.year}")
     }
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(Spacing.Surrounding.s)
     ) {
         Column(
             modifier = Modifier
@@ -161,7 +161,7 @@ fun Day(date: LocalDate) {
             .size(ButtonSize.m)
             .clickable(
                 enabled = true,
-                onClick = { Log.d("JustJog", "Clicked on $date") }
+                onClick = { Log.d("JustJog-CalendarView", "Clicked on $date") }
             ),
         contentAlignment = Alignment.Center,
     ) {
