@@ -95,15 +95,8 @@ fun WeekHeader() {
             .fillMaxWidth()
             .padding(Spacing.Surrounding.xs)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Spacing.Horizontal.xs)
-        ) {
-            listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
-                DayOfTheWeek(dayOfTheWeek = it)
-            }
+        listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
+            DayOfTheWeek(dayOfTheWeek = it)
         }
     }
 }
