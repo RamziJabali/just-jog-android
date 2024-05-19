@@ -8,3 +8,4 @@ object StatisticsScreen
 
 @Serializable
 object CalendarScreen
+

@@ -26,34 +26,18 @@ import ramzi.eljabali.justjog.repository.room.database.JustJogDataBase
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
-import ramzi.eljabali.justjog.intent.MockVM
+import ramzi.eljabali.justjog.viewmodel.MockVM
 import ramzi.eljabali.justjog.ui.util.CalendarScreen
+import ramzi.eljabali.justjog.ui.util.JustJogNavigation
 import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
 import ramzi.eljabali.justjog.ui.views.CalendarPage
+import kotlin.math.log
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val db = Room.databaseBuilder(
-            applicationContext,
-            JustJogDataBase::class.java, "just-jog-database"
-        )
-            .build()
-        val vm = MockVM(db.jogEntryDao())
-
-        // TODO: Remove later dummy data
-        val data = listOf(
-            LineData(x = "Mon", y = 40),
-            LineData(x = "Tues", y = 60),
-            LineData(x = "Wed", y = 70),
-            LineData(x = "Thurs", y = 120),
-            LineData(x = "Fri", y = 80),
-            LineData(x = "Sat", y = 60),
-            LineData(x = "Sun", y = 150),
-        )
         checkPermissionStatus()
 
         setContent {
@@ -70,19 +54,9 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     floatingActionButtonPosition = FabPosition.EndOverlay,
-                ) {
-                    it
-                    NavHost(navController = navController, startDestination = StatisticsScreen) {
-                        composable<StatisticsScreen> {
-                            StatisticsPage(
-                                motivationalQuote = "Awareness is the only density, the only guarantee of affirmation.",
-                                data = data,
-                            )
-                        }
-                        composable<CalendarScreen> {
-                            CalendarPage()
-                        }
-                    }
+                ) { contentPadding ->
+                    Log.d("Scaffold", "Content Padding $contentPadding")
+                    JustJogNavigation(navController)
                 }
             }
         }
