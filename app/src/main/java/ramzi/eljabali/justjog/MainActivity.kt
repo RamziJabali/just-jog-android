@@ -15,24 +15,13 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
 import ramzi.eljabali.justjog.notification.permissions
-import ramzi.eljabali.justjog.repository.room.database.JustJogDataBase
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
-import ramzi.eljabali.justjog.ui.views.StatisticsPage
-import ramzi.eljabali.justjog.viewmodel.MockVM
-import ramzi.eljabali.justjog.ui.util.CalendarScreen
 import ramzi.eljabali.justjog.ui.util.JustJogNavigation
-import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
-import ramzi.eljabali.justjog.ui.views.CalendarPage
-import kotlin.math.log
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
