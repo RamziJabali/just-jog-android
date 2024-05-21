@@ -1,6 +1,7 @@
 package ramzi.eljabali.justjog.loactionservice
 
 import android.app.ForegroundServiceStartNotAllowedException
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
@@ -11,6 +12,8 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Stop
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -22,16 +25,19 @@ import java.time.ZonedDateTime
 class ForegroundService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 1
-        private const val LOCATION_REQUEST_INTERVAL_MS = 2000L
+        private const val LOCATION_REQUEST_INTERVAL_MS = 1000L
         private const val CHANNEL_ID_1 = "JUST_JOG_1"
     }
+    private var startTime = ZonedDateTime.now()
 
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
     }
 
     private val locationListener: LocationListener by lazy {
+        startTime = ZonedDateTime.now()
         LocationListener { location ->
+            updateNotification((ZonedDateTime.now().toEpochSecond() - startTime.toEpochSecond()).toString())
             Log.d(
                 "ForegroundService::Class",
                 "Time:${ZonedDateTime.now()}\nLatitude: ${location.latitude}, Longitude:${location.longitude}"
@@ -86,7 +92,7 @@ class ForegroundService : Service() {
             if (currentPermission == PackageManager.PERMISSION_DENIED) {
                 // Without these permissions the service cannot run in the foreground
                 // Consider informing user or updating your app UI if visible.
-                Log.d("ForegroundService::Class", "Permissions were not given, stopping service!")
+                Log.e("ForegroundService::Class", "Permissions were not given, stopping service!")
                 stopSelf()
             }
         }
@@ -95,7 +101,7 @@ class ForegroundService : Service() {
             ServiceCompat.startForeground(
                 this,
                 NOTIFICATION_ID, // Cannot be 0
-                getNotification(),
+                getNotification("0:00:00"),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
                 } else {
@@ -109,6 +115,7 @@ class ForegroundService : Service() {
                 0F,
                 locationListener
             )
+           startTime = ZonedDateTime.now()
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException
@@ -122,11 +129,11 @@ class ForegroundService : Service() {
 
 
     // ~~~ Notification Builder ~~~
-    private fun getNotification() =
+    private fun getNotification(time: String) =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID_1)
             .setSmallIcon(R.mipmap.just_jog_icon_foreground)
             .setContentTitle(ContextCompat.getString(applicationContext, R.string.just_jog))
-            .setContentText(ContextCompat.getString(applicationContext, R.string.notification_text))
+            .setContentText(time)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
@@ -140,6 +147,12 @@ class ForegroundService : Service() {
                 stopServicePendingIntent
             )
             .build()
+
+    fun updateNotification(content: String) {
+        val notification = getNotification(content)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
 
 
     // Actions
