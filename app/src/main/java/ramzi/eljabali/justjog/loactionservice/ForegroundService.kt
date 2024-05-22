@@ -12,14 +12,15 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
+import javatimefun.zoneddatetime.ZonedDateTimes
 import ramzi.eljabali.justjog.MainActivity
 import ramzi.eljabali.justjog.R
 import ramzi.eljabali.justjog.notification.permissions
+import ramzi.eljabali.justjog.util.formatDuration
+import java.time.Duration
 import java.time.ZonedDateTime
 
 class ForegroundService : Service() {
@@ -28,16 +29,16 @@ class ForegroundService : Service() {
         private const val LOCATION_REQUEST_INTERVAL_MS = 1000L
         private const val CHANNEL_ID_1 = "JUST_JOG_1"
     }
-    private var startTime = ZonedDateTime.now()
+    private val jogStartZonedDateTime by lazy { ZonedDateTimes.now }
 
     private val locationManager by lazy {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
     }
 
     private val locationListener: LocationListener by lazy {
-        startTime = ZonedDateTime.now()
         LocationListener { location ->
-            updateNotification((ZonedDateTime.now().toEpochSecond() - startTime.toEpochSecond()).toString())
+            val duration = Duration.between(jogStartZonedDateTime, ZonedDateTime.now())
+            updateNotification(formatDuration(duration))
             Log.d(
                 "ForegroundService::Class",
                 "Time:${ZonedDateTime.now()}\nLatitude: ${location.latitude}, Longitude:${location.longitude}"
@@ -101,7 +102,7 @@ class ForegroundService : Service() {
             ServiceCompat.startForeground(
                 this,
                 NOTIFICATION_ID, // Cannot be 0
-                getNotification("0:00:00"),
+                getNotification(""),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
                 } else {
@@ -115,7 +116,6 @@ class ForegroundService : Service() {
                 0F,
                 locationListener
             )
-           startTime = ZonedDateTime.now()
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException
@@ -148,7 +148,7 @@ class ForegroundService : Service() {
             )
             .build()
 
-    fun updateNotification(content: String) {
+    private fun updateNotification(content: String) {
         val notification = getNotification(content)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
