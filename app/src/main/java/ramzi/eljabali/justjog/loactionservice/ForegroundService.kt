@@ -138,6 +138,7 @@ class ForegroundService : Service() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
             .setAutoCancel(false)
+            .setOnlyAlertOnce(true)
             .setStyle(NotificationCompat.BigTextStyle())
             // Set the intent that fires when the user taps the notification.
             .setContentIntent(pendingIntent)

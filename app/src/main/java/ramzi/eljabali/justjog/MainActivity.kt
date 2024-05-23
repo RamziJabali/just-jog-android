@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkPermissionStatus()
-
         setContent {
             val navController = rememberNavController()
             JustJogTheme(true) {
