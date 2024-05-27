@@ -25,7 +25,7 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
 
         val job = viewModelScope.launch(Dispatchers.IO) {
             try {
-                dao.addUpdateWorkout(jogEntry).also {
+                dao.addUpdateJogEntries(jogEntry).also {
                     deferred.complete(Unit)
                 }
             } catch (e: Exception) {
@@ -39,7 +39,7 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
                 if (cause is CancellationException) {
                     Log.d("MockVM::Class.java", "addJog: Coroutine canceled: ${cause.message}")
                 } else {
-                    Log.e("MockVM::Class.java", "addJog: Coroutine failed with: $cause")
+                    Log.e("MockVM::Class.java", "addJog: Coroutine failed with: ${cause.message}")
                 }
                 job.cancel() // Cancel the job explicitly
             } else {

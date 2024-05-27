@@ -10,16 +10,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface JogSummaryTempDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addJogDate(jogSummaryTemp: JogSummaryTemp)
+    fun add(jogSummaryTemp: JogSummaryTemp)
 
     @Query("SELECT * FROM jog_summary_temp")
     fun getAll(): Flow<List<JogSummaryTemp>>
 
-//    @Query("SELECT * FROM jog_summary WHERE CAST(start_date_time AS DATE) BETWEEN CAST(:startDate AS DATE) AND CAST(:endDate AS DATE)")
-//    fun getByRangeOfDates(startDate: String, endDate: String): Observable<List<JogSummary>>
-
     @Query("SELECT * FROM jog_summary_temp WHERE id IS :jogId")
-    fun getByID(jogId: Int): Flow<JogSummaryTemp?>
+    fun getById(jogId: Int): Flow<JogSummaryTemp?>
 
     @Query("DELETE FROM jog_summary_temp")
     fun deleteAll()
