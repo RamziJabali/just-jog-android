@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ramzi.eljabali.justjog.MainActivity
 import ramzi.eljabali.justjog.R
-import ramzi.eljabali.justjog.notification.permissions
+import ramzi.eljabali.justjog.util.permissions
 import ramzi.eljabali.justjog.usecase.JogUseCase
 import ramzi.eljabali.justjog.util.DateFormat
 import ramzi.eljabali.justjog.util.TAG

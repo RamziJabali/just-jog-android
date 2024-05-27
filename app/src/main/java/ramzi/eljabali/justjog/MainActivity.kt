@@ -17,7 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.notification.permissions
+import ramzi.eljabali.justjog.util.permissions
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.util.JustJogNavigation
