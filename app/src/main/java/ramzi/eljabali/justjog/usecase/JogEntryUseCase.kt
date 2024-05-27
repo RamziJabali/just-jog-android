@@ -7,7 +7,7 @@ class JogEntryUseCase(private val dataBase: JustJogDataBase) {
     private val jogEntryDao = dataBase.jogEntryDao()
 
     suspend fun addJogEntry(jogEntry: JogEntry) {
-        jogEntryDao.addUpdateJogEntries(jogEntry)
+        jogEntryDao.addEntry(jogEntry)
     }
 
     suspend fun getAllJogEntries() = jogEntryDao.getAll()

@@ -25,7 +25,7 @@ class MockVM(private val dao: JogEntryDAO) : ViewModel() {
 
         val job = viewModelScope.launch(Dispatchers.IO) {
             try {
-                dao.addUpdateJogEntries(jogEntry).also {
+                dao.addEntry(jogEntry).also {
                     deferred.complete(Unit)
                 }
             } catch (e: Exception) {
