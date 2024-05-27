@@ -1,4 +1,7 @@
 package ramzi.eljabali.justjog.viewmodel
 
-class JogViewModel {
+import androidx.lifecycle.ViewModel
+
+
+class JogViewModel : ViewModel() {
 }

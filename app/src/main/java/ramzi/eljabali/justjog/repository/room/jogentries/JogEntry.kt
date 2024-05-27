@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity("jog_entries")
 data class JogEntry(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int = 0,
     @ColumnInfo("jog_summary_id")
     val jogSummaryId: Int,
     @ColumnInfo("date_time")
