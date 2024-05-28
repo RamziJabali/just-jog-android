@@ -38,17 +38,17 @@ class JogSummaryWorkManager(
             val currentDateTime: ZonedDateTime = inputData.getString("DATE_TIME")
                 ?.toZonedDateTime(DateFormat.YYYY_MM_DD_T_TIME.format)!!
 
-            Log.i(TAG, "Before GetTempJogSummary")
+            Log.i("JogSummaryWorkManager", "Before GetTempJogSummary")
             try {
                 jogUseCase.getJogSummaryTemp(id)
                     .onStart {
-                        Log.i(TAG, "Start of adding and processing jogs")
+                        Log.i("JogSummaryWorkManager", "Start of adding and processing jogs")
                     }
                     .onCompletion {
-                        Log.i(TAG, "End of adding and processing jogs")
+                        Log.i("JogSummaryWorkManager", "End of adding and processing jogs")
                     }
-                    .map { jogSummaryTemp ->
-                        Log.i(TAG, "Adding JogEntry")
+                    .collect { jogSummaryTemp ->
+                        Log.i("JogSummaryWorkManager", "Adding JogEntry")
                         jogUseCase.addJogEntry(
                             ModifiedJogEntry(
                                 jogSummaryId = id,
@@ -56,11 +56,11 @@ class JogSummaryWorkManager(
                                 latLng = currentLatLng
                             )
                         )
-                        Log.i(TAG, "Adding JogEntry COMPLETE")
-                        jogSummaryTemp
-                    }.map { jogSummaryTemp ->
-                        if (jogSummaryTemp == null) {
-                            Log.i(TAG, "Adding First JogSummary Temp")
+                        Log.i("JogSummaryWorkManager", "Adding JogEntry COMPLETE")
+//                        jogSummaryTemp
+                        //
+                        val modifiedTempJogSummary = if (jogSummaryTemp == null) {
+                            Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp")
                             val modifiedTempJogSummary = ModifiedTempJogSummary(
                                 jogId = id,
                                 date = currentDateTime,
@@ -69,10 +69,10 @@ class JogSummaryWorkManager(
                             jogUseCase.addOrUpdateJogSummaryTemp(
                                 modifiedTempJogSummary
                             )
-                            Log.i(TAG, "Adding First JogSummary Temp COMPLETE")
+                            Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp COMPLETE")
                             modifiedTempJogSummary
                         } else {
-                            Log.i(TAG, "Updating JogSummary Temp")
+                            Log.i("JogSummaryWorkManager", "Updating JogSummary Temp")
                             val updatedDistance = jogSummaryTemp.totalDistance +
                                     getTotalDistance(listOf(jogSummaryTemp.location, currentLatLng))
                             val updatedDuration =
@@ -84,11 +84,11 @@ class JogSummaryWorkManager(
                                 duration = updatedDuration,
                             )
                             jogUseCase.addOrUpdateJogSummaryTemp(modifiedTempJogSummary)
-                            Log.i(TAG, "Updating JogSummary Temp COMPLETE")
+                            Log.i("JogSummaryWorkManager", "Updating JogSummary Temp COMPLETE")
                             modifiedTempJogSummary
                         }
-                    }.map { modifiedTempJogSummary ->
-                        Log.i(TAG, "Adding/Updating JogSummary")
+
+                        Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary")
                         val modifiedJogSummary = ModifiedJogSummary(
                             jogId = modifiedTempJogSummary.jogId,
                             startDate = modifiedTempJogSummary.date,
@@ -96,7 +96,7 @@ class JogSummaryWorkManager(
                             totalDistance = modifiedTempJogSummary.totalDistance
                         )
                         jogUseCase.addJogSummary(modifiedJogSummary)
-                        Log.i(TAG, "Adding/Updating JogSummary COMPLETED")
+                        Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary COMPLETED")
                     }
                 Result.success()
             } catch (e: Exception) {
