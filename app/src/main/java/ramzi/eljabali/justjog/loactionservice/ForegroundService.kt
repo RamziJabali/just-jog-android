@@ -23,7 +23,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import javatimefun.zoneddatetime.ZonedDateTimes
 import javatimefun.zoneddatetime.extensions.print
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ramzi.eljabali.justjog.MainActivity
@@ -42,6 +43,7 @@ class ForegroundService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val LOCATION_REQUEST_INTERVAL_MS = 1000L
         private const val CHANNEL_ID_1 = "JUST_JOG_1"
+        private const val JOG_TRACKER_WORKER_ID = "JOG_TRACKER_WORKER_ID"
     }
 
     private val jogUseCase by inject<JogUseCase>()
@@ -51,6 +53,7 @@ class ForegroundService : Service() {
         ContextCompat.getSystemService(application, LocationManager::class.java) as LocationManager
     }
     private var id = 0
+    private var lastWorkRequestTime = 0L
     private val locationListener: LocationListener by lazy {
         LocationListener { location ->
             val duration = Duration.between(jogStartZonedDateTime, ZonedDateTime.now())
@@ -96,6 +99,10 @@ class ForegroundService : Service() {
 
     private fun stop() {
         locationManager.removeUpdates(locationListener)
+        WorkManager.getInstance(applicationContext).cancelAllWorkByTag(JOG_TRACKER_WORKER_ID)
+        CoroutineScope(Dispatchers.IO).launch {
+            jogUseCase.deleteAllTempJogSummaries()
+        }
         stopSelf()
     }
 
@@ -107,7 +114,8 @@ class ForegroundService : Service() {
                 // Without these permissions the service cannot run in the foreground
                 // Consider informing user or updating your app UI if visible.
                 Log.e("ForegroundService::Class", "Permissions were not given, stopping service!")
-                stopSelf()
+                stop()
+                return
             }
         }
 
@@ -164,15 +172,14 @@ class ForegroundService : Service() {
 
     // jog
     private fun getJogIDAndStartTrackingJog() {
-        // Launching a coroutine on the main dispatcher to collect the Flow
-        MainScope().launch {
+        Log.i(TAG, "In getJogIDAndStartTrackingJog")
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 Log.i(TAG, "Getting new run ID")
-                jogUseCase.getNewRunID().collect { newId ->
-                    Log.i(TAG, "Got new run id $newId")
-                    // Proceed with starting the tracking jog
-                    jogListener(newId)
-                }
+                val newId = jogUseCase.getNewJogID()
+                Log.i(TAG, "Got new run id $newId")
+                // Proceed with starting the tracking jog
+                setJogListener(newId)
             } catch (e: Exception) {
                 // Handle the error
                 Log.e(TAG, "Error getting new run ID", e)
@@ -180,7 +187,7 @@ class ForegroundService : Service() {
         }
     }
 
-    private fun jogListener(newId: Int) {
+    private fun setJogListener(newId: Int) {
         // getting user location
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -190,13 +197,7 @@ class ForegroundService : Service() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            stop()
             return
         }
         id = newId
@@ -211,6 +212,13 @@ class ForegroundService : Service() {
 
     private fun recordRunEvent(id: Int, location: Location) {
         Log.i(TAG, "Success getting location")
+
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastWorkRequestTime < LOCATION_REQUEST_INTERVAL_MS) {
+            // Skip this event if it is too soon since the last event
+            return
+        }
+        lastWorkRequestTime = currentTime
         val data = Data.Builder().apply {
             putDouble("KEY_LONGITUDE", location.longitude)
             putDouble("KEY_LATITUDE", location.latitude)
@@ -221,9 +229,10 @@ class ForegroundService : Service() {
         val recordSummaryWorker =
             OneTimeWorkRequest.Builder(JogSummaryWorkManager::class.java).apply {
                 setInputData(data)
-            }
+                addTag(JOG_TRACKER_WORKER_ID)
+            }.build()
 
-        WorkManager.getInstance(applicationContext).enqueue(recordSummaryWorker.build())
+        WorkManager.getInstance(applicationContext).enqueue(recordSummaryWorker)
     }
 
     // Actions

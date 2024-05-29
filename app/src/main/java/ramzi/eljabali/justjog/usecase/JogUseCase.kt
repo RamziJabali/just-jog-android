@@ -4,10 +4,10 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import javatimefun.zoneddatetime.extensions.print
 import javatimefun.zoneddatetime.extensions.toZonedDateTime
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.single
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntryDAO
 import ramzi.eljabali.justjog.repository.room.jogsummary.JogSummary
@@ -34,14 +34,18 @@ class JogUseCase(
     fun getAllJogEntries() = jogEntryDao.getAll()
 
     // SUMMARY
-    fun getNewRunID(): Flow<Int> =
-        jogSummaryDao.getLast().onStart {
-            Log.i(TAG, "Collecting last jog summary id")
-        }.onCompletion {
-            Log.i(TAG, "Collecting last jog summary id completed")
-        }.map { jogSummary ->
-            (jogSummary?.id ?: 0) + 1
+    suspend fun getNewJogID(): Int {
+        Log.i(TAG, "getNewJogID() -> JogUseCase")
+        val id =  jogSummaryDao.getLastID().firstOrNull()
+
+        return if (id == null) {
+            Log.i(TAG, "getNewJogID() -> 1")
+            1
+        } else {
+            Log.i(TAG, "getNewJogID() -> ${id+1}")
+            id + 1
         }
+    }
 
     fun addJogSummary(modifiedJogSummary: ModifiedJogSummary) {
         jogSummaryDao.add(
@@ -68,7 +72,7 @@ class JogUseCase(
             null
         }
     }
-
+    fun deleteAllTempJogSummaries() = jogSummaryTempDao.deleteAll()
     fun addOrUpdateJogSummaryTemp(modifiedTempJogSummary: ModifiedTempJogSummary) {
         jogSummaryTempDao.add(
             JogSummaryTemp(

@@ -65,8 +65,8 @@ interface JogSummaryDAO {
     @Query("DELETE FROM jog_summary")
     fun deleteAll()
 
-    @Query("SELECT * FROM jog_summary ORDER BY id DESC LIMIT 1")
-    fun getLast(): Flow<JogSummary?>
+    @Query("SELECT id FROM jog_summary ORDER BY ID DESC LIMIT 1")
+    fun getLastID(): Flow<Int?>
 
     @Delete
     fun delete(jogSummary: JogSummary)
