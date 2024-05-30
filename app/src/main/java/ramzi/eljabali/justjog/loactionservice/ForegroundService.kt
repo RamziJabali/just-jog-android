@@ -123,7 +123,12 @@ class ForegroundService : Service() {
             ServiceCompat.startForeground(
                 this,
                 NOTIFICATION_ID, // Cannot be 0
-                getNotification(""),
+                getNotification(
+                    ContextCompat.getString(
+                        applicationContext,
+                        R.string.initializing_jog
+                    )
+                ),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
                 } else {
@@ -147,7 +152,7 @@ class ForegroundService : Service() {
     private fun getNotification(time: String) =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID_1)
             .setSmallIcon(R.mipmap.just_jog_icon_foreground)
-            .setContentTitle(ContextCompat.getString(applicationContext, R.string.just_jog))
+            .setContentTitle(ContextCompat.getString(applicationContext, R.string.timer))
             .setContentText(time)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

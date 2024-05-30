@@ -29,7 +29,7 @@ class JustJogApplication : Application() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val name: String = getString(R.string.just_jog)
+        val name: String = getString(R.string.app_name)
         val mChannel =
             NotificationChannel(CHANNEL_ID_1, name, NotificationManager.IMPORTANCE_DEFAULT).apply {
                 description = getString(R.string.channel_description)
