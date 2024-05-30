@@ -57,7 +57,6 @@ class JogSummaryWorkManager(
             }
             try {
                 async {
-
                     Log.i("JogSummaryWorkManager", "Adding JogEntry")
                     jogUseCase.addJogEntry(
                         ModifiedJogEntry(
@@ -76,24 +75,27 @@ class JogSummaryWorkManager(
             try {
                 async {
                     // jogSummaryTemp
-                    val modifiedTempJogSummary = if (jogSummaryTemp == null) {
-                        Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp")
-                        ModifiedTempJogSummary(
-                            jogId = id,
-                            date = currentDateTime,
-                            location = currentLatLng
-                        )
-                    } else {
+                    val modifiedTempJogSummary = if (jogSummaryTemp != null) {
                         Log.i("JogSummaryWorkManager", "Updating JogSummary Temp")
                         val updatedDistance = jogSummaryTemp!!.totalDistance +
                                 getTotalDistance(listOf(jogSummaryTemp!!.location, currentLatLng))
+                        Log.i("Distance", "current LatLng: $currentLatLng, jogSummaryTemp: ${jogSummaryTemp!!.location}, Updated Distance: $updatedDistance, Total Distance: ${getTotalDistance(listOf(jogSummaryTemp!!.location, currentLatLng))}")
                         val updatedDuration =
                             Duration.between(jogSummaryTemp!!.date, currentDateTime)
                         ModifiedTempJogSummary(
                             jogId = id,
-                            date = currentDateTime,
+                            date = jogSummaryTemp!!.date,
                             totalDistance = updatedDistance,
                             duration = updatedDuration,
+                            location = currentLatLng
+                        )
+                    } else {
+                        Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp")
+                        Log.i("Distance", "Updated Distance: 0")
+                        ModifiedTempJogSummary(
+                            jogId = id,
+                            date = currentDateTime,
+                            location = currentLatLng
                         )
                     }
                     jogUseCase.addOrUpdateJogSummaryTemp(modifiedTempJogSummary)
