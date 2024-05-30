@@ -34,11 +34,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         checkPermissionStatus()
         val jogUseCase by inject<JogUseCase>()
-        GlobalScope.launch {
-            jogUseCase.getAllJogEntries().collect{ list ->
-                Log.d("Fake", "Jog: \n $list")
-            }
-        }
         setContent {
             val navController = rememberNavController()
             JustJogTheme(true) {
