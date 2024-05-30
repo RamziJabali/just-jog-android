@@ -9,15 +9,11 @@ import javatimefun.zoneddatetime.extensions.toZonedDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ramzi.eljabali.justjog.repository.room.jogsummarytemp.JogSummaryTemp
 import ramzi.eljabali.justjog.usecase.JogUseCase
 import ramzi.eljabali.justjog.usecase.ModifiedJogEntry
 import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
@@ -43,84 +39,87 @@ class JogSummaryWorkManager(
             ?.toZonedDateTime(DateFormat.YYYY_MM_DD_T_TIME.format)!!
 
         var jogSummaryTemp: ModifiedTempJogSummary? = null
-            withContext(Dispatchers.IO) {
-                try {
-                    Log.i("JogSummaryWorkManager", "Before GetTempJogSummary")
-                    jogSummaryTemp = jogUseCase.getJogSummaryTemp(id)
+
+        withContext(Dispatchers.IO) async@{
+            try {
+                jogSummaryTemp = async {
+                    jogUseCase.getJogSummaryTemp(id)
                         .onStart {
-                            Log.i("JogSummaryWorkManager", "Start of adding and processing jogs")
+                            Log.i("JogSummaryWorkManager", "Before GetTempJogSummary")
                         }
                         .onCompletion {
-                            Log.i("JogSummaryWorkManager", "End of adding and processing jogs")
-                        }
-                        .firstOrNull()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Exception: ${e.message}")
-                    return@withContext Result.failure()
-                }
-            }
-
-        withContext(Dispatchers.IO) {
-            try {
-                Log.i("JogSummaryWorkManager", "Adding JogEntry")
-                jogUseCase.addJogEntry(
-                    ModifiedJogEntry(
-                        jogSummaryId = id,
-                        dateTime = currentDateTime,
-                        latLng = currentLatLng
-                    )
-                )
-                Log.i("JogSummaryWorkManager", "Adding JogEntry COMPLETE")
+                            Log.i("JogSummaryWorkManager", "After GetTempJogSummary")
+                        }.firstOrNull()
+                }.await()
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: ${e.message}")
-                return@withContext Result.failure()
+                return@async Result.failure()
             }
-        }
-
-        withContext(Dispatchers.IO) {
-            // jogSummaryTemp
-            val modifiedTempJogSummary = if (jogSummaryTemp == null) {
-                Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp")
-                ModifiedTempJogSummary(
-                    jogId = id,
-                    date = currentDateTime,
-                    location = currentLatLng
-                )
-            } else {
-                Log.i("JogSummaryWorkManager", "Updating JogSummary Temp")
-                val updatedDistance = jogSummaryTemp!!.totalDistance +
-                        getTotalDistance(listOf(jogSummaryTemp!!.location, currentLatLng))
-                val updatedDuration =
-                    Duration.between(jogSummaryTemp!!.date, currentDateTime)
-                ModifiedTempJogSummary(
-                    jogId = id,
-                    date = currentDateTime,
-                    totalDistance = updatedDistance,
-                    duration = updatedDuration,
-                )
-            }
-            jogUseCase.addOrUpdateJogSummaryTemp(modifiedTempJogSummary)
-            jogSummaryTemp = modifiedTempJogSummary
-            Log.i("JogSummaryWorkManager", "Adding JogSummary Temp COMPLETE")
-
-        }
-
-        withContext(Dispatchers.IO) {
             try {
-                Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary")
-                val modifiedJogSummary = ModifiedJogSummary(
-                    jogId = jogSummaryTemp!!.jogId,
-                    startDate = jogSummaryTemp!!.date,
-                    duration = jogSummaryTemp!!.duration,
-                    totalDistance = jogSummaryTemp!!.totalDistance
-                )
-                jogUseCase.addJogSummary(modifiedJogSummary)
-                Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary COMPLETED")
-                Result.success()
+                async {
 
+                    Log.i("JogSummaryWorkManager", "Adding JogEntry")
+                    jogUseCase.addJogEntry(
+                        ModifiedJogEntry(
+                            jogSummaryId = id,
+                            dateTime = currentDateTime,
+                            latLng = currentLatLng
+                        )
+                    )
+                    Log.i("JogSummaryWorkManager", "Adding JogEntry COMPLETE")
+                }.await()
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception: ${e.message}")
+                return@async Result.failure()
+            }
+
+            try {
+                async {
+                    // jogSummaryTemp
+                    val modifiedTempJogSummary = if (jogSummaryTemp == null) {
+                        Log.i("JogSummaryWorkManager", "Adding First JogSummary Temp")
+                        ModifiedTempJogSummary(
+                            jogId = id,
+                            date = currentDateTime,
+                            location = currentLatLng
+                        )
+                    } else {
+                        Log.i("JogSummaryWorkManager", "Updating JogSummary Temp")
+                        val updatedDistance = jogSummaryTemp!!.totalDistance +
+                                getTotalDistance(listOf(jogSummaryTemp!!.location, currentLatLng))
+                        val updatedDuration =
+                            Duration.between(jogSummaryTemp!!.date, currentDateTime)
+                        ModifiedTempJogSummary(
+                            jogId = id,
+                            date = currentDateTime,
+                            totalDistance = updatedDistance,
+                            duration = updatedDuration,
+                        )
+                    }
+                    jogUseCase.addOrUpdateJogSummaryTemp(modifiedTempJogSummary)
+                    jogSummaryTemp = modifiedTempJogSummary
+                    Log.i("JogSummaryWorkManager", "Adding JogSummary Temp COMPLETE")
+                }.await()
             } catch (e: Exception) {
                 Log.e(this.javaClass.simpleName, "Exception: ${e.message}")
-                return@withContext Result.failure()
+                return@async Result.failure()
+            }
+
+            try {
+                async {
+                    Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary")
+                    val modifiedJogSummary = ModifiedJogSummary(
+                        jogId = jogSummaryTemp!!.jogId,
+                        startDate = jogSummaryTemp!!.date,
+                        duration = jogSummaryTemp!!.duration,
+                        totalDistance = jogSummaryTemp!!.totalDistance
+                    )
+                    jogUseCase.addJogSummary(modifiedJogSummary)
+                    Log.i("JogSummaryWorkManager", "Adding/Updating JogSummary COMPLETED")
+                }.await()
+            } catch (e: Exception) {
+                Log.e(this.javaClass.simpleName, "Exception: ${e.message}")
+                return@async Result.failure()
             }
         }
         return Result.success()
