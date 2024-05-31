@@ -16,19 +16,24 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.notification.permissions
+import ramzi.eljabali.justjog.util.permissions
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.util.JustJogNavigation
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
+import ramzi.eljabali.justjog.usecase.JogUseCase
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkPermissionStatus()
-
+        val jogUseCase by inject<JogUseCase>()
         setContent {
             val navController = rememberNavController()
             JustJogTheme(true) {

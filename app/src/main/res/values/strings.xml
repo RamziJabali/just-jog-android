@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">Just Jog</string>
-    <string name="just_jog">Just Jog</string>
     <string name="this_week">This Week:</string>
-    <string name="notification_text">The futility of your moonlights will die sincerely when you know that suffering is the aspect.</string>
+    <string name="notification_dummy_text">The futility of your moonlights will die sincerely when you know that suffering is the aspect.</string>
     <string name="average_per_run">Average Per Run:</string>
     <string name="channel_description">This is your jogging notification channel</string>
     <string name="stop_jog">Stop Jog</string>
+    <string name="timer">Timer</string>
+    <string name="initializing_jog">Initializing Jog!</string>
 </resources>

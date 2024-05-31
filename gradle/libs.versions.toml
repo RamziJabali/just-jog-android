@@ -19,7 +19,9 @@ composeNavigation = "2.8.0-alpha08"
 serialization = "1.6.3"
 material3Icons ="1.7.0-alpha08"
 foundation = "1.4.3"
-composeCalendar = "1.3.0"
+workManager = "2.9.0"
+koinDI = "3.6.0-wasm-alpha2"
+playServicesMaps = "18.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0-alpha05" }
@@ -49,8 +51,9 @@ sami-java-timefun = {group = "org.eljabali.sami.javatimefun", name ="javatimefun
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 androidx-compose-foundation = {group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
-io-github-boguszpawlowski-composecalendar = {group = "io.github.boguszpawlowski.composecalendar", name = "composecalendar", version.ref = "composeCalendar"}
-io-github-boguszpawlowski-composecalendar-kotlinx-datetime = {group = "io.github.boguszpawlowski.composecalendar", name = "kotlinx-datetime", version.ref = "composeCalendar"}
+work-manager = {group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager"}
+koin-di = {group = "io.insert-koin", name = "koin-android", version.ref = "koinDI"}
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

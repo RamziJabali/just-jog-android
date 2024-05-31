@@ -12,19 +12,24 @@ import javatimefun.zoneddatetime.extensions.getDayDifference
 import javatimefun.zoneddatetime.extensions.isAfterDay
 import javatimefun.zoneddatetime.extensions.print
 import kotlinx.coroutines.flow.Flow
+import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.util.DateFormat
 import java.time.ZonedDateTime
 
 @Dao
 interface JogSummaryDAO {
+
+    @Query("SELECT * FROM jog_entries WHERE jog_summary_id IS :id")
+    fun getEntriesById(id: Int): Flow<List<JogEntry>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addJogDate(jogSummary: JogSummary)
+    fun add(jogSummary: JogSummary)
 
     @Query("SELECT * FROM jog_summary")
     fun getAll(): Flow<List<JogSummary>>
 
     @Query("SELECT * FROM jog_summary WHERE start_date_time LIKE (:stringDate)")
-    fun getByDate(stringDate: String): Flow<List<JogSummary>?>
+    fun getByDate(stringDate: String): Flow<List<JogSummary>>
 
 //    @Query("SELECT * FROM jog_summary WHERE CAST(start_date_time AS DATE) BETWEEN CAST(:startDate AS DATE) AND CAST(:endDate AS DATE)")
 //    fun getByRangeOfDates(startDate: String, endDate: String): Observable<List<JogSummary>>
@@ -60,8 +65,8 @@ interface JogSummaryDAO {
     @Query("DELETE FROM jog_summary")
     fun deleteAll()
 
-    @Query("SELECT * FROM jog_summary ORDER BY id DESC LIMIT 1")
-    fun getLast(): Flow<JogSummary?>
+    @Query("SELECT id FROM jog_summary ORDER BY ID DESC LIMIT 1")
+    fun getLastID(): Flow<Int?>
 
     @Delete
     fun delete(jogSummary: JogSummary)

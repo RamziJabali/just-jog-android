@@ -71,7 +71,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = Spacing.Vertical.xs),
-                text = stringResource(R.string.just_jog),
+                text = stringResource(R.string.app_name),
                 style = Typography.titleSmall,
                 color = secondaryTextColor,
                 textAlign = TextAlign.Center,

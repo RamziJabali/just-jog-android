@@ -1,29 +1,35 @@
-package ramzi.eljabali.justjog.notification
+package ramzi.eljabali.justjog.util
 
 import android.Manifest
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getString
-import androidx.core.content.ContextCompat.getSystemService
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.logger.AndroidLogger
+import org.koin.core.context.GlobalContext.startKoin
 import ramzi.eljabali.justjog.R
-import ramzi.eljabali.justjog.MainActivity
+import ramzi.eljabali.justjog.koin.jogDataBaseModule
+import ramzi.eljabali.justjog.koin.jogUseCaseModule
+import ramzi.eljabali.justjog.koin.statisticsModule
 
-class NotificationUtil : Application() {
+class JustJogApplication : Application() {
     private val CHANNEL_ID_1 = "JUST_JOG_1"
-
+    private val modules = listOf(statisticsModule, jogDataBaseModule, jogUseCaseModule)
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            AndroidLogger()
+            androidContext(this@JustJogApplication)
+            modules(modules)
+        }
+
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val name: String = getString(R.string.just_jog)
+        val name: String = getString(R.string.app_name)
         val mChannel =
             NotificationChannel(CHANNEL_ID_1, name, NotificationManager.IMPORTANCE_DEFAULT).apply {
                 description = getString(R.string.channel_description)
