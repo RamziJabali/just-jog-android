@@ -30,12 +30,18 @@ fun getFormattedTime(totalTimeInSeconds: Long, format: DurationFormat): String {
 }
 
 
-fun getFormattedTimeMinutes(totalTimeInMinutes: Long): String {
-    var tempTime = minutesToSeconds(totalTimeInMinutes)
+fun getFormattedTimeSeconds(totalTimeInSeconds: Long, format: DurationFormat = DurationFormat.HH_MM_SS): String {
+    var tempTime = totalTimeInSeconds
     val totalHours = secondsToHours(tempTime)
-    tempTime -= hoursToSeconds(totalHours)
+    tempTime %= 3600
     val totalMinutes = secondsToMinutes(tempTime)
-    tempTime -= minutesToSeconds(totalMinutes)
+    tempTime %= 60
     val totalSeconds = tempTime
-    return String.format("%02d:%02d:%02d", totalHours, totalMinutes, totalSeconds)
+
+    return when (format) {
+        DurationFormat.HH_MM_SS -> String.format("%02d:%02d:%02d", totalHours, totalMinutes, totalSeconds)
+        DurationFormat.H_M_S -> String.format("%d:%d:%d", totalHours, totalMinutes, totalSeconds)
+        DurationFormat.HMS -> String.format("%02dh %02dm %02ds", totalHours, totalMinutes, totalSeconds)
+        DurationFormat.MS -> String.format("%01dm %02ds", totalHours, totalMinutes, totalSeconds)
+    }
 }

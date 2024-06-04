@@ -13,11 +13,14 @@ import org.koin.core.context.GlobalContext.startKoin
 import ramzi.eljabali.justjog.R
 import ramzi.eljabali.justjog.koin.jogDataBaseModule
 import ramzi.eljabali.justjog.koin.jogUseCaseModule
+import ramzi.eljabali.justjog.koin.networkModule
 import ramzi.eljabali.justjog.koin.statisticsModule
 
 class JustJogApplication : Application() {
     private val CHANNEL_ID_1 = "JUST_JOG_1"
-    private val modules = listOf(statisticsModule, jogDataBaseModule, jogUseCaseModule)
+    private val modules =
+        listOf(statisticsModule, jogDataBaseModule, jogUseCaseModule, networkModule)
+
     override fun onCreate() {
         super.onCreate()
         startKoin {

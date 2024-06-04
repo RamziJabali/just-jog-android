@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.work.manager)
     implementation(libs.koin.di)
+    implementation(libs.com.squareup.retrofit2)
+    implementation(libs.com.squareup.retrofit2.converter)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
