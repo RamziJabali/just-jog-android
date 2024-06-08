@@ -15,30 +15,21 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.motivationalquotes.MotivationQuotesAPI
 import ramzi.eljabali.justjog.util.permissions
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.views.JoggingFAB
-import ramzi.eljabali.justjog.ui.util.JustJogNavigation
+import ramzi.eljabali.justjog.ui.navigation.JustJogNavigation
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
-import ramzi.eljabali.justjog.usecase.JogUseCase
+import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        checkPermissionStatus()
-
+        val statisticsViewModel: StatisticsViewModel by viewModel()
         setContent {
             val navController = rememberNavController()
             JustJogTheme(true) {
@@ -55,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     floatingActionButtonPosition = FabPosition.EndOverlay,
                 ) { contentPadding ->
                     Log.d("Scaffold", "Content Padding $contentPadding")
-                    JustJogNavigation(navController)
+                    JustJogNavigation(navController, statisticsViewModel)
                 }
             }
         }

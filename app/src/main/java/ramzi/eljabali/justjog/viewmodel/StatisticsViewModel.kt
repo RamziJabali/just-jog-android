@@ -26,7 +26,7 @@ import ramzi.eljabali.justjog.util.TAG
 import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 import java.time.Duration
 import java.time.ZonedDateTime
-import kotlin.math.min
+import java.util.Locale
 
 
 class StatisticsViewModel(
@@ -51,7 +51,7 @@ class StatisticsViewModel(
                 ZonedDateTimes.today.getNext(DayOfWeek.SUNDAY, countingInThisDay = true)
             val thisWeeksJogSummaries = getWeeklyJogSummaries(startOfWeekDate, endOfWeekDate)
             val chartStatistics =
-                getChartData(thisWeeksJogSummaries, startOfWeekDate, endOfWeekDate)
+                getChartData(thisWeeksJogSummaries, startOfWeekDate)
             val weeklyStatisticsBreakDown =
                 getWeeklyStatisticsBreakDown(thisWeeksJogSummaries)
             val jogStatisticsBreakDown = getWeeklyPerJogStatisticsBreakDown(thisWeeksJogSummaries)
@@ -60,7 +60,7 @@ class StatisticsViewModel(
                     quote = quote,
                     lineDataList = chartStatistics,
                     weeklyStatisticsBreakDown = weeklyStatisticsBreakDown,
-                    perJogStatisticsBreakDown =jogStatisticsBreakDown
+                    perJogStatisticsBreakDown = jogStatisticsBreakDown
                 )
             }
         }
@@ -69,33 +69,58 @@ class StatisticsViewModel(
     private fun getChartData(
         summaryList: List<ModifiedJogSummary>,
         startOfWeek: ZonedDateTime,
-        endOfWeek: ZonedDateTime
     ): List<LineData> {
+        if (summaryList.isEmpty()) {
+            return listOf(
+                LineData(x = "Mon", y = 0),
+                LineData(x = "Tues", y = 0),
+                LineData(x = "Wed", y = 0),
+                LineData(x = "Thurs", y = 0),
+                LineData(x = "Fri", y = 0),
+                LineData(x = "Sat", y = 0),
+                LineData(x = "Sun", y = 0),
+            )
+        }
         val listOfLineData = mutableListOf<LineData>()
         var tempDate = startOfWeek
-        var dayOfWeek = 0
-        var totalMilesInDay = 0.0
-        for (summary in summaryList) {
-            if (tempDate.compareDay(summary.startDate) != 0) {
-                listOfLineData.add(LineData(x = daysOfTheWeek[dayOfWeek], y = totalMilesInDay))
-                totalMilesInDay = 0.0
-                tempDate = tempDate.plusDays(1)
-                dayOfWeek++
+        var index = 0
+        for (day in 0..6) {
+            if (index >= summaryList.size || tempDate.compareDay(summaryList[index].startDate) != 0) {
+                listOfLineData.add(LineData(x = daysOfTheWeek[day], y = 0))
+            } else if (index < summaryList.size) {
+                if (tempDate.compareDay(summaryList[index].startDate) == 0) {
+                    var totalDistance = 0.0
+                    while (tempDate.compareDay(summaryList[index].startDate) == 0) {
+                        totalDistance += summaryList[index].totalDistance
+                        index++
+                        if (index >= summaryList.size) {
+                            break
+                        }
+                    }
+                    listOfLineData.add(
+                        LineData(
+                            x = daysOfTheWeek[day],
+                            y = totalDistance
+                        )
+                    )
+                }
             }
-            totalMilesInDay += summary.totalDistance
+            tempDate = tempDate.plusDays(1)
         }
-        if (tempDate.compareDay(endOfWeek) != 0) {
-            repeat(6 - dayOfWeek) {
-                listOfLineData.add(LineData(x = daysOfTheWeek[dayOfWeek], y = 0.0))
-                dayOfWeek++
-            }
-        }
+        Log.i(TAG, "getChartData: $listOfLineData")
         return listOfLineData
     }
 
     private fun getWeeklyStatisticsBreakDown(
         weeklyJogSummaries: List<ModifiedJogSummary>
     ): List<String> {
+        if (weeklyJogSummaries.isEmpty()) {
+            return listOf(
+                "0 Miles",
+                "No Weekly Data",
+                "No Weekly Data"
+            )
+        }
         val totalJogs = "${weeklyJogSummaries.size} Runs"
         var totalMiles = 0.0
         var totalDuration = Duration.ZERO
@@ -105,20 +130,27 @@ class StatisticsViewModel(
         }
         return listOf(
             totalJogs,
-            "$totalMiles Miles",
+            String.format(Locale.US, "%.2f Miles", totalMiles),
             getFormattedTimeSeconds(totalDuration.seconds, DurationFormat.HMS)
         )
     }
 
-    private fun getWeeklyPerJogStatisticsBreakDown(thisWeeksJogSummaries: List<ModifiedJogSummary>): List<String> {
+    private fun getWeeklyPerJogStatisticsBreakDown(weeklyJogSummaries: List<ModifiedJogSummary>): List<String> {
+        if (weeklyJogSummaries.isEmpty()) {
+            return listOf(
+                "0 Miles",
+                "No Weekly Data",
+                "No Weekly Data"
+            )
+        }
         val averageMilesPerJog =
-            thisWeeksJogSummaries.sumOf { it.totalDistance } / thisWeeksJogSummaries.size
+            weeklyJogSummaries.sumOf { it.totalDistance } / weeklyJogSummaries.size
         val averageDurationPerJog =
-            thisWeeksJogSummaries.sumOf { it.duration.seconds } / thisWeeksJogSummaries.size
-        val minutesPerMile = averageDurationPerJog / averageMilesPerJog
+            weeklyJogSummaries.sumOf { it.duration.seconds } / weeklyJogSummaries.size
+        val minutesPerMile = (averageDurationPerJog / 60.0) / averageMilesPerJog
         return listOf(
-            "$averageMilesPerJog Miles",
-            "$minutesPerMile Mins/Mil",
+            String.format(Locale.US, "%.2f Miles", averageMilesPerJog),
+            String.format(Locale.US, "%.2f Mins/Mil", minutesPerMile),
             getFormattedTimeSeconds(averageDurationPerJog, DurationFormat.MS)
         )
     }

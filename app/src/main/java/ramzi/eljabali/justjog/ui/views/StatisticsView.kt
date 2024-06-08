@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -41,6 +42,7 @@ import ramzi.eljabali.justjog.ui.design.errorDark
 import ramzi.eljabali.justjog.ui.design.primaryDark
 import ramzi.eljabali.justjog.ui.design.primaryTextColor
 import ramzi.eljabali.justjog.ui.design.secondaryTextColor
+import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 
 
 /*
@@ -49,7 +51,7 @@ TODO:
  state management etc
 */
 @Composable
-fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
+fun StatisticsPage(statisticsViewState: State<StatisticsViewState>) {
     Column(
         modifier =
         Modifier
@@ -82,7 +84,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = motivationalQuote,
+                    text = statisticsViewState.value.quote,
                     style = Typography.titleLarge,
                     color = primaryTextColor,
                     textAlign = TextAlign.Center
@@ -100,7 +102,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
-                data = data,
+                data = statisticsViewState.value.lineDataList,
                 style = LineGraphStyle(
                     visibility = LineGraphVisibility(
                         isYAxisLabelVisible = true,
@@ -145,21 +147,21 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "6 Runs",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[0],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "24.81 Miles",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[1],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "26m 55s",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[2],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
@@ -183,21 +185,21 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3.54 Miles",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[0],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3:00 Min/Mil",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[1],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3m 50s",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[2],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
@@ -228,15 +230,39 @@ fun JoggingFAB(onClick: () -> Unit) {
 @Composable
 fun PreviewStatisticsPage() {
     val data = listOf(
-        LineData(x = "Mon", y = 40),
-        LineData(x = "Tues", y = 60),
-        LineData(x = "Wed", y = 70),
-        LineData(x = "Thurs", y = 120),
-        LineData(x = "Fri", y = 80),
-        LineData(x = "Sat", y = 60),
-        LineData(x = "Sun", y = 150),
+        LineData(x = "Mon", y = 0),
+        LineData(x = "Tues", y = 0),
+        LineData(x = "Wed", y = 0),
+        LineData(x = "Thurs", y = 0),
+        LineData(x = "Fri", y = 2.59999999),
+        LineData(x = "Sat", y = 0),
+        LineData(x = "Sun", y = 0),
     )
     JustJogTheme(true) {
-        StatisticsPage("Try your best until you succeed - RJ!", data)
+        LineGraph(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
+            data = data,
+            style = LineGraphStyle(
+                visibility = LineGraphVisibility(
+                    isYAxisLabelVisible = true,
+                    isGridVisible = true,
+                    isCrossHairVisible = true,
+                    isXAxisLabelVisible = true
+                ),
+                yAxisLabelPosition = LabelPosition.LEFT,
+                colors = LineGraphColors(
+                    lineColor = primaryDark,
+                    pointColor = errorDark,
+                    xAxisTextColor = primaryTextColor,
+                    yAxisTextColor = primaryTextColor
+                )
+            ),
+            onPointClick = { value: LineData ->
+                // do something with value
+                Log.i("lineGraph", "Point clicked: $value")
+            },
+        )
     }
 }
