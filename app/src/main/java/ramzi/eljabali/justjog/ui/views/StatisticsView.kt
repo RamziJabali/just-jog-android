@@ -45,11 +45,6 @@ import ramzi.eljabali.justjog.ui.design.secondaryTextColor
 import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 
 
-/*
-TODO:
- Wire everything together when the time comes:
- state management etc
-*/
 @Composable
 fun StatisticsPage(statisticsViewState: State<StatisticsViewState>) {
     Column(

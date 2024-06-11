@@ -81,6 +81,8 @@ dependencies {
     implementation(libs.koin.di)
     implementation(libs.com.squareup.retrofit2)
     implementation(libs.com.squareup.retrofit2.converter)
+
+    implementation ("com.github.ehsannarmani:ComposeCharts:0.0.4")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

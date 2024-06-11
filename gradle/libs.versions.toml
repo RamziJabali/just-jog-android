@@ -23,11 +23,15 @@ workManager = "2.9.0"
 koinDI = "3.6.0-wasm-alpha2"
 playServicesMaps = "18.2.0"
 retrofit = "2.9.0"
+osmoid = "6.1.18"
+vico = "2.0.0-alpha.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.0-alpha05" }
 com-android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugraingLib" }
+
 composable-graphs = { module = "com.github.jaikeerthick:Composable-Graphs", version.ref = "composableGraphs" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -57,6 +61,12 @@ koin-di = {group = "io.insert-koin", name = "koin-android", version.ref = "koinD
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 com-squareup-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 com-squareup-retrofit2-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+
+osmoid-android = {group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmoid"}
+osmoid-wms = {group = "org.osmdroid", name = "osmdroid-wms", version.ref = "osmoid"}
+osmoid-mapsforge = {group = "org.osmdroid", name = "osmdroid-mapsforge", version.ref = "osmoid"}
+osmoid-geopackage = {group = "org.osmdroid", name = "osmdroid-geopackage", version.ref = "osmoid"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

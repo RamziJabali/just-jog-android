@@ -27,6 +27,7 @@ import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.Locale
+import kotlin.math.ceil
 
 
 class StatisticsViewModel(
@@ -100,7 +101,7 @@ class StatisticsViewModel(
                     listOfLineData.add(
                         LineData(
                             x = daysOfTheWeek[day],
-                            y = totalDistance
+                            y = ceil(totalDistance)
                         )
                     )
                 }
