@@ -103,6 +103,10 @@ class ForegroundService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             jogUseCase.deleteAllTempJogSummaries()
         }
+        val openMainActivityIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        startActivity(openMainActivityIntent)
         stopSelf()
     }
 
