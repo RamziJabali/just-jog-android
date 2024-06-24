@@ -13,20 +13,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.model.permissioninformation.LocationPermissionTextProvider
-import ramzi.eljabali.justjog.model.permissioninformation.NotificationPermissionTextProvider
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
-import ramzi.eljabali.justjog.ui.views.JoggingFAB
 import ramzi.eljabali.justjog.ui.navigation.JustJogNavigation
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
-import ramzi.eljabali.justjog.ui.views.PermissionDialogBox
 import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 class MainActivity : ComponentActivity() {
