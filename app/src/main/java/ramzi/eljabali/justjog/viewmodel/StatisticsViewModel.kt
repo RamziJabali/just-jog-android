@@ -1,6 +1,10 @@
 package ramzi.eljabali.justjog.viewmodel
 
+import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eljabali.joggingapplicationandroid.util.getFormattedTimeSeconds
@@ -18,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import ramzi.eljabali.justjog.loactionservice.ForegroundService
 import ramzi.eljabali.justjog.motivationalquotes.MotivationQuotesAPI
 import ramzi.eljabali.justjog.usecase.JogUseCase
 import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
@@ -32,8 +37,11 @@ import kotlin.math.ceil
 
 class StatisticsViewModel(
     private val jogUseCase: JogUseCase,
-    private val motivationQuotesAPI: MotivationQuotesAPI
+    private val motivationQuotesAPI: MotivationQuotesAPI,
+    private val applicationContext: Context
 ) : ViewModel() {
+
+    val visiblePermissionDialogQueue = mutableStateListOf<String>()
     private val _statisticsViewState = MutableStateFlow(StatisticsViewState())
     val statisticsViewState: StateFlow<StatisticsViewState> = _statisticsViewState.asStateFlow()
 
@@ -185,5 +193,47 @@ class StatisticsViewModel(
             body
         }
         return quote.await()
+    }
+
+    /*
+
+        PERMISSION HANDLING, SHOWING, AND DISMISSING
+
+     */
+
+    fun dismissDialog() {
+        visiblePermissionDialogQueue.removeFirst()
+        _statisticsViewState.update {
+            it.copy(
+                shouldBlur = false
+            )
+        }
+    }
+
+    fun blur() {
+        visiblePermissionDialogQueue.removeFirst()
+        _statisticsViewState.update {
+            it.copy(
+                shouldBlur = true
+            )
+        }
+    }
+
+    fun onFabClicked() {
+        Log.i(this.TAG, "onFabClicked: start")
+        Intent(applicationContext, ForegroundService::class.java).also {
+            it.action = ForegroundService.Actions.START.name
+            Log.i(this.TAG, "onFabClicked: ${it.action}")
+            applicationContext.startService(it)
+        }
+    }
+
+    fun onPermissionResult(
+        permission: String,
+        isGranted: Boolean
+    ) {
+        if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
+            visiblePermissionDialogQueue.add(permission)
+        }
     }
 }

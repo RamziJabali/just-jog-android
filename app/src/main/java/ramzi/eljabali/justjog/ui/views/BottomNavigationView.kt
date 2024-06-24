@@ -30,9 +30,7 @@ fun BottomNavigationView(navController: NavController) {
                 onClick = {
                     selectedItemIndex = index
                     if (selectedItemIndex == 0) {
-                        navController.navigate(
-                            StatisticsScreen
-                        )
+                        navController.navigate(StatisticsScreen)
                     } else {
                         navController.navigate(CalendarScreen)
                     }

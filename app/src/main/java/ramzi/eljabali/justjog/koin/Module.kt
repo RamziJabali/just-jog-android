@@ -1,5 +1,6 @@
 package ramzi.eljabali.justjog.koin
 
+import android.app.Application
 import androidx.room.Room
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,7 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val statisticsModule = module {
-    viewModel { StatisticsViewModel(get<JogUseCase>(), get<MotivationQuotesAPI>()) }
+    viewModel { StatisticsViewModel(get<JogUseCase>(), get<MotivationQuotesAPI>(), get<Application>().applicationContext) }
 }
 
 val jogDataBaseModule = module {
@@ -43,7 +44,4 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-}
-val viewModelModule = module {
-    viewModel { StatisticsViewModel(get<JogUseCase>(), get<MotivationQuotesAPI>()) }
 }

@@ -1,6 +1,7 @@
 package ramzi.eljabali.justjog.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,13 +16,13 @@ import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 @Composable
 fun JustJogNavigation(
-    navController: NavHostController = rememberNavController(),
-    statisticsViewModel: StatisticsViewModel
+    navController: NavHostController,
+    statisticsViewModel: StatisticsViewModel,
 ) {
     NavHost(navController = navController, startDestination = StatisticsScreen) {
         composable<StatisticsScreen> {
             statisticsViewModel.onLaunch()
-            StatisticsPage(statisticsViewModel.statisticsViewState.collectAsStateWithLifecycle())
+            StatisticsPage(statisticsViewModel.statisticsViewState.collectAsStateWithLifecycle(), statisticsViewModel::onFabClicked)
         }
         composable<CalendarScreen> {
             JustJogCalendarView()

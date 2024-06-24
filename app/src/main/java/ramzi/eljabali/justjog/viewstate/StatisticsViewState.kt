@@ -14,5 +14,6 @@ data class StatisticsViewState(
         LineData(x = "Sun", y = 0),
     ),
     val weeklyStatisticsBreakDown: List<String> = listOf("", "", ""),
-    val perJogStatisticsBreakDown: List<String> = listOf("", "", "")
+    val perJogStatisticsBreakDown: List<String> = listOf("", "", ""),
+    val shouldBlur: Boolean = false,
 )
