@@ -38,7 +38,7 @@ class JogSummaryWorkManager(
         val currentDateTime: ZonedDateTime = inputData.getString("DATE_TIME")
             ?.toZonedDateTime(DateFormat.YYYY_MM_DD_T_TIME.format)!!
 
-        var jogSummaryTemp: ModifiedTempJogSummary? = null
+        var jogSummaryTemp: ModifiedTempJogSummary?
 
         withContext(Dispatchers.IO) async@{
             try {

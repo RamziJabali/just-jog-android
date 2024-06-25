@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ramzi.eljabali.justjog.MainActivity
 import ramzi.eljabali.justjog.R
-import ramzi.eljabali.justjog.util.permissions
+import ramzi.eljabali.justjog.Permissions
 import ramzi.eljabali.justjog.usecase.JogUseCase
 import ramzi.eljabali.justjog.util.DateFormat
 import ramzi.eljabali.justjog.util.TAG
@@ -103,12 +103,16 @@ class ForegroundService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             jogUseCase.deleteAllTempJogSummaries()
         }
+        val openMainActivityIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        startActivity(openMainActivityIntent)
         stopSelf()
     }
 
     private fun start() {
         Log.i("ForegroundService::Class", "Checking permissions")
-        for (permission in permissions.list) {
+        for (permission in Permissions.list) {
             val currentPermission = ContextCompat.checkSelfPermission(this, permission)
             if (currentPermission == PackageManager.PERMISSION_DENIED) {
                 // Without these permissions the service cannot run in the foreground

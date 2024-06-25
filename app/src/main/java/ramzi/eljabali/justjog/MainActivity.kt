@@ -12,55 +12,55 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
-import ramzi.eljabali.justjog.loactionservice.ForegroundService
-import ramzi.eljabali.justjog.util.permissions
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
-import ramzi.eljabali.justjog.ui.views.JoggingFAB
-import ramzi.eljabali.justjog.ui.util.JustJogNavigation
+import ramzi.eljabali.justjog.ui.navigation.JustJogNavigation
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
-import ramzi.eljabali.justjog.usecase.JogUseCase
+import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermissionStatus()
-        val jogUseCase by inject<JogUseCase>()
+
+        val statisticsViewModel: StatisticsViewModel by viewModel()
+
+        askForPermission(
+            Permissions.list
+        ) { permission: String, isGranted: Boolean ->
+            statisticsViewModel.onPermissionResult(
+                permission,
+                isGranted
+            )
+        }
+
         setContent {
             val navController = rememberNavController()
             JustJogTheme(true) {
                 Scaffold(
                     bottomBar = { BottomNavigationView(navController) },
-                    floatingActionButton = {
-                        JoggingFAB {
-                            Intent(applicationContext, ForegroundService::class.java).also {
-                                it.action = ForegroundService.Actions.START.name
-                                startService(it)
-                            }
-                        }
-                    },
-                    floatingActionButtonPosition = FabPosition.EndOverlay,
                 ) { contentPadding ->
                     Log.d("Scaffold", "Content Padding $contentPadding")
-                    JustJogNavigation(navController)
+                    JustJogNavigation(
+                        navController,
+                        statisticsViewModel,
+                        this::askForPermission,
+                        this::shouldShowRequestPermissionRationale,
+                        ::openSettings
+                    )
                 }
             }
         }
     }
 
     // ~~~ PERMISSION Handler ~~~
-    //Best way to check which permission status you are on
+//Best way to check which permission status you are on
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun checkPermissionStatus() {
-        for (permission in permissions.list) {
+        for (permission in Permissions.list) {
             when {
                 ContextCompat.checkSelfPermission(
                     this,
@@ -75,7 +75,6 @@ class MainActivity : ComponentActivity() {
 
                 else -> {
                     Log.d("Log.d", "Asking user to grant permission for $permission")
-                    askForPermission(permission)
                 }
             }
         }
@@ -83,27 +82,32 @@ class MainActivity : ComponentActivity() {
 
     // You are asking for permission
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun askForPermission(permission: String): Boolean {
-        var isGrantedPermission = false
+    fun askForPermission(
+        permissionsList: List<String>,
+        onPermissionResult: (String, Boolean) -> Unit
+    ) {
         val permissionRequestResult = registerForActivityResult(
-            ActivityResultContracts.RequestPermission(),
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.d("Log.d", "$permission has been granted")
-            } else {
-                Log.d("Log.d", "$permission has been denied")
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+        ) { permissionsMap ->
+            permissionsMap.keys.forEach { permission ->
+                if (permissionsMap[permission] == true) {
+                    Log.d("Log.d", "$permission has been granted")
+                    onPermissionResult(permission, true)
+                } else {
+                    Log.d("Log.d", "$permission has been denied")
+                    onPermissionResult(permission, false)
+                }
             }
-            isGrantedPermission = isGranted
         }
-        permissionRequestResult.launch(permission)
-        return isGrantedPermission
-    }
-
-    //Making an open detailed settings request
-    private fun Activity.penSettings() {
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", packageName, null)
-        ).also(::startActivity)
+        permissionRequestResult.launch(permissionsList.toTypedArray())
     }
 }
+
+//Making an open detailed settings request
+private fun Activity.openSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
+}
+

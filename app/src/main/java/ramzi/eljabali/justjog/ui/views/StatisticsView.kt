@@ -1,6 +1,9 @@
 package ramzi.eljabali.justjog.ui.views
 
+import android.Manifest
+import android.os.Build
 import android.util.Log
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,19 +20,33 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.jaikeerthick.composable_graphs.composables.line.LineGraph
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphColors
 import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphStyle
 import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphVisibility
 import com.jaikeerthick.composable_graphs.style.LabelPosition
+import kotlinx.coroutines.flow.MutableStateFlow
 import ramzi.eljabali.justjog.R
+import ramzi.eljabali.justjog.model.permissioninformation.LocationPermissionTextProvider
+import ramzi.eljabali.justjog.model.permissioninformation.NotificationPermissionTextProvider
 import ramzi.eljabali.justjog.ui.design.CardElevation
 import ramzi.eljabali.justjog.ui.design.CardSize
 import ramzi.eljabali.justjog.ui.design.FabElevation
@@ -41,20 +58,76 @@ import ramzi.eljabali.justjog.ui.design.errorDark
 import ramzi.eljabali.justjog.ui.design.primaryDark
 import ramzi.eljabali.justjog.ui.design.primaryTextColor
 import ramzi.eljabali.justjog.ui.design.secondaryTextColor
+import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 
 
-/*
-TODO:
- Wire everything together when the time comes:
- state management etc
-*/
 @Composable
-fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
+fun StatisticsPage(
+    statisticsViewState: State<StatisticsViewState>,
+    startService: () -> Unit,
+    dismissDialog: () -> Unit,
+    onPermissionResult: (String, Boolean) -> Unit,
+    shouldShowRequestPermissionRationale: (String) -> Boolean,
+    openSettings: () -> Unit,
+    askForPermission: (List<String>, (String, Boolean) -> Unit) -> Unit
+) {
+    var isBlurred by remember { mutableStateOf(false) }
+    var isHidden by remember { mutableStateOf(false) }
+    val animatedBlur by animateDpAsState(targetValue = if (isBlurred) 10.dp else 0.dp, label = "")
+    var alpha by remember { mutableFloatStateOf(1F) }
+    alpha = if (!isBlurSupported() && isHidden) {
+        0.5F
+    } else {
+        1F
+    }
+
+    if (isBlurred) {
+        statisticsViewState.value.listOfPermissions
+            .reversed()
+            .forEach { permission ->
+                PermissionDialogBox(
+                    permissionTextProvider = when (permission) {
+                        Manifest.permission.POST_NOTIFICATIONS -> {
+                            NotificationPermissionTextProvider()
+                        }
+
+                        Manifest.permission.ACCESS_FINE_LOCATION -> {
+                            LocationPermissionTextProvider()
+                        }
+
+                        else -> return@forEach
+                    },
+
+                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission),
+                    onDismiss = {
+                        if (isBlurSupported()) {
+                            isBlurred = false
+                        } else {
+                            isHidden = false
+                        }
+                        dismissDialog()
+                    },
+                    onOkClick = {
+                        if (isBlurSupported()) {
+                            isBlurred = false
+                        } else {
+                            isHidden = false
+                        }
+                        dismissDialog()
+                        askForPermission(listOf(permission)) { permission, isGranted ->
+                            onPermissionResult(permission, isGranted)
+                        }
+                    },
+                    onGoToAppSettingsClick = openSettings
+                )
+            }
+    }
     Column(
-        modifier =
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Spacing.Surrounding.s),
+            .padding(horizontal = Spacing.Surrounding.s)
+            .blur(radius = animatedBlur, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+            .alpha(alpha),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -82,7 +155,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = motivationalQuote,
+                    text = statisticsViewState.value.quote,
                     style = Typography.titleLarge,
                     color = primaryTextColor,
                     textAlign = TextAlign.Center
@@ -100,7 +173,7 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Spacing.Horizontal.s, vertical = Spacing.Vertical.m),
-                data = data,
+                data = statisticsViewState.value.lineDataList,
                 style = LineGraphStyle(
                     visibility = LineGraphVisibility(
                         isYAxisLabelVisible = true,
@@ -145,21 +218,21 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "6 Runs",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[0],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "24.81 Miles",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[1],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "26m 55s",
+                    text = statisticsViewState.value.weeklyStatisticsBreakDown[2],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
@@ -183,27 +256,41 @@ fun StatisticsPage(motivationalQuote: String, data: List<LineData>) {
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3.54 Miles",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[0],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3:00 Min/Mil",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[1],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "3m 50s",
+                    text = statisticsViewState.value.perJogStatisticsBreakDown[2],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = Spacing.Vertical.s, bottom = Spacing.Vertical.s),
                     textAlign = TextAlign.Center
                 )
-
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            JoggingFAB {
+                startService()
+                if(statisticsViewState.value.shouldBlur){
+                    if (isBlurSupported()) {
+                        isBlurred = true
+                    } else {
+                        isHidden = true
+                    }
+                }
             }
         }
     }
@@ -224,19 +311,30 @@ fun JoggingFAB(onClick: () -> Unit) {
     }
 }
 
+fun isBlurSupported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
 @Preview(showBackground = true, backgroundColor = 0)
 @Composable
 fun PreviewStatisticsPage() {
     val data = listOf(
-        LineData(x = "Mon", y = 40),
-        LineData(x = "Tues", y = 60),
-        LineData(x = "Wed", y = 70),
-        LineData(x = "Thurs", y = 120),
-        LineData(x = "Fri", y = 80),
-        LineData(x = "Sat", y = 60),
-        LineData(x = "Sun", y = 150),
+        LineData(x = "Mon", y = 0),
+        LineData(x = "Tues", y = 0),
+        LineData(x = "Wed", y = 0),
+        LineData(x = "Thurs", y = 0),
+        LineData(x = "Fri", y = 2),
+        LineData(x = "Sat", y = 0),
+        LineData(x = "Sun", y = 0),
     )
     JustJogTheme(true) {
-        StatisticsPage("Try your best until you succeed - RJ!", data)
+        val statisticsViewState: State<StatisticsViewState> = MutableStateFlow(
+            StatisticsViewState(
+                quote = "Not heavens or wonderland, know the surrender.",
+                lineDataList = data,
+                weeklyStatisticsBreakDown = listOf("0 Miles", "No Weekly Data", "No Weekly Data"),
+                perJogStatisticsBreakDown = listOf("0 Miles", "No Weekly Data", "No Weekly Data")
+            )
+        ).collectAsState()
+//        StatisticsPage(statisticsViewState, {})
+
     }
 }
