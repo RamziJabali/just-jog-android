@@ -3,7 +3,6 @@ package ramzi.eljabali.justjog
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.Manifest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,9 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         val statisticsViewModel: StatisticsViewModel by viewModel()
-        val dialogQueue = statisticsViewModel.visiblePermissionDialogQueue
 
         askForPermission(
             Permissions.list
@@ -47,7 +44,13 @@ class MainActivity : ComponentActivity() {
                     bottomBar = { BottomNavigationView(navController) },
                 ) { contentPadding ->
                     Log.d("Scaffold", "Content Padding $contentPadding")
-                    JustJogNavigation(navController, statisticsViewModel)
+                    JustJogNavigation(
+                        navController,
+                        statisticsViewModel,
+                        this::askForPermission,
+                        this::shouldShowRequestPermissionRationale,
+                        ::openSettings
+                    )
                 }
             }
         }

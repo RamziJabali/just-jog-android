@@ -15,5 +15,6 @@ data class StatisticsViewState(
     ),
     val weeklyStatisticsBreakDown: List<String> = listOf("", "", ""),
     val perJogStatisticsBreakDown: List<String> = listOf("", "", ""),
+    val listOfPermissions: List<String> = emptyList(),
     val shouldBlur: Boolean = false,
 )

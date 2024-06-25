@@ -1,5 +1,6 @@
 package ramzi.eljabali.justjog.viewmodel
 
+import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -210,17 +211,17 @@ class StatisticsViewModel(
         }
     }
 
-    fun blur() {
-        visiblePermissionDialogQueue.removeFirst()
-        _statisticsViewState.update {
-            it.copy(
-                shouldBlur = true
-            )
-        }
-    }
-
     fun onFabClicked() {
         Log.i(this.TAG, "onFabClicked: start")
+        if (!visiblePermissionDialogQueue.isEmpty()) {
+            _statisticsViewState.update {
+                it.copy(
+                    shouldBlur = true,
+                    listOfPermissions = visiblePermissionDialogQueue
+                )
+            }
+            return
+        }
         Intent(applicationContext, ForegroundService::class.java).also {
             it.action = ForegroundService.Actions.START.name
             Log.i(this.TAG, "onFabClicked: ${it.action}")

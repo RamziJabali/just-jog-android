@@ -1,5 +1,6 @@
 package ramzi.eljabali.justjog.ui.views
 
+import android.Manifest
 import android.os.Build
 import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
@@ -44,7 +45,8 @@ import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphVisibi
 import com.jaikeerthick.composable_graphs.style.LabelPosition
 import kotlinx.coroutines.flow.MutableStateFlow
 import ramzi.eljabali.justjog.R
-import ramzi.eljabali.justjog.loactionservice.ForegroundService
+import ramzi.eljabali.justjog.model.permissioninformation.LocationPermissionTextProvider
+import ramzi.eljabali.justjog.model.permissioninformation.NotificationPermissionTextProvider
 import ramzi.eljabali.justjog.ui.design.CardElevation
 import ramzi.eljabali.justjog.ui.design.CardSize
 import ramzi.eljabali.justjog.ui.design.FabElevation
@@ -60,15 +62,65 @@ import ramzi.eljabali.justjog.viewstate.StatisticsViewState
 
 
 @Composable
-fun StatisticsPage(statisticsViewState: State<StatisticsViewState>, startService: () -> Unit) {
-    val isBlurred by remember { mutableStateOf(false) }
-    val isHidden by remember { mutableStateOf(false) }
+fun StatisticsPage(
+    statisticsViewState: State<StatisticsViewState>,
+    startService: () -> Unit,
+    dismissDialog: () -> Unit,
+    onPermissionResult: (String, Boolean) -> Unit,
+    shouldShowRequestPermissionRationale: (String) -> Boolean,
+    openSettings: () -> Unit,
+    askForPermission: (List<String>, (String, Boolean) -> Unit) -> Unit
+) {
+    var isBlurred by remember { mutableStateOf(false) }
+    var isHidden by remember { mutableStateOf(false) }
     val animatedBlur by animateDpAsState(targetValue = if (isBlurred) 10.dp else 0.dp, label = "")
     var alpha by remember { mutableFloatStateOf(1F) }
     alpha = if (!isBlurSupported() && isHidden) {
         0.5F
     } else {
         1F
+    }
+
+    if (statisticsViewState.value.shouldBlur) {
+        statisticsViewState.value.listOfPermissions
+            .reversed()
+            .forEach { permission ->
+                PermissionDialogBox(
+                    permissionTextProvider = when (permission) {
+                        Manifest.permission.POST_NOTIFICATIONS -> {
+                            NotificationPermissionTextProvider()
+                        }
+
+                        Manifest.permission.ACCESS_FINE_LOCATION -> {
+                            LocationPermissionTextProvider()
+                        }
+
+                        else -> return@forEach
+                    },
+
+                    isPermanentlyDeclined = !shouldShowRequestPermissionRationale(permission),
+                    onDismiss = {
+                        if (isBlurSupported()) {
+                            isBlurred = false
+                        } else {
+                            isHidden = false
+                        }
+                        dismissDialog()
+                    },
+                    onOkClick = {
+                        if (isBlurSupported()) {
+                            isBlurred = false
+                        } else {
+                            isHidden = false
+                        }
+                        dismissDialog()
+                        askForPermission(listOf(permission)) { permission, isGranted ->
+                            onPermissionResult(permission, isGranted)
+                        }
+                    },
+                    onGoToAppSettingsClick = openSettings
+                )
+            }
     }
     Column(
         modifier = Modifier
@@ -79,7 +131,6 @@ fun StatisticsPage(statisticsViewState: State<StatisticsViewState>, startService
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -232,6 +283,11 @@ fun StatisticsPage(statisticsViewState: State<StatisticsViewState>, startService
             horizontalArrangement = Arrangement.End
         ) {
             JoggingFAB {
+                if (isBlurSupported()) {
+                    isBlurred = true
+                } else {
+                    isHidden = true
+                }
                 startService()
             }
         }
@@ -276,7 +332,7 @@ fun PreviewStatisticsPage() {
                 perJogStatisticsBreakDown = listOf("0 Miles", "No Weekly Data", "No Weekly Data")
             )
         ).collectAsState()
-        StatisticsPage(statisticsViewState, {})
+//        StatisticsPage(statisticsViewState, {})
 
     }
 }
