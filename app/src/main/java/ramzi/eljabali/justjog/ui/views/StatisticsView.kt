@@ -81,7 +81,7 @@ fun StatisticsPage(
         1F
     }
 
-    if (statisticsViewState.value.shouldBlur) {
+    if (isBlurred) {
         statisticsViewState.value.listOfPermissions
             .reversed()
             .forEach { permission ->
@@ -283,12 +283,14 @@ fun StatisticsPage(
             horizontalArrangement = Arrangement.End
         ) {
             JoggingFAB {
-                if (isBlurSupported()) {
-                    isBlurred = true
-                } else {
-                    isHidden = true
-                }
                 startService()
+                if(statisticsViewState.value.shouldBlur){
+                    if (isBlurSupported()) {
+                        isBlurred = true
+                    } else {
+                        isHidden = true
+                    }
+                }
             }
         }
     }

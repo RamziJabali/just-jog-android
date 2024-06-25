@@ -42,7 +42,7 @@ class StatisticsViewModel(
     private val applicationContext: Context
 ) : ViewModel() {
 
-    val visiblePermissionDialogQueue = mutableStateListOf<String>()
+    private val visiblePermissionDialogQueue = mutableStateListOf<String>()
     private val _statisticsViewState = MutableStateFlow(StatisticsViewState())
     val statisticsViewState: StateFlow<StatisticsViewState> = _statisticsViewState.asStateFlow()
 
