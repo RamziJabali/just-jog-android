@@ -1,6 +1,5 @@
-package com.eljabali.joggingapplicationandroid.util
+package ramzi.eljabali.justjog.util
 
-import ramzi.eljabali.justjog.util.DurationFormat
 import java.util.Locale
 
 fun hoursToMinutes(hours: Long): Long = hours * 60

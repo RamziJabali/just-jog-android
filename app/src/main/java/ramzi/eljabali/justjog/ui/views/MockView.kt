@@ -1,52 +1,36 @@
 package ramzi.eljabali.justjog.ui.views
 
-import androidx.compose.animation.core.EaseInOutCubic
-import androidx.compose.animation.core.tween
+import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.jaikeerthick.composable_graphs.composables.bar.BarGraph
 import com.jaikeerthick.composable_graphs.composables.bar.model.BarData
 import com.jaikeerthick.composable_graphs.composables.bar.style.BarGraphColors
 import com.jaikeerthick.composable_graphs.composables.bar.style.BarGraphStyle
 import com.jaikeerthick.composable_graphs.composables.bar.style.BarGraphVisibility
 import com.jaikeerthick.composable_graphs.style.LabelPosition
-import ir.ehsannarmani.compose_charts.LineChart
-import ir.ehsannarmani.compose_charts.models.AnimationMode
-import ir.ehsannarmani.compose_charts.models.DrawStyle
-import ir.ehsannarmani.compose_charts.models.Line
+import com.mapbox.geojson.Point
+import com.mapbox.maps.Image
+import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.extension.compose.MapboxMap
+import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mapbox.maps.extension.compose.annotation.generated.PolylineAnnotation
+import com.mapbox.maps.extension.compose.style.standard.MapboxStandardStyle
+import com.mapbox.maps.extension.style.image.image
+import ramzi.eljabali.justjog.R
 import ramzi.eljabali.justjog.ui.design.Spacing
 import ramzi.eljabali.justjog.ui.design.primaryTextColor
 
 @Composable
-fun MockView() {
-    LineChart(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 22.dp),
-        data = listOf(
-            Line(
-                label = "Windows",
-                values = listOf(28.0,41.0,5.0,10.0,35.0),
-                color = SolidColor(Color(0xFF23af92)),
-                firstGradientFillColor = Color(0xFF2BC0A1).copy(alpha = .5f),
-                secondGradientFillColor = Color.Transparent,
-                strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
-                gradientAnimationDelay = 1000,
-                drawStyle = DrawStyle.Stroke(width = 2.dp),
-            )
-        ),
-        animationMode = AnimationMode.Together(delayBuilder = {
-            it * 500L
-        }),
-    )
-}
-@Composable
-fun MockView2(){
+fun MockView2() {
     BarGraph(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,9 +59,37 @@ fun MockView2(){
     )
 }
 
+@OptIn(MapboxExperimental::class)
+@Composable
+fun Test() {
+    MapboxMap(
+        modifier = Modifier.fillMaxSize(),
+        mapViewportState = MapViewportState().apply {
+            setCameraOptions {
+                zoom(10.0)
+                center(Point.fromLngLat(-98.0, 39.5))
+                pitch(0.0)
+                bearing(0.0)
+            }
+        },
+        style = {
+            PolylineAnnotation(
+                listOf(
+                    Point.fromLngLat(-98.0, 39.5),
+                    Point.fromLngLat(-97.0, 38.5),
+                    Point.fromLngLat(-96.0, 37.5),
+                    Point.fromLngLat(-95.0, 36.5),
+                    Point.fromLngLat(-94.0, 39.5)
+                )
+            )
+
+            MapboxStandardStyle()
+        }
+    )
+}
+
 @Composable
 @Preview(backgroundColor = 0xFF121212)
 fun MockViewPreview() {
-    MockView()
-//    MockView2()
+    Test()
 }
