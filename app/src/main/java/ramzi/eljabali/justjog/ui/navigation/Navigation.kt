@@ -9,6 +9,7 @@ import ramzi.eljabali.justjog.ui.util.CalendarScreen
 import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 import ramzi.eljabali.justjog.ui.views.JustJogCalendarView
 import ramzi.eljabali.justjog.ui.views.StatisticsPage
+import ramzi.eljabali.justjog.viewmodel.CalendarViewModel
 import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 
@@ -16,6 +17,7 @@ import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 fun JustJogNavigation(
     navController: NavHostController,
     statisticsViewModel: StatisticsViewModel,
+    calendarViewModel: CalendarViewModel,
     askForPermission: (List<String>, (String, Boolean) -> Unit) -> Unit,
     shouldShowRequestPermissionRationale: (String) -> Boolean,
     openSettings: () -> Unit,
@@ -34,7 +36,10 @@ fun JustJogNavigation(
             )
         }
         composable<CalendarScreen> {
-            JustJogCalendarView()
+            calendarViewModel.onLaunch()
+            JustJogCalendarView(
+                calendarViewModel.calendarViewState.collectAsStateWithLifecycle()
+            )
         }
     }
 }

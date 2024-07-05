@@ -1,6 +1,7 @@
 package ramzi.eljabali.justjog.ui.views
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,22 +28,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import javatimefun.localdate.LocalDates.today
+import kotlinx.coroutines.flow.MutableStateFlow
 import ramzi.eljabali.justjog.ui.design.ButtonSize
 import ramzi.eljabali.justjog.ui.design.Spacing
+import ramzi.eljabali.justjog.ui.design.errorContainerDark
+import ramzi.eljabali.justjog.ui.design.lightBlue
+import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
+import ramzi.eljabali.justjog.util.TAG
 import ramzi.eljabali.justjog.util.getDayOfTheWeekTheMonthStartsIn
 import ramzi.eljabali.justjog.util.getNumberOfWeeksInMonth
+import ramzi.eljabali.justjog.viewstate.CalendarViewState
+import java.time.Duration
 import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 @Composable
-fun JustJogCalendarView() {
+fun JustJogCalendarView(jogCalendarViewState: State<CalendarViewState>) {
     var date by remember {
         mutableStateOf(today)
+    }
+    var shouldHide by remember {
+        mutableStateOf(true)
     }
     var monthHeader by remember {
         mutableStateOf("${date.month.name} ${date.year}")
     }
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth().padding(Spacing.Surrounding.s)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Spacing.Surrounding.s)
     ) {
         Column(
             modifier = Modifier
@@ -77,7 +94,15 @@ fun JustJogCalendarView() {
                 }
             }
             WeekHeader()
-            Month(monthDate = date)
+            Month(
+                monthDate = date,
+                monthJogs = jogCalendarViewState.value.currentMonthJogSummaries,
+            )
+            if (!shouldHide) {
+                ElevatedCard() {
+
+                }
+            }
         }
     }
 }
@@ -102,9 +127,10 @@ fun WeekHeader() {
 }
 
 @Composable
-fun Month(monthDate: LocalDate) {
+fun Month(monthDate: LocalDate, monthJogs: List<ModifiedJogSummary>) {
     val monthLength = monthDate.lengthOfMonth()
-    var dayOfWeekTheMonthStartsOn = getDayOfTheWeekTheMonthStartsIn(monthDate) - 1
+    var dayOfWeekTheMonthStartsOn =
+        getDayOfTheWeekTheMonthStartsIn(monthDate) - 1 // mondqy = 1, sunday = 7
     val dayOfTheWeek = dayOfWeekTheMonthStartsOn
     val numberOfWeeks = getNumberOfWeeksInMonth(monthLength + dayOfWeekTheMonthStartsOn)
     var date = monthDate.withDayOfMonth(1)
@@ -116,7 +142,8 @@ fun Month(monthDate: LocalDate) {
         repeat(numberOfWeeks) {
             Week(
                 startOfWeek = date,
-                endOfWeek = date.plusDays(6 - dayOfWeekTheMonthStartsOn.toLong())
+                endOfWeek = date.plusDays(6 - dayOfWeekTheMonthStartsOn.toLong()),
+                monthJogs = monthJogs
             )
             date = date.plusDays(7 - dayOfWeekTheMonthStartsOn.toLong())
             dayOfWeekTheMonthStartsOn = 0
@@ -124,14 +151,15 @@ fun Month(monthDate: LocalDate) {
         if ((monthLength + dayOfTheWeek) % 7 != 0) {
             Week(
                 startOfWeek = date,
-                endOfWeek = date.plusDays((monthLength - date.dayOfMonth).toLong())
+                endOfWeek = date.plusDays((monthLength - date.dayOfMonth).toLong()),
+                monthJogs = monthJogs
             )
         }
     }
 }
 
 @Composable
-fun Week(startOfWeek: LocalDate, endOfWeek: LocalDate) {
+fun Week(startOfWeek: LocalDate, endOfWeek: LocalDate, monthJogs: List<ModifiedJogSummary>) {
     var date = startOfWeek
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -143,7 +171,10 @@ fun Week(startOfWeek: LocalDate, endOfWeek: LocalDate) {
             EmptyDay()
         }
         for (day in startOfWeek.dayOfMonth..endOfWeek.dayOfMonth) {
-            Day(date)
+            Day(date, monthJogs.any {
+                Log.i("Week","modified jog: $it")
+                it.startDate.dayOfMonth == date.dayOfMonth
+            })
             date = date.plusDays(1)
         }
         if (endOfWeek.dayOfWeek.value != 7) {
@@ -155,14 +186,17 @@ fun Week(startOfWeek: LocalDate, endOfWeek: LocalDate) {
 }
 
 @Composable
-fun Day(date: LocalDate) {
+fun Day(date: LocalDate, didUserJog: Boolean) {
     Box(
         modifier = Modifier
             .size(ButtonSize.m)
             .clickable(
                 enabled = true,
-                onClick = { Log.d("JustJog-CalendarView", "Clicked on $date") }
-            ),
+                onClick = {
+                    Log.d("JustJog-CalendarView", "Clicked on $date")
+                }
+            )
+            .background(if (didUserJog) lightBlue else errorContainerDark),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -201,17 +235,38 @@ fun DayOfTheWeek(dayOfTheWeek: String) {
 @Preview(backgroundColor = 0xFFF0EAE2)
 @Composable
 fun PreviewJustJogCalendarView() {
-    JustJogCalendarView()
+    val calendarViewState = MutableStateFlow(CalendarViewState())
+    JustJogCalendarView(calendarViewState.collectAsState())
 }
 
 @Preview(backgroundColor = 0xFFF0EAE2)
 @Composable
-fun PreviewJustJogDayView() {
-    Day(today)
+fun PreviewJustJogDayViewFalse() {
+    Day(today, false)
+}
+
+@Preview(backgroundColor = 0xFFF0EAE2)
+@Composable
+fun PreviewJustJogDayViewTrue() {
+    Day(today, true)
 }
 
 @Preview(backgroundColor = 0xFFF0EAE2)
 @Composable
 fun PreviewJustJogWeekView() {
-    Week(startOfWeek = today, endOfWeek = today.plusDays(6))
+    val listOfJogs = listOf(
+        ModifiedJogSummary(
+            jogId = 0,
+            startDate = ZonedDateTime.now(),
+            duration = Duration.of(20, ChronoUnit.MINUTES),
+            totalDistance = 3.5
+        ),
+        ModifiedJogSummary(
+            jogId = 1,
+            startDate = ZonedDateTime.now().plusDays(2),
+            duration = Duration.of(25, ChronoUnit.MINUTES),
+            totalDistance = 7.0
+        )
+    )
+    Week(startOfWeek = today.minusDays(3), endOfWeek = today.plusDays(3), monthJogs = listOfJogs)
 }

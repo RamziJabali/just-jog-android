@@ -19,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.navigation.JustJogNavigation
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
+import ramzi.eljabali.justjog.viewmodel.CalendarViewModel
 import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val statisticsViewModel: StatisticsViewModel by viewModel()
+        val calendarViewModel: CalendarViewModel by viewModel()
 
         askForPermission(
             Permissions.list
@@ -47,6 +49,7 @@ class MainActivity : ComponentActivity() {
                     JustJogNavigation(
                         navController,
                         statisticsViewModel,
+                        calendarViewModel,
                         this::askForPermission,
                         this::shouldShowRequestPermissionRationale,
                         ::openSettings
