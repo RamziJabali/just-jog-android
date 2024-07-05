@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import ramzi.eljabali.justjog.ui.util.BottomNavigationItems
+import ramzi.eljabali.justjog.ui.navigation.BottomNavigationItems
 import ramzi.eljabali.justjog.ui.util.CalendarScreen
 import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 

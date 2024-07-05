@@ -2,16 +2,15 @@ package ramzi.eljabali.justjog.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import javatimefun.zoneddatetime.ZonedDateTimes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ramzi.eljabali.justjog.usecase.JogUseCase
+import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
 import ramzi.eljabali.justjog.viewstate.CalendarViewState
 import java.time.ZonedDateTime
 
@@ -23,10 +22,7 @@ class CalendarViewModel(
 
     fun onLaunch() {
         viewModelScope.launch {
-            val startDate = ZonedDateTimes.today.withDayOfMonth(1)
-            val endDate =
-                ZonedDateTimes.today.withDayOfMonth(ZonedDateTimes.today.month.maxLength())
-            val monthlyJogSummaries = getMonthlyJogSummaries(startDate, endDate)
+            val monthlyJogSummaries = getMonthlyJogSummaries(ZonedDateTime.now())
             _calendarViewState.update {
                 it.copy(
                     currentMonthJogSummaries = monthlyJogSummaries
@@ -35,8 +31,31 @@ class CalendarViewModel(
         }
     }
 
-    private suspend fun getMonthlyJogSummaries(startDate: ZonedDateTime, endDate: ZonedDateTime) =
+    private suspend fun getMonthlyJogSummaries(date: ZonedDateTime) =
         viewModelScope.async(Dispatchers.IO) {
-            jogUseCase.getJogSummariesBetweenDates(startDate, endDate).first()
+            val startOfMonthDate = date.withDayOfMonth(1)
+            val endOfMonthDate = date.withDayOfMonth(date.month.maxLength())
+            jogUseCase.getJogSummariesBetweenDates(startOfMonthDate, endOfMonthDate).first()
         }.await()
+
+
+    fun getJogSummariesForMonth(date: ZonedDateTime) {
+        viewModelScope.launch {
+            val jogs = getMonthlyJogSummaries(date)
+            _calendarViewState.update {
+                it.copy(
+                    currentMonthJogSummaries = jogs
+                )
+            }
+        }
+    }
+
+    fun showJogSummariesAtDate(jogsInDay: List<ModifiedJogSummary>) {
+        _calendarViewState.update {
+            it.copy(
+                jogsInSelectedDay = jogsInDay,
+                shouldShowJogSummaries = true
+            )
+        }
+    }
 }

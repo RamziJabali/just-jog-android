@@ -38,7 +38,9 @@ fun JustJogNavigation(
         composable<CalendarScreen> {
             calendarViewModel.onLaunch()
             JustJogCalendarView(
-                calendarViewModel.calendarViewState.collectAsStateWithLifecycle()
+                calendarViewModel.calendarViewState.collectAsStateWithLifecycle(),
+                calendarViewModel::getJogSummariesForMonth,
+                calendarViewModel::showJogSummariesAtDate
             )
         }
     }

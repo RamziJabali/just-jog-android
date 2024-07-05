@@ -1,4 +1,4 @@
-package ramzi.eljabali.justjog.ui.util
+package ramzi.eljabali.justjog.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AreaChart
