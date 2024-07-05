@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ramzi.eljabali.justjog.ui.design.ButtonSize
 import ramzi.eljabali.justjog.ui.design.CardSize
 import ramzi.eljabali.justjog.ui.design.Spacing
+import ramzi.eljabali.justjog.ui.design.Spacing.Vertical.xs
 import ramzi.eljabali.justjog.ui.design.errorContainerDark
 import ramzi.eljabali.justjog.ui.design.lightBlue
 import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
@@ -120,7 +122,7 @@ fun JustJogCalendarView(
                 items(jogCalendarViewState.value.jogsInSelectedDay.size) { index ->
                     ElevatedCard(
                         modifier = Modifier
-                            .size(CardSize.xl4)
+                            .size(CardSize.xl4, CardSize.xxl)
                             .padding(end = Spacing.Horizontal.s)
                     ) {
                         Column(
@@ -128,16 +130,47 @@ fun JustJogCalendarView(
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Jog #${index + 1}")
-
                             val stringDate =
                                 jogCalendarViewState.value.jogsInSelectedDay[index].startDate.print(
                                     DateFormat.YYYY_MM_DD.format,
                                     Locale.US
                                 )
-                            Text(stringDate)
-                            Text("Total Distance: ${jogCalendarViewState.value.jogsInSelectedDay[index].totalDistance} Miles")
-                            Text("Total Time: ${getFormattedTimeSeconds(jogCalendarViewState.value.jogsInSelectedDay[index].duration.seconds)} ")
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = xs,
+                                    bottom = xs
+                                ), text = stringDate
+                            )
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = xs,
+                                    bottom = xs
+                                ), text = "Jog #${index + 1}"
+                            )
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = xs,
+                                    bottom = xs
+                                ),
+                                text = "Total Distance: ${jogCalendarViewState.value.jogsInSelectedDay[index].totalDistance} Miles"
+                            )
+                            Text(
+                                modifier = Modifier.padding(
+                                    top = xs,
+                                    bottom = xs
+                                ),
+                                text = "Total Time: ${getFormattedTimeSeconds(jogCalendarViewState.value.jogsInSelectedDay[index].duration.seconds)} "
+                            )
+                            Button(
+                                modifier = Modifier.padding(
+                                    top = xs,
+                                    bottom = xs
+                                ),
+                                onClick = {
+
+                                }) {
+                                Text("Map")
+                            }
                         }
                     }
                 }
