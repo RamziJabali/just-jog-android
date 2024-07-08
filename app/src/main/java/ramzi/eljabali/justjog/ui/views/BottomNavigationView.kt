@@ -1,5 +1,6 @@
 package ramzi.eljabali.justjog.ui.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,6 +23,9 @@ import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 @Composable
 fun BottomNavigationView(navController: NavHostController) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    if (navController.currentDestination?.route == CalendarScreen.Route) {
+        selectedItemIndex = 1
+    }
     NavigationBar(
         modifier = Modifier.fillMaxWidth()
     ) {
