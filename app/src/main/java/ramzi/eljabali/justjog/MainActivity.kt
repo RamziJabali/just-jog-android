@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             var showBottomNavigation by remember { mutableStateOf(true) }
             navController.addOnDestinationChangedListener { _, destination, _ ->
+                Log.i(TAG, "Current Destination: ${destination.route}")
                 showBottomNavigation = when (destination.route) {
                     StatisticsScreen.Route, CalendarScreen.Route -> true
                     else -> {

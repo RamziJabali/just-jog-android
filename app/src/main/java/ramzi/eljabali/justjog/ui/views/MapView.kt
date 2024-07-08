@@ -20,7 +20,7 @@ fun MapView(mapViewState: State<MapViewState>, navController: NavController) {
             modifier = Modifier.fillMaxSize(),
             mapViewportState = MapViewportState().apply {
                 setCameraOptions {
-                    zoom(10.0)
+                    zoom(15.0)
                     center(mapViewState.value.listOfPoints[0])
                     pitch(0.0)
                     bearing(0.0)
