@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import com.mapbox.maps.MapView
 import javatimefun.localdate.LocalDates.today
 import javatimefun.zoneddatetime.ZonedDateTimes
 import javatimefun.zoneddatetime.extensions.print
@@ -39,6 +41,7 @@ import ramzi.eljabali.justjog.ui.design.Spacing
 import ramzi.eljabali.justjog.ui.design.Spacing.Vertical.xs
 import ramzi.eljabali.justjog.ui.design.errorContainerDark
 import ramzi.eljabali.justjog.ui.design.lightBlue
+import ramzi.eljabali.justjog.ui.util.MapsScreen
 import ramzi.eljabali.justjog.usecase.ModifiedJogSummary
 import ramzi.eljabali.justjog.util.DateFormat
 import ramzi.eljabali.justjog.util.getDayOfTheWeekTheMonthStartsIn
@@ -55,7 +58,8 @@ import java.util.Locale
 fun JustJogCalendarView(
     jogCalendarViewState: State<CalendarViewState>,
     getJogSummariesForDate: (ZonedDateTime) -> Unit,
-    showJogSummariesAtDate: (List<ModifiedJogSummary>) -> Unit
+    showJogSummariesAtDate: (List<ModifiedJogSummary>) -> Unit,
+    navController: NavHostController
 ) {
     var date by remember {
         mutableStateOf(ZonedDateTimes.today)
@@ -167,7 +171,7 @@ fun JustJogCalendarView(
                                     bottom = xs
                                 ),
                                 onClick = {
-
+                                    navController.navigate(MapsScreen(jogId = jogCalendarViewState.value.jogsInSelectedDay[index].jogId))
                                 }) {
                                 Text("Map")
                             }

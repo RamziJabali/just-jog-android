@@ -13,13 +13,21 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ramzi.eljabali.justjog.ui.design.JustJogTheme
 import ramzi.eljabali.justjog.ui.navigation.JustJogNavigation
+import ramzi.eljabali.justjog.ui.util.CalendarScreen
+import ramzi.eljabali.justjog.ui.util.StatisticsScreen
 import ramzi.eljabali.justjog.ui.views.BottomNavigationView
+import ramzi.eljabali.justjog.util.TAG
 import ramzi.eljabali.justjog.viewmodel.CalendarViewModel
+import ramzi.eljabali.justjog.viewmodel.MapViewModel
 import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 
 class MainActivity : ComponentActivity() {
@@ -29,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
         val statisticsViewModel: StatisticsViewModel by viewModel()
         val calendarViewModel: CalendarViewModel by viewModel()
+        val mapViewModel: MapViewModel by viewModel()
 
         askForPermission(
             Permissions.list
@@ -41,15 +50,29 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+            var showBottomNavigation by remember { mutableStateOf(true) }
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                showBottomNavigation = when (destination.route) {
+                    StatisticsScreen.Route, CalendarScreen.Route -> true
+                    else -> {
+                        false
+                    }
+                }
+            }
             JustJogTheme(true) {
                 Scaffold(
-                    bottomBar = { BottomNavigationView(navController) },
+                    bottomBar = {
+                        if (showBottomNavigation) {
+                            BottomNavigationView(navController)
+                        }
+                    },
                 ) { contentPadding ->
                     Log.d("Scaffold", "Content Padding $contentPadding")
                     JustJogNavigation(
                         navController,
                         statisticsViewModel,
                         calendarViewModel,
+                        mapViewModel,
                         this::askForPermission,
                         this::shouldShowRequestPermissionRationale,
                         ::openSettings
