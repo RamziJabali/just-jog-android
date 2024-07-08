@@ -1,14 +1,12 @@
 package ramzi.eljabali.justjog.viewmodel
 
-import android.Manifest
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eljabali.joggingapplicationandroid.util.getFormattedTimeSeconds
+import ramzi.eljabali.justjog.util.getFormattedTimeSeconds
 import com.jaikeerthick.composable_graphs.composables.line.model.LineData
 import javatimefun.zoneddatetime.ZonedDateTimes
 import javatimefun.zoneddatetime.extensions.compareDay

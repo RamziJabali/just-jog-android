@@ -11,12 +11,22 @@ import ramzi.eljabali.justjog.repository.room.jogentries.JogEntryDAO
 import ramzi.eljabali.justjog.repository.room.jogsummary.JogSummaryDAO
 import ramzi.eljabali.justjog.repository.room.jogsummarytemp.JogSummaryTempDAO
 import ramzi.eljabali.justjog.usecase.JogUseCase
+import ramzi.eljabali.justjog.viewmodel.CalendarViewModel
+import ramzi.eljabali.justjog.viewmodel.MapViewModel
 import ramzi.eljabali.justjog.viewmodel.StatisticsViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val statisticsModule = module {
     viewModel { StatisticsViewModel(get<JogUseCase>(), get<MotivationQuotesAPI>(), get<Application>().applicationContext) }
+}
+
+val calendarModule = module {
+    viewModel { CalendarViewModel(get<JogUseCase>()) }
+}
+
+val mapModule = module {
+    viewModel { MapViewModel(get<JogUseCase>()) }
 }
 
 val jogDataBaseModule = module {

@@ -10,15 +10,17 @@ import android.util.Log
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.GlobalContext.startKoin
+import ramzi.eljabali.justjog.koin.calendarModule
 import ramzi.eljabali.justjog.koin.jogDataBaseModule
 import ramzi.eljabali.justjog.koin.jogUseCaseModule
+import ramzi.eljabali.justjog.koin.mapModule
 import ramzi.eljabali.justjog.koin.networkModule
 import ramzi.eljabali.justjog.koin.statisticsModule
 
 class JustJogApplication : Application() {
     private val CHANNEL_ID_1 = "JUST_JOG_1"
     private val modules =
-        listOf(statisticsModule, jogDataBaseModule, jogUseCaseModule, networkModule)
+        listOf(statisticsModule, jogDataBaseModule, jogUseCaseModule, networkModule, calendarModule, mapModule)
 
     override fun onCreate() {
         super.onCreate()

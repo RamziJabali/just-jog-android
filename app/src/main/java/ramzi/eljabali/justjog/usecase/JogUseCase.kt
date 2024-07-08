@@ -36,6 +36,17 @@ class JogUseCase(
 
     fun getAllJogEntries() = jogEntryDao.getAll()
 
+    fun getJogEntriesFromJogSummaryId(id: Int) =
+        jogSummaryDao.getEntriesById(id).map { jogEntryList ->
+            jogEntryList.map { jogEntry ->
+                ModifiedJogEntry(
+                    jogSummaryId = jogEntry.jogSummaryId,
+                    dateTime = jogEntry.dateTime.toZonedDateTime(DateFormat.YYYY_MM_DD_T_TIME.format)!!,
+                    latLng = LatLng(jogEntry.latitude, jogEntry.longitude)
+                )
+            }
+        }
+
     // SUMMARY
     suspend fun getNewJogID(): Int {
         Log.i(TAG, "getNewJogID() -> JogUseCase")

@@ -1,6 +1,5 @@
 package ramzi.eljabali.justjog.util
 
-import com.eljabali.joggingapplicationandroid.util.secondsToHoursDouble
 import com.google.android.gms.maps.model.LatLng
 import kotlin.math.cos
 import kotlin.math.sin
