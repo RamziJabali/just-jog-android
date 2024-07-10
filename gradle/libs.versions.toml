@@ -23,7 +23,6 @@ workManager = "2.9.0"
 koinDI = "3.6.0-wasm-alpha2"
 playServicesMaps = "18.2.0"
 retrofit = "2.9.0"
-osmoid = "6.1.18"
 mapbox = "11.4.1"
 foundationLayoutAndroid = "1.6.6"
 
