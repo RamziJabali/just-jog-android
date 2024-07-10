@@ -1,4 +1,4 @@
-<h3 align="center"><img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/logo.png?raw=true" alt="" data-canonical-src="" width="270" height="270"/> </h3>
+<h3 align="center"><img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/2cfb44ad4dbad800689f36b0a1e89199ad2a75bc/screen-shots/just_jog_icon.png" alt="" data-canonical-src="" width="270" height="270"/> </h3>
 <p align="center">Jog tracking application that motivates you to keep jogging.</p>
 
 ## Features
@@ -7,27 +7,41 @@
 - Calendar
 - Map
 <p align="center">
-<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/stats_page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/calendar-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/maps-page.png?raw=true" alt="" data-canonical-src="" width="187.5" height="375"/>
-</p></br>
-<p align="center">
-<img src="https://github.com/RamziJabali/just-jog-android/blob/main/screen-shots/summary.png?raw=true" alt="" data-canonical-src="" width="700" height="400"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots2.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots3.png" alt="" data-canonical-src="" width="187.5" height="375"/>
 </p>
+# videos
+
+## Setting Up Jog
+
+[![Setting Up Jog](https://img.youtube.com/vi/spZF3uWQPgA/0.jpg)](https://www.youtube.com/watch?v=spZF3uWQPgA)
+
+## Start Of Jog
+
+[![Start Of Jog](https://img.youtube.com/vi/k5SzVsxXNhk/0.jpg)](https://www.youtube.com/watch?v=k5SzVsxXNhk)
+
+## End Of Jog
+
+[![End Of Jog](https://img.youtube.com/vi/hWu_B1weCkg/0.jpg)](https://www.youtube.com/watch?v=hWu_B1weCkg)
+
+## Showcasing Calendar and Map
+
+[![Showcasing Calendar and Map](https://img.youtube.com/vi/lHI3u0-Wq0g/0.jpg)](https://www.youtube.com/watch?v=lHI3u0-Wq0g)
+
  
 ## Architecture
-- MVVM
+- [MVI](https://ramzijabali.github.io/articles/Dev-Notes/MVVM-vs-MVI)
 
 ## Libraries
-- [Caldroid](https://github.com/roomorama/Caldroid)
-- [Google Map](https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap)
+- [Composable Graphs](https://github.com/jaikeerthick/Composable-Graphs)
+- [Google Mobile Services]()
 - [Gson](https://github.com/google/gson)
 - [Koin](https://insert-koin.io/)
-- [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
-- [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
-- [OkHttp](https://square.github.io/okhttp/)
+- [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
+- [MapBox](https://docs.mapbox.com/#maps)
 - [Retrofit](https://square.github.io/retrofit/)
-- [WorkManager](https://developer.android.com/reference/androidx/work/WorkManager?hl=en)
+- [CoroutineWorker](https://developer.android.com/develop/background-work/background-tasks/persistent/threading/coroutineworker)
 
 ## API
 - [Quotable](https://github.com/lukePeavey/quotable#get-random-quote)
