@@ -5,11 +5,8 @@ import com.google.android.gms.maps.model.LatLng
 import javatimefun.zoneddatetime.extensions.print
 import javatimefun.zoneddatetime.extensions.toZonedDateTime
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
-import ramzi.eljabali.justjog.motivationalquotes.MotivationQuotesAPI
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntry
 import ramzi.eljabali.justjog.repository.room.jogentries.JogEntryDAO
 import ramzi.eljabali.justjog.repository.room.jogsummary.JogSummary

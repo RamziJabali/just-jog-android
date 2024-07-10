@@ -156,7 +156,12 @@ fun JustJogCalendarView(
                                     top = xs,
                                     bottom = xs
                                 ),
-                                text = "Total Distance: ${jogCalendarViewState.value.jogsInSelectedDay[index].totalDistance} Miles"
+
+                                text = String.format(
+                                    Locale.US,
+                                    "Total Distance: %.2f Miles",
+                                    jogCalendarViewState.value.jogsInSelectedDay[index].totalDistance
+                                )
                             )
                             Text(
                                 modifier = Modifier.padding(
