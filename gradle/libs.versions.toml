@@ -23,6 +23,7 @@ workManager = "2.9.0"
 koinDI = "3.6.0-wasm-alpha2"
 playServicesMaps = "18.2.0"
 retrofit = "2.9.0"
+osmoid = "6.1.18"
 mapbox = "11.4.1"
 foundationLayoutAndroid = "1.6.6"
 
@@ -58,6 +59,7 @@ androidx-compose-foundation = {group = "androidx.compose.foundation", name = "fo
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 work-manager = {group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager"}
 koin-di = {group = "io.insert-koin", name = "koin-android", version.ref = "koinDI"}
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 com-squareup-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 com-squareup-retrofit2-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
