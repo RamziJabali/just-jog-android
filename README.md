@@ -7,12 +7,11 @@
 - Calendar
 - Map
 <p align="center">
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots.png" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots2.png" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/JJ-19-Update-Read-Me/screen-shots/new_screenshots3.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots2.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots3.png" alt="" data-canonical-src="" width="187.5" height="375"/>
 </p>
 # videos
-
 ## Setting Up Jog
 
 [![Setting Up Jog](https://img.youtube.com/vi/spZF3uWQPgA/0.jpg)](https://www.youtube.com/watch?v=spZF3uWQPgA)
