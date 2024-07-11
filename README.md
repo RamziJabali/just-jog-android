@@ -7,9 +7,9 @@
 - Calendar
 - Map
 <p align="center">
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots.png" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots2.png" alt="" data-canonical-src="" width="187.5" height="375"/>
-<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots3.png" alt="" data-canonical-src="" width="187.5" height="375"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots.png" alt="" data-canonical-src="" width="250" height="550"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots2.png" alt="" data-canonical-src="" width="250" height="550"/>
+<img src="https://raw.githubusercontent.com/RamziJabali/just-jog-android/main/screen-shots/new_screenshots3.png" alt="" data-canonical-src="" width="250" height="550"/>
 </p>
 
 # videos
